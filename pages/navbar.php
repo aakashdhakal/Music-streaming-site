@@ -1,7 +1,6 @@
 <header>
     <div class="logo-container">
-        <img src="public/images/logo.png" alt="logo">
-        <h1>Name</h1>
+        <img src="public/images/logo.svg" alt="logo">
     </div>
     <nav>
         <ul>
