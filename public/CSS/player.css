@@ -110,6 +110,9 @@ input[type="range"]::-webkit-slider-thumb {
 		background-color: #ff801177;
 		position: absolute;
 	}
+	#seekbar::-webkit-slider-thumb {
+		display: var(--thumb-display, none);
+	}
 	.controls {
 		display: flex;
 		justify-content: space-between;
@@ -122,12 +125,16 @@ input[type="range"]::-webkit-slider-thumb {
 			display: flex;
 			align-items: center;
 			gap: 1rem;
-			justify-content: center;
+			justify-content: space-between;
 		}
 
 		button {
 			background: transparent;
 			font-size: 1.2rem;
+		}
+
+		.play-pause-btn {
+			color: #ff7f11;
 		}
 	}
 	.left {
@@ -140,6 +147,9 @@ input[type="range"]::-webkit-slider-thumb {
 			font-size: 0.9rem;
 			color: #707070;
 			font-weight: 500;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
 		}
 
 		img {

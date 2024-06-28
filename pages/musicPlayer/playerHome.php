@@ -6,20 +6,19 @@ include_once  "../head.php";
 </head>
 
 <body>
-    <!-- <?php
-            include_once "sideBar.php";
-            ?> -->
-    <button class="start-play-music" data-source="/WEB-PROJECT/public/music/Saarangi-Sushant-K.C.mp3">Saarangi</button>
-    <button class="start-play-music" data-source="/WEB-PROJECT/public/music/Kya-Kardiya-sushant-kc.m4a">Kya Kardiya</button>
+    <?php
+    // include_once "sideBar.php";
+    include_once "musicCard.php";
+    ?>
 
     <div class="music-controls">
-        <input type="range" name="" id="seekbar" min="0" max="100" value="0" step="0.000000000000001">
+        <input type="range" name="" id="seekbar" min="0" max="100" value="0" step="0.001">
         <div class="controls">
             <div class="left">
-                <img src="/WEB-PROJECT/public/images/song-cover/sarangi.jpg" alt="album art">
+                <img src="" alt="album art" class="music-cover">
                 <div class="song-info">
-                    <h3 class="song-title">Saarangi</h3>
-                    <p class="artist-name">Sushant K.C</p>
+                    <h3 class="music-title">Saarangi</h3>
+                    <p class="music-artist">Sushant K.C</p>
                 </div>
             </div>
             <div class="center">
@@ -46,9 +45,9 @@ include_once  "../head.php";
                 </span>
                 <div class="volume-control">
                     <button class="volume-btn">
-                        <i class="fa-solid fa-volume-up"></i>
+                        <i class="fa-duotone fa-volume-high"></i>
                     </button>
-                    <input type="range" name="" id="volume" min="0" max="100" value="100" step="1">
+                    <input type="range" name="" id="volume" min="0" max="100" value="100" step="0.001">
                 </div>
             </div>
         </div>
