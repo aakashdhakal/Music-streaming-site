@@ -6,6 +6,6 @@ include_once "pages/head.php";
 
 <body>
     <?php
-    include_once "pages/navbar.php";
+    include_once "pages/home/home.php";
     ?>
 </body>

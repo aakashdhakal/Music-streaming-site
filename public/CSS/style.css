@@ -3,7 +3,9 @@
 	padding: 0;
 	box-sizing: border-box;
 	font-family: Nunito;
-	/* outline: 1px dotted red; */
+	outline: none;
+	touch-action: none;
+	outline: 1px dotted red;
 }
 
 header {
@@ -46,6 +48,8 @@ button {
 	padding: 0.5rem 1rem;
 	cursor: pointer;
 	font-size: 1rem;
+	outline: none;
+	background: none;
 }
 
 .login-signup {

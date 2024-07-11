@@ -1,0 +1,74 @@
+.close-btn {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	padding: 10px;
+	cursor: pointer;
+}
+
+/* Login Form */
+
+#loginFormDialog {
+	width: 60%;
+	height: 70%;
+	margin: auto;
+	border: none;
+	border-radius: 1rem;
+	padding: 1rem;
+
+	.max-width {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+	}
+
+	.left {
+		width: 50%;
+		height: 100%;
+	}
+	.right {
+		width: 30%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	#loginForm {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
+	.input-field {
+		width: 100%;
+		padding: 0.5rem 1rem;
+		border-radius: 5px;
+		border: 1px solid #ff7f11;
+		outline: none;
+		display: flex;
+		align-items: center;
+	}
+	input {
+		width: 100%;
+		padding: 0.5rem 1rem;
+		border: none;
+		outline: none;
+	}
+	.login-submit {
+		background-color: #ff7f11;
+		color: white;
+		border-radius: 5px;
+		padding: 0.5rem 1rem;
+		cursor: pointer;
+		font-size: 1rem;
+		outline: none;
+		border: none;
+		width: 100%;
+	}
+}
