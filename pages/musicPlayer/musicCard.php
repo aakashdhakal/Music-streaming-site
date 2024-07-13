@@ -6,3 +6,5 @@ $result = mysqli_query($mysqli, $sql);
 while ($musics = mysqli_fetch_assoc($result)) {
     echo "<button class='start-play-music' data-musicId='" . $musics["id"] . "'>" . $musics['title'] . "</button>";
 }
+?>
+    <p><?php echo $_SESSION['user_name'] ?></p>

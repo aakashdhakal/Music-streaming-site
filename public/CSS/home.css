@@ -1,20 +1,8 @@
-.close-btn {
-	position: absolute;
-	top: 1rem;
-	right: 1rem;
-	padding: 10px;
-	cursor: pointer;
-}
-
 /* Login Form */
 
 #loginFormDialog {
 	width: 60%;
 	height: 70%;
-	margin: auto;
-	border: none;
-	border-radius: 1rem;
-	padding: 1rem;
 
 	.max-width {
 		width: 100%;

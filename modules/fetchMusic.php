@@ -1,4 +1,6 @@
 <?php
+include_once "extraFunctions.php";
+ 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["musicId"])) {
         include_once "database.php";
@@ -9,6 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $result = $stmt->get_result();
         $music = mysqli_fetch_assoc($result);
+        $isFavourite = isFavourites($musicId); 
+        $music["isFavourite"] = $isFavourite; 
         echo json_encode($music);
     } else {
         echo json_encode(["error" => "No music id provided"]);

@@ -1,6 +1,7 @@
 <?php
 $website_title = "Music Player";
 include_once  "../head.php";
+
 ?>
 <link rel="stylesheet" href="/WEB-PROJECT/public/CSS/player.css">
 </head>
@@ -9,14 +10,14 @@ include_once  "../head.php";
     <?php
     // include_once "sideBar.php";
     include_once "musicCard.php";
+    include_once "getPlaylist.php";
     ?>
 
     <div class="music-controls">
-        <div class="controls">
             <div class="left">
                 <img src="\WEB-PROJECT\public\images\song-cover\sarangi.jpg" alt="album art" class="music-cover">
                 <div class="song-info">
-                    <h3 class="music-title">Saarangi</h3>
+                <h3 class="music-title">Saarangi</h3>
                     <p class="music-artist">Sushant K.C</p>
                 </div>
             </div>
@@ -46,7 +47,7 @@ include_once  "../head.php";
                 </div>
             </div>
             <div class="right">
-                <button class="like-btn" title="Add to Favourites" data-liked="false">
+                <button class="like-btn" title="Add to Favourites" data-liked="false" data-m>
                     <i class="fa-regular fa-heart"></i>
                 </button>
                 <button class="playlist-btn" title="Add to Playlist">
@@ -62,4 +63,5 @@ include_once  "../head.php";
         </div>
     </div>
     <script src="/WEB-PROJECT/public/JS/musicPlayer.js"></script>
+    <script src="/WEB-PROJECT/public/JS/script.js"></script>
 </body>

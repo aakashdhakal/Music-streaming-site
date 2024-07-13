@@ -5,7 +5,7 @@
 	font-family: Nunito;
 	outline: none;
 	touch-action: none;
-	outline: 1px dotted red;
+	/* outline: 1px dotted red; */
 }
 
 header {
@@ -69,4 +69,35 @@ button {
 #loginBtn {
 	border-radius: 5px;
 	border: 2px solid #ff7f11;
+}
+.close-dialog-btn {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	padding: 10px;
+	cursor: pointer;
+}
+
+dialog {
+	margin: auto;
+	border: none;
+	border-radius: 1rem;
+	padding: 1rem;
+	position: relative;
+}
+.input-field {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	border: 1px solid #ff7f11;
+	outline: none;
+	display: flex;
+	align-items: center;
+
+	input {
+		width: 100%;
+		padding: 0.5rem 1rem;
+		border: none;
+		outline: none;
+	}
 }

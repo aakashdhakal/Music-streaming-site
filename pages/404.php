@@ -1,6 +1,6 @@
 <?php
 $website_title = "404 - Page not found";
-require_once "views/head.php"
+require_once "pages/head.php"
 ?>
 <link rel="stylesheet" href="public/CSS/404.css">
 </head>

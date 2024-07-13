@@ -1,8 +1,7 @@
 <dialog id="loginFormDialog">
+    <button class="close-dialog-btn"> <i class="fa-solid fa-xmark"></i>
+    </button>
     <div class="max-width">
-        <button class="close-btn">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
         <div class="left">
             <img src="public/images/login.svg" alt="login">
         </div>
@@ -19,5 +18,4 @@
                 <button type="submit" class="login-submit">Login</button>
             </form>
         </div>
-    </div>
 </dialog>

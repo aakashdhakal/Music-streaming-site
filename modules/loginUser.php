@@ -1,5 +1,4 @@
 <?php
-session_start();
 include_once "database.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["username"];

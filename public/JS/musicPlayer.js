@@ -9,6 +9,8 @@ let currentDuration = document.querySelector(".current-duration");
 let totalDuration = document.querySelector(".total-duration");
 let volumeBtn = document.querySelector(".volume-btn");
 let likeBtn = document.querySelector(".like-btn");
+let addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
+let addToPlaylistBtn = document.querySelector(".playlist-btn");
 
 let startPlayMusic = document.querySelectorAll(".start-play-music");
 
@@ -67,6 +69,19 @@ playPauseBtn.addEventListener("click", function () {
 	}
 });
 
+function setFavouriteStatus(status) {
+	console.log(status);
+	if (status) {
+		likeBtn.style.color = "#ff7f11";
+		likeBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+		likeBtn.setAttribute("data-liked", "true");
+	} else {
+		likeBtn.style.color = "#000";
+		likeBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+		likeBtn.setAttribute("data-liked", "false");
+	}
+}
+
 function loadMusic(musicData) {
 	music.src = musicData.filePath;
 	music.load();
@@ -74,7 +89,8 @@ function loadMusic(musicData) {
 	isplaying = true;
 	document.title =
 		musicData.title + " - " + musicData.firstname + " " + musicData.lastname;
-
+	console.log(musicData.isFavourite);
+	setFavouriteStatus(musicData.isFavourite);
 	let musicTitle = document.querySelector(".music-title");
 	let musicArtist = document.querySelector(".music-artist");
 	let musicCover = document.querySelector(".music-cover");
@@ -85,6 +101,7 @@ function loadMusic(musicData) {
 			'  <i class="fa-solid fa-badge-check" title="verified"></i>';
 	}
 	musicCover.src = musicData.coverImage;
+	likeBtn.setAttribute("data-musicId", musicData.id);
 }
 
 function playMusic() {
@@ -252,13 +269,36 @@ window.addEventListener("keydown", function (e) {
 });
 
 likeBtn.addEventListener("click", function () {
+	let action;
 	if (likeBtn.getAttribute("data-liked") === "false") {
-		likeBtn.style.color = "#ff7f11";
-		likeBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
-		likeBtn.setAttribute("data-liked", "true");
+		action = "like";
 	} else {
-		likeBtn.style.color = "#000";
-		likeBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
-		likeBtn.setAttribute("data-liked", "false");
+		action = "unlike";
 	}
+	let musicId = likeBtn.getAttribute("data-musicId");
+	fetch("/WEB-PROJECT/modules/addToFavourite.php", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
+		body: "musicId=" + encodeURIComponent(musicId) + "&action=" + action,
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			if (data.status === "success") {
+				if (action === "like") {
+					setFavouriteStatus("true");
+					alert("Added to favourite!");
+				} else {
+					setFavouriteStatus("false");
+					alert("Removed from favourite!");
+				}
+			} else {
+				alert("Something went wrong! " + data.message);
+			}
+		});
+});
+
+addToPlaylistBtn.addEventListener("click", function () {
+	addToPlaylistDialog.showModal();
 });
