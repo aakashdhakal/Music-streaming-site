@@ -101,3 +101,16 @@ dialog {
 		outline: none;
 	}
 }
+
+@keyframes dialogShow {
+	from {
+		transform: scale(0.5);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+dialog[open] {
+	animation: dialogShow 0.2s forwards;
+}

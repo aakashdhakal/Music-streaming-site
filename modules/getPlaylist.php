@@ -1,0 +1,58 @@
+<?php
+include_once 'database.php';
+
+$sql = "SELECT playlists.*, COUNT(playlist_songs.music_id) 
+AS song_count 
+FROM playlists 
+LEFT JOIN playlist_songs 
+ON playlist_songs.playlist_id = playlists.id 
+WHERE playlists.user_id = ?
+GROUP BY playlists.id;";
+
+
+$stmt = mysqli_stmt_init($mysqli);
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param('i', $_SESSION['user_id']);
+$stmt->execute();
+$result = $stmt->get_result();
+echo '   <div class="add-to-playlist">
+         <h2>Add to Playlist</h2>
+         <div class="playlists">
+';
+if (mysqli_num_rows($result) === 0) {
+    echo '<p class="no-playlist">You have not created any playlist yet</p>';
+} else {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo '
+                    <div class="playlist-card" data-playlistId = "' . $row['id'] . '">
+                    <img src="' . $row['cover'] . '" alt="" srcset="">
+                    <div class="playlist-info">
+                    <h3 class="playlist-title">' . $row['name'] . '</h3>
+                    <p class="song-count"> <span class="count">' . $row['song_count'] . '</span> songs</p>
+                    </div>
+                    <button class="song-status-in-playlist">
+                    </button>
+                    </div>
+                    ';
+    }
+}
+if (mysqli_num_rows($result) === 3) {
+    echo '<p class="max-reached">You can only create maximum of 3 playlist</p>';
+} else {
+    echo '
+        </div>
+     <div class="create-playlist">
+                <h2>Create Playlist</h2>
+                <form action="" method="post" class="create-playlist-form">
+                    <div class="input-field">
+                        <input type="text" name="playlist-name" id="playlist-name" placeholder="Playlist Name">
+                    </div>
+                    <button  class="create-playlist-btn"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Create
+                        Playlist</button>
+                </form>
+            </div>
+    ';
+}
+echo '
+</div>
+</div>';

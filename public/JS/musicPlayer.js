@@ -11,6 +11,11 @@ let volumeBtn = document.querySelector(".volume-btn");
 let likeBtn = document.querySelector(".like-btn");
 let addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
 let addToPlaylistBtn = document.querySelector(".playlist-btn");
+let playlistCard = document.querySelectorAll(".playlist-card");
+let songCount = document.querySelectorAll(".song-count .count");
+let musicControls = document.querySelector(".music-controls");
+
+let isControlFocused = false;
 
 let startPlayMusic = document.querySelectorAll(".start-play-music");
 
@@ -70,7 +75,6 @@ playPauseBtn.addEventListener("click", function () {
 });
 
 function setFavouriteStatus(status) {
-	console.log(status);
 	if (status) {
 		likeBtn.style.color = "#ff7f11";
 		likeBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
@@ -224,51 +228,8 @@ volume.addEventListener("mousemove", function (e) {
 	volume.style.setProperty("--thumb-display", "block");
 });
 
-window.addEventListener("keydown", function (e) {
-	switch (e.key) {
-		case " ":
-			e.preventDefault();
-			if (isplaying) {
-				pauseMusic();
-			} else {
-				playMusic();
-			}
-			break;
-		case "ArrowRight":
-			music.currentTime += 5;
-			break;
-		case "ArrowLeft":
-			music.currentTime -= 5;
-			break;
-		case "ArrowUp":
-			if (volume.value < 100) {
-				adjustVolume(parseInt(volume.value) + 5);
-			}
-			break;
-		case "ArrowDown":
-			if (volume.value > 0) {
-				adjustVolume(parseInt(volume.value) - 5);
-			} else {
-				mute();
-			}
-			break;
-		case "m":
-			if (volume.value > 0) {
-				mute();
-			} else {
-				adjustVolume(localStorage.getItem("volume"));
-			}
-			break;
-		case "r":
-			repeatBtn.click();
-			break;
-		case "s":
-			shuffleBtn.click();
-			break;
-	}
-});
-
-likeBtn.addEventListener("click", function () {
+//Function to like or dislike a music
+likeBtn.addEventListener("click", async function () {
 	let action;
 	if (likeBtn.getAttribute("data-liked") === "false") {
 		action = "like";
@@ -276,29 +237,45 @@ likeBtn.addEventListener("click", function () {
 		action = "unlike";
 	}
 	let musicId = likeBtn.getAttribute("data-musicId");
-	fetch("/WEB-PROJECT/modules/addToFavourite.php", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/x-www-form-urlencoded",
-		},
-		body: "musicId=" + encodeURIComponent(musicId) + "&action=" + action,
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			if (data.status === "success") {
-				if (action === "like") {
-					setFavouriteStatus("true");
-					alert("Added to favourite!");
-				} else {
-					setFavouriteStatus("false");
-					alert("Removed from favourite!");
-				}
-			} else {
-				alert("Something went wrong! " + data.message);
-			}
-		});
+	if (await setLikeStatus(musicId, action)) {
+		if (action === "like") {
+			setFavouriteStatus(true);
+		} else {
+			setFavouriteStatus(false);
+		}
+	}
 });
 
+//Function to add music to playlist
 addToPlaylistBtn.addEventListener("click", function () {
 	addToPlaylistDialog.showModal();
+});
+
+addToPlaylistDialog.addEventListener("click", async function (e) {
+	//Add music to playlist
+	let playlistCard = e.target.closest(".playlist-card");
+	if (playlistCard) {
+		let musicId = likeBtn.getAttribute("data-musicId");
+		let playlistId = playlistCard.getAttribute("data-playlistId");
+		if (await addToPlaylist(playlistId, musicId)) {
+			alert("Music added to playlist");
+			let data = await fetchPlaylists();
+			addToPlaylistDialog.querySelector(".max-width").innerHTML = data;
+		}
+	}
+	//Create playlist
+	let createPlaylistBtn = e.target.closest(".create-playlist-btn");
+	if (createPlaylistBtn) {
+		e.preventDefault();
+		let form = document.querySelector(".create-playlist-form");
+		let formData = new FormData(form);
+		if (formData.get("playlist-name") === "") {
+			alert("Playlist name cannot be empty!");
+		} else if (await createPlaylist(formData)) {
+			let data = await fetchPlaylists();
+			addToPlaylistDialog.querySelector(".max-width").innerHTML = data;
+		} else {
+			alert("Failed to create playlist");
+		}
+	}
 });
