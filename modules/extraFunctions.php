@@ -18,3 +18,17 @@ function isFavourites($musicId)
     }
     return false;
 }
+
+function checkSongInPlaylist($playlistId, $musicId)
+{
+    require 'database.php';
+    $sql = "SELECT * FROM playlist_songs WHERE playlist_id = ? AND music_id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('ii', $playlistId, $musicId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        return true;
+    }
+    return false;
+}
