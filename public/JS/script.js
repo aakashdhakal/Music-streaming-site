@@ -24,6 +24,14 @@ dialog.forEach((d) => {
 	});
 });
 
+let fileUpload = document.getElementById("fileUpload");
+
+fileUpload.addEventListener("change", function (e) {
+	var fileName = e.target.files[0].name;
+	let previewImage = document.querySelector(".preview-image");
+	previewImage.src = URL.createObjectURL(e.target.files[0]);
+});
+
 //all api calls
 
 //Function to like or dislike a music

@@ -15,10 +15,7 @@ $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
 $result = $stmt->get_result();
-echo '   <div class="add-to-playlist">
-         <h2>Add to Playlist</h2>
-         <div class="playlists">
-';
+$showForm = isset($showForm) ? $showForm : false;
 if (mysqli_num_rows($result) === 0) {
     echo '<p class="no-playlist">You have not created any playlist yet</p>';
 } else {
@@ -36,23 +33,9 @@ if (mysqli_num_rows($result) === 0) {
                     ';
     }
 }
-if (mysqli_num_rows($result) === 3) {
-    echo '<p class="max-reached">You can only create maximum of 3 playlist</p>';
+if (mysqli_num_rows($result) >= 3) {
+    echo '<p class="max-reached">You can only create upto 3 playlists</p>';
 } else {
-    echo '
-        </div>
-     <div class="create-playlist">
-                <h2>Create Playlist</h2>
-                <form action="" method="post" class="create-playlist-form">
-                    <div class="input-field">
-                        <input type="text" name="playlist-name" id="playlist-name" placeholder="Playlist Name">
-                    </div>
-                    <button  class="create-playlist-btn"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Create
-                        Playlist</button>
-                </form>
-            </div>
-    ';
+    echo '<button class="show-create-playlist-dialog-btn"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Create Playlist</button>';
+
 }
-echo '
-</div>
-</div>';
