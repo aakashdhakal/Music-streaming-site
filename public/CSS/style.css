@@ -8,6 +8,15 @@
 	/* outline: 1px dotted red; */
 }
 
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #ff7f11;
+	border-radius: 5px;
+}
+
 header {
 	display: flex;
 	justify-content: space-around;
@@ -50,6 +59,12 @@ button {
 	font-size: 1rem;
 	outline: none;
 	background: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.3rem;
+
+	
 }
 
 .login-signup {
@@ -77,13 +92,22 @@ button {
 	padding: 10px;
 	cursor: pointer;
 }
+@keyframes dialogShow {
+	from {
+		transform: scale(0.5);
+	}
+	to {
+		transform: scale(1);
+	}
+}
 
 dialog {
 	margin: auto;
 	border: none;
 	border-radius: 1rem;
 	padding: 1rem;
-	position: relative;
+	position: fixed;
+	animation: dialogShow 0.2s ease;
 }
 .input-field {
 	width: 100%;
@@ -102,15 +126,31 @@ dialog {
 	}
 }
 
-@keyframes dialogShow {
-	from {
-		transform: scale(0.5);
-	}
-	to {
-		transform: scale(1);
-	}
+.form-group:has(input[type="file"]) {
+	border: none !important;
+}
+/* custom file upload */
+.custom-file-upload {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 1rem;
+	width: 6rem;
+	height: 6rem;
+	border: 1px solid #ff7f11;
+	border-radius: 5px;
+	position: relative;
 }
 
-dialog[open] {
-	animation: dialogShow 0.2s forwards;
+.custom-file-upload label {
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	pointer-events: all !important;
+	height: 100%;
+	width: 100%;
+}
+
+.custom-file-upload input[type="file"] {
+	display: none;
 }

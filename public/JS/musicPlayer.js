@@ -14,7 +14,11 @@ let addToPlaylistBtn = document.querySelector(".playlist-btn");
 let playlistCard = document.querySelectorAll(".playlist-card");
 let songCount = document.querySelectorAll(".song-count .count");
 let musicControls = document.querySelector(".music-controls");
-
+let playlistContainer = document.querySelectorAll(".playlists");
+let showCreatePlaylistDialog = document.querySelectorAll(
+	".show-create-playlist-dialog-btn"
+);
+let createPlaylistDialog = document.querySelector("#createNewPlaylistDialog");
 let isControlFocused = false;
 
 let startPlayMusic = document.querySelectorAll(".start-play-music");
@@ -259,23 +263,43 @@ addToPlaylistDialog.addEventListener("click", async function (e) {
 		let playlistId = playlistCard.getAttribute("data-playlistId");
 		if (await addToPlaylist(playlistId, musicId)) {
 			alert("Music added to playlist");
-			let data = await fetchPlaylists();
-			addToPlaylistDialog.querySelector(".max-width").innerHTML = data;
+			await displayPlaylists();
 		}
 	}
-	//Create playlist
-	let createPlaylistBtn = e.target.closest(".create-playlist-btn");
-	if (createPlaylistBtn) {
-		e.preventDefault();
-		let form = document.querySelector(".create-playlist-form");
-		let formData = new FormData(form);
-		if (formData.get("playlist-name") === "") {
-			alert("Playlist name cannot be empty!");
-		} else if (await createPlaylist(formData)) {
-			let data = await fetchPlaylists();
-			addToPlaylistDialog.querySelector(".max-width").innerHTML = data;
-		} else {
-			alert("Failed to create playlist");
-		}
+});
+
+async function displayPlaylists() {
+	let data = await fetchPlaylists();
+	playlistContainer.forEach((container) => {
+		container.innerHTML = data;
+	});
+}
+
+showCreatePlaylistDialog.forEach((btn) => {
+	btn.addEventListener("click", function () {
+		createPlaylistDialog.showModal();
+	});
+});
+
+let createPlaylistForm = document.querySelector(".create-playlist-form");
+createPlaylistForm.addEventListener("submit", async function (e) {
+	e.preventDefault();
+	let formData = new FormData(createPlaylistForm);
+	if (await createPlaylist(formData)) {
+		alert("Playlist created successfully");
+		createPlaylistDialog.close();
+		await displayPlaylists();
+		createPlaylistForm.reset();
 	}
+});
+
+playlistContainer.forEach((container) => {
+	container.addEventListener("click", async function (e) {
+		let createPlaylistBtn = e.target.closest(
+			".show-create-playlist-dialog-btn"
+		);
+		if (createPlaylistBtn) {
+			createPlaylistDialog.showModal();
+		}
+	});
 });
