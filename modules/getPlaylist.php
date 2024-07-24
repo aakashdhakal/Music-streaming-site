@@ -17,7 +17,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $showForm = isset($showForm) ? $showForm : false;
 if (mysqli_num_rows($result) === 0) {
-    echo '<p class="no-playlist">You have not created any playlist yet</p>';
+    echo '<br><p class="no-playlist">You have not created any playlist yet</p><br>';
 } else {
     while ($row = mysqli_fetch_assoc($result)) {
         echo '
