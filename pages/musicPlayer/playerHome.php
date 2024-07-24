@@ -16,7 +16,10 @@ if (!isset($_SESSION['user_id'])) {
     ?>
     <main>
         <?php
+        include_once "topNav.php";
         include_once "musicCard.php";
+
+
         ?>
         <!-- Plylist Dialog -->
         <dialog id="addToPlaylistDialog">
@@ -106,6 +109,10 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
         </div>
+        <div class="music-card">
+
+        </div>
+
     </main>
 
 
