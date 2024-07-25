@@ -43,7 +43,7 @@ if (!isset($_SESSION['user_id'])) {
                 <form action="" method="POST" class="create-playlist-form" enctype="multipart/form-data">
                     <div class="form-group playlist-name">
                         <input type="text" name="playlist-name" placeholder="" required>
-                        <label for="playlist-name">Playlist Name</label>
+                        <label for="playlist-name">Playlist Name </label>
                     </div>
                     <div class="form-group playlist-description">
                         <input type="text" name="playlist-description" placeholder="">
