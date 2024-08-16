@@ -21,8 +21,6 @@ loginForm.addEventListener("submit", function (e) {
 		});
 });
 
-
-
 loginFormDialog.showModal();
 
 loginBtn.addEventListener("click", function () {

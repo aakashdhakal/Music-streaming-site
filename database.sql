@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 17, 2024 at 09:04 AM
+-- Generation Time: Aug 09, 2024 at 07:38 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.0.28
 
@@ -41,7 +41,9 @@ INSERT INTO `favourite_songs` (`id`, `song_id`, `user_id`) VALUES
 (6, 3, 1),
 (21, 0, 3),
 (22, 3, 3),
-(23, 2, 3);
+(30, 2, 3),
+(31, 10, 3),
+(32, 11, 3);
 
 -- --------------------------------------------------------
 
@@ -67,7 +69,38 @@ CREATE TABLE `musics` (
 INSERT INTO `musics` (`id`, `title`, `artist`, `genre`, `duration`, `releaseDate`, `filePath`, `coverImage`) VALUES
 (1, 'Sarangi', 'sushantkc', 'folk', '04:42:00', NULL, '/WEB-PROJECT/public/music/Saarangi-Sushant-K.C.mp3', '/WEB-PROJECT/public/images/song-cover/sarangi.jpg'),
 (2, 'Kya Kardiya', 'sushantkc', 'pop', '03:26:00', '2024-06-04', '/WEB-PROJECT/public/music/Kya-Kardiya-sushant-kc.m4a', '/WEB-PROJECT/public/images/song-cover/kyakardiya.jpg'),
-(3, 'Blinding Lights', 'theweekend', 'pop', '03:26:00', '2024-06-04', '/WEB-PROJECT/public/music/Blinding-Lights.mp3', '/WEB-PROJECT/public/images/song-cover/blindinglights.jpg');
+(3, 'Blinding Lights', 'theweekend', 'pop', '03:26:00', '2024-06-04', '/WEB-PROJECT/public/music/Blinding-Lights.mp3', '/WEB-PROJECT/public/images/song-cover/blindinglights.jpg'),
+(11, 'Cheap Thrills', 'aakashdhakal', 'english', '00:00:00', '2024-08-07', '/WEB-PROJECT/public/music/song-3876176.m4a', '/WEB-PROJECT/public/images/song-cover/music.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `music_history`
+--
+
+CREATE TABLE `music_history` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `music_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `music_history`
+--
+
+INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
+(68, 3, 11),
+(71, 3, 11),
+(72, 3, 11),
+(74, 3, 2),
+(76, 3, 11),
+(78, 3, 2),
+(80, 3, 11),
+(81, 3, 11),
+(82, 3, 3),
+(83, 3, 11),
+(84, 3, 11),
+(85, 3, 11);
 
 -- --------------------------------------------------------
 
@@ -81,15 +114,16 @@ CREATE TABLE `playlists` (
   `name` text NOT NULL,
   `creation_date` date NOT NULL DEFAULT current_timestamp(),
   `cover` text NOT NULL,
-  `description` text NOT NULL
+  `description` text NOT NULL,
+  `visibility` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `playlists`
 --
 
-INSERT INTO `playlists` (`id`, `user_id`, `name`, `creation_date`, `cover`, `description`) VALUES
-(18, 3, 'Hello World', '2024-07-16', '/WEB-PROJECT/public/images/playlist-cover.png', '');
+INSERT INTO `playlists` (`id`, `user_id`, `name`, `creation_date`, `cover`, `description`, `visibility`) VALUES
+(50, 3, 'Aakash\'s Playlist', '2024-07-29', '/WEB-PROJECT/public/images/playlist-cover/3-Aakash\'s Playlist948726.jpeg', '', 'private');
 
 -- --------------------------------------------------------
 
@@ -102,6 +136,13 @@ CREATE TABLE `playlist_songs` (
   `music_id` int(11) NOT NULL,
   `playlist_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `playlist_songs`
+--
+
+INSERT INTO `playlist_songs` (`id`, `music_id`, `playlist_id`) VALUES
+(53, 2, 50);
 
 -- --------------------------------------------------------
 
@@ -131,7 +172,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `firstname`, `lastname`, `dob`, `gender`, `email`, `profile_picture`, `bio`, `is_artist`, `isVerified`) VALUES
 (1, 'sushantkc', 'kjhekajhksjdhak', 'Shusant', 'K.C', '1997-01-01', 'male', 'helloworld@gmail.com', '', '', 1, 1),
 (2, 'theweekend', 'kjhekajhksjdhak', 'The', 'Weekend', '1997-01-01', 'male', 'helloworld@gmail.com', '', '', 1, 1),
-(3, 'aakashdhakal', 'helloworld', 'Aakash', 'Dhakal', '1997-01-01', 'male', 'helloworld@gmail.com', '', '', 1, 1);
+(3, 'aakashdhakal', 'helloworld', 'Aakash', 'Dhakal', '1997-01-01', 'male', 'helloworld@gmail.com', '/WEB-PROJECT/public/images/profile-pics/profile.jpeg', '', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -206,6 +247,14 @@ ALTER TABLE `musics`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `music_history`
+--
+ALTER TABLE `music_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_music_id` (`music_id`),
+  ADD KEY `fk_user_id` (`user_id`);
+
+--
 -- Indexes for table `playlists`
 --
 ALTER TABLE `playlists`
@@ -239,25 +288,31 @@ ALTER TABLE `verify_email`
 -- AUTO_INCREMENT for table `favourite_songs`
 --
 ALTER TABLE `favourite_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `musics`
 --
 ALTER TABLE `musics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `music_history`
+--
+ALTER TABLE `music_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT for table `playlists`
 --
 ALTER TABLE `playlists`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `playlist_songs`
 --
 ALTER TABLE `playlist_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -276,10 +331,17 @@ ALTER TABLE `verify_email`
 --
 
 --
+-- Constraints for table `music_history`
+--
+ALTER TABLE `music_history`
+  ADD CONSTRAINT `fk_music_id` FOREIGN KEY (`music_id`) REFERENCES `musics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `playlist_songs`
 --
 ALTER TABLE `playlist_songs`
-  ADD CONSTRAINT `fk_playlist_id` FOREIGN KEY (`playlist_id`) REFERENCES `playlists` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_playlist_id` FOREIGN KEY (`playlist_id`) REFERENCES `playlists` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

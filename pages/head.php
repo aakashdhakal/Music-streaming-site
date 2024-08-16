@@ -18,3 +18,4 @@ if (session_status() == PHP_SESSION_NONE) {
         rel="stylesheet">
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="" class="dynamic-css">

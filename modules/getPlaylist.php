@@ -34,7 +34,7 @@ if (mysqli_num_rows($result) === 0) {
     }
 }
 if (mysqli_num_rows($result) >= 3) {
-    echo '<br><p class="max-reached">You can only create upto 3 playlists</p><br>';
+    echo '<p class="max-reached">You can only create upto 3 playlists</p>';
 } else {
     echo '<button class="show-create-playlist-dialog-btn"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;Create Playlist</button>';
 
