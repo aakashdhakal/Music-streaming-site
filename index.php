@@ -6,7 +6,6 @@ include_once "pages/head.php";
 
 <body>
     <?php
-
-    include_once "pages/home/home.php";
+    include_once "pages/landingPage/home.php";
     ?>
 </body>

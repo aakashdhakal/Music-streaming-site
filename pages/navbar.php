@@ -1,6 +1,6 @@
 <header>
     <div class="logo-container">
-        <img src="public/images/logo.svg" alt="logo">
+        <img src="/WEB-PROJECT/public/images/logo.svg" alt="logo">
     </div>
     <nav>
         <ul>

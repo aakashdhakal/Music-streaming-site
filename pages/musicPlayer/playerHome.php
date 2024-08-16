@@ -13,15 +13,15 @@ if (!isset($_SESSION['user_id'])) {
 <body>
     <?php
     include_once "sideBar.php";
+    include_once "uploadMusicForm.php";
     ?>
     <main>
         <?php
         include_once "topNav.php";
-        include_once "musicCard.php";
 
 
         ?>
-        <!-- Plylist Dialog -->
+        <!-- Playlist Dialog -->
         <dialog id="addToPlaylistDialog">
             <button class="close-dialog-btn"> <i class="fa-solid fa-xmark"></i>
             </button>
@@ -35,30 +35,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
         </dialog>
-        <dialog id="createNewPlaylistDialog">
-            <button class="close-dialog-btn"> <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="max-width">
-                <h2>Create New Playlist</h2>
-                <form action="" method="POST" class="create-playlist-form" enctype="multipart/form-data">
-                    <div class="form-group playlist-name">
-                        <input type="text" name="playlist-name" placeholder="" required>
-                        <label for="playlist-name">Playlist Name </label>
-                    </div>
-                    <div class="form-group playlist-description">
-                        <input type="text" name="playlist-description" placeholder="">
-                        <label for="playlist-description">Description</label>
-                    </div>
-                    <div class="custom-file-upload">
-                        <input type="file" id="fileUpload" name="playlist_cover" hidden />
-                        <label for="fileUpload">Upload Cover</label>
-                        <img src="\WEB-PROJECT\public\images\playlist-cover\playlist-cover.png" alt=""
-                            class="preview-image">
-                    </div>
-                    <button type="submit" class="create-playlist-btn">Create Playlist</button>
-                </form>
-            </div>
-        </dialog>
+        <?php include_once "createPlaylistForm.php"; ?>
         <div class="music-controls">
             <div class="left">
                 <img src="\WEB-PROJECT\public\images\song-cover\sarangi.jpg" alt="album art" class="music-cover">
@@ -94,7 +71,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
             <div class="right">
-                <button class="like-btn" title="Add to Favourites" data-liked="false" data-m>
+                <button class="like-btn" title="Add to Favourites" data-liked="false" data-musicId="2">
                     <i class="fa-regular fa-heart"></i>
                 </button>
                 <button class="playlist-btn" title="Add to Playlist">
@@ -109,14 +86,16 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
         </div>
-        <div class="music-card">
-
-        </div>
+        <section id="mainContent">
+            <?php include_once "../home/home.php"; ?>
+        </section>
 
     </main>
 
 
 
     <script src="/WEB-PROJECT/public/JS/musicPlayer.js"></script>
-    <script src="/WEB-PROJECT/public/JS/script.js"></script>
+    <script src="/WEB-PROJECT/public/JS/uploadMusic.js"></script>
+    <script src="/WEB-PROJECT/public/JS/script.js" class="main-script"></script>
+    <script class="dynamic-script"></script>
 </body>

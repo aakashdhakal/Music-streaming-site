@@ -5,35 +5,41 @@
     <nav>
         <ul class="main-links nav-links">
             <li class="active">
-                <a href="/WEB-PROJECT/pages/musicPlayer/playerHome.php">
+                <button class="nav-btn" data-path="/WEB-PROJECT/pages/home/home.php">
                     <i class="fa-solid fa-house"></i>
-                    Home</a>
+                    Home</button>
             </li>
             <li>
-                <a href="/WEB-PROJECT/pages/musicPlayer/playerLibrary.php">
+                <button class="nav-btn">
                     <i class="fa-solid fa-compass"></i>
-                    Discover</a>
+                    Discover
+                </button>
             </li>
             <li>
-                <a href="/WEB-PROJECT/pages/musicPlayer/playerPlaylist.php">
-                    <i class="fa-solid fa-microphone"></i>
-                    Artists</a>
+                <button class="nav-btn">
+                    <i class="fa-solid fa-music-note"></i>
+                    Artists
+                </button>
             </li>
+            <li>
+                <button class="nav-btn">
+                    <i class="fa-solid fa-album-collection"></i>
+                    Albums
+                </button>
         </ul>
         <ul class="library-links nav-links">
             <span class="nav-links-title">Library</span>
-
-            <!-- history -->
             <li>
-                <a href="/WEB-PROJECT/pages/musicPlayer/playerHistory.php">
-                    <i class="fa-solid fa-history"></i>
-                    History</a>
+                <button class="nav-btn">
+                    <i class="fa-solid fa-heart"></i>
+                    Favourites
+                </button>
             </li>
-            <!-- favourites -->
             <li>
-                <a href="/WEB-PROJECT/pages/musicPlayer/playerFavourites.php">
-                    <i class="fa-regular fa-heart"></i>
-                    Favourites</a>
+                <button class="nav-btn">
+                    <i class="fa-solid fa-history"></i>
+                    Recently Played
+                </button>
             </li>
         </ul>
         <ul class="playlist-links nav-links">

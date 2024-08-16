@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
         $musicId = $_POST['musicId'];
-        if($_POST['action' ]== 'like') {
+        if ($_POST['action'] == 'like') {
             $sql = "INSERT INTO favourite_songs (user_id, song_id) VALUES (?, ?)";
         } else {
             $sql = "DELETE FROM favourite_songs WHERE user_id = ? AND song_id = ?";
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             echo json_encode(['status' => 'error', 'message' => $mysqli->error]);
         }
-    }else{
-        echo json_encode(['status' => 'error', 'message' => 'User not logged in'],$_SESSION);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
     }
 }

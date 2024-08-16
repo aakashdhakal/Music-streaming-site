@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["user_name"] = $row["firstname"] . " " . $row["lastname"];
         $_SESSION["user_email"] = $row["email"];
         $_SESSION["user_image"] = $row["profile_picture"];
+        $_SESSION["username"] = $row["username"];
         echo "success";
     } else {
         echo "error: {$mysqli->error}";
