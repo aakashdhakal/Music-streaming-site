@@ -2,6 +2,12 @@ let dragDropArea = document.querySelector(".drag-drop-area");
 let songInput = document.querySelector("#songInput");
 let dragDropText = document.querySelector(".drag-drop-text");
 let uploadMusicForm = document.querySelector("#uploadMusicForm");
+let uploadDialogShowBtn = document.querySelector(".upload-music-page-show-btn");
+let uploadDialog = document.querySelector("#uploadMusicDialog");
+
+uploadDialogShowBtn.addEventListener("click", function () {
+	uploadDialog.showModal();
+});
 
 dragDropArea.addEventListener("dragover", function (e) {
 	e.preventDefault();
@@ -57,7 +63,7 @@ songInput.addEventListener("change", function () {
 uploadMusicForm.addEventListener("submit", function (e) {
 	e.preventDefault();
 	let formData = new FormData(uploadMusicForm);
-	fetch("/WEB-PROJECT/modules/uploadMusic.php", {
+	fetch(baseUrl + "/modules/uploadMusic.php", {
 		method: "POST",
 		body: formData,
 	})

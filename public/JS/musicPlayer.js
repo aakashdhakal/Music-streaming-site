@@ -23,10 +23,6 @@ let isControlFocused = false;
 
 let startPlayMusic = document.querySelectorAll(".start-play-music");
 
-function fuck() {
-	console.log("fucked");
-}
-
 document.addEventListener("click", async function (e) {
 	if (e.target.closest(".start-play-music")) {
 		startPlayMusic = e.target.closest(".start-play-music");
@@ -94,7 +90,7 @@ function showMusicControls() {
 	});
 }
 
-function loadMusic(musicData) {
+async function loadMusic(musicData) {
 	if (!musicControls.classList.contains("show")) {
 		musicControls.classList.add("show");
 		showMusicControls();
@@ -117,7 +113,9 @@ function loadMusic(musicData) {
 	}
 	musicCover.src = musicData.coverImage;
 	likeBtn.setAttribute("data-musicId", musicData.id);
-	addToHistory(musicData.id);
+	if (await checkLoginStatus()) {
+		addToHistory(musicData.id);
+	}
 }
 
 function playMusic() {
@@ -241,80 +239,8 @@ volume.addEventListener("mousemove", function (e) {
 });
 
 //Function to like or dislike a music
-likeBtn.addEventListener("click", async function () {
-	let action;
-	if (likeBtn.getAttribute("data-liked") === "false") {
-		action = "like";
-	} else {
-		action = "unlike";
-	}
-	let musicId = likeBtn.getAttribute("data-musicId");
-	if (await setLikeStatus(musicId, action)) {
-		if (action === "like") {
-			setFavouriteStatus(true);
-			showAlert("Music added to favourites", "success");
-		} else {
-			setFavouriteStatus(false);
-			showAlert("Music removed from favourites", "warning");
-		}
-	}
-});
 
 //Function to add music to playlist
-addToPlaylistBtn.addEventListener("click", function () {
-	addToPlaylistDialog.showModal();
-});
-
-addToPlaylistDialog.addEventListener("click", async function (e) {
-	//Add music to playlist
-	let playlistCard = e.target.closest(".playlist-card");
-	if (playlistCard) {
-		let musicId = likeBtn.getAttribute("data-musicId");
-		let playlistId = playlistCard.getAttribute("data-playlistId");
-		if (await addToPlaylist(playlistId, musicId)) {
-			showAlert("Music added to playlist", "success");
-			await displayPlaylists();
-		}
-		closeDialog(addToPlaylistDialog);
-	}
-});
-
-async function displayPlaylists() {
-	let data = await fetchPlaylists();
-	playlistContainer.forEach((container) => {
-		container.innerHTML = data;
-	});
-}
-
-showCreatePlaylistDialog.forEach((btn) => {
-	btn.addEventListener("click", function () {
-		createPlaylistDialog.showModal();
-	});
-});
-
-let createPlaylistForm = document.querySelector(".create-playlist-form");
-createPlaylistForm.addEventListener("submit", async function (e) {
-	e.preventDefault();
-	let formData = new FormData(createPlaylistForm);
-	if (await createPlaylist(formData)) {
-		showAlert("Playlist created successfully", "success");
-		closeDialog(createPlaylistDialog);
-		await displayPlaylists();
-		createPlaylistForm.reset();
-		formData.delete("playlist_cover");
-	}
-});
-
-playlistContainer.forEach((container) => {
-	container.addEventListener("click", async function (e) {
-		let createPlaylistBtn = e.target.closest(
-			".show-create-playlist-dialog-btn"
-		);
-		if (createPlaylistBtn) {
-			createPlaylistDialog.showModal();
-		}
-	});
-});
 
 let topnav = document.querySelector(".top-nav");
 
@@ -328,27 +254,110 @@ document.addEventListener("scroll", function () {
 	}
 });
 
-let profileMenu = document.querySelector(".profile-menu");
-let profileSection = document.querySelector(".profile-pic");
+async function profileFunctions() {
+	if (await checkLoginStatus()) {
+		let profileMenu = document.querySelector(".profile-menu");
+		let profileSection = document.querySelector(".profile-pic");
 
-profileSection.addEventListener("click", function (e) {
-	e.stopPropagation();
-	if (window.getComputedStyle(profileMenu).display === "none") {
-		profileMenu.style.display = "flex";
-		console.log("clicked");
-	} else if (window.getComputedStyle(profileMenu).display === "flex") {
-		profileMenu.style.display = "none";
-		console.log("clicked");
+		profileSection.addEventListener("click", function (e) {
+			e.stopPropagation();
+			if (window.getComputedStyle(profileMenu).display === "none") {
+				profileMenu.style.display = "flex";
+				console.log("clicked");
+			} else if (window.getComputedStyle(profileMenu).display === "flex") {
+				profileMenu.style.display = "none";
+				console.log("clicked");
+			}
+		});
+
+		document.addEventListener("click", function (e) {
+			if (!profileSection.contains(e.target)) {
+				profileMenu.style.display = "none";
+			}
+		});
+
+		let uplodMusicPageShowBtn = document.querySelector(
+			".upload-music-page-show-btn"
+		);
+		let uploadMusicDialog = document.querySelector("#uploadMusicDialog");
+
+		uplodMusicPageShowBtn.addEventListener("click", function () {
+			uploadMusicDialog.showModal();
+		});
 	}
-});
+	likeBtn.addEventListener("click", async function () {
+		let action;
+		if (likeBtn.getAttribute("data-liked") === "false") {
+			action = "like";
+		} else {
+			action = "unlike";
+		}
+		let musicId = likeBtn.getAttribute("data-musicId");
+		if (await setLikeStatus(musicId, action)) {
+			if (action === "like") {
+				setFavouriteStatus(true);
+				showAlert("Music added to favourites", "success");
+			} else {
+				setFavouriteStatus(false);
+				showAlert("Music removed from favourites", "warning");
+			}
+		}
+	});
+	addToPlaylistBtn.addEventListener("click", function () {
+		addToPlaylistDialog.showModal();
+	});
 
-document.addEventListener("click", function (e) {
-	if (!profileSection.contains(e.target)) {
-		profileMenu.style.display = "none";
+	addToPlaylistDialog.addEventListener("click", async function (e) {
+		//Add music to playlist
+		let playlistCard = e.target.closest(".playlist-card");
+		if (playlistCard) {
+			let musicId = likeBtn.getAttribute("data-musicId");
+			let playlistId = playlistCard.getAttribute("data-playlistId");
+			if (await addToPlaylist(playlistId, musicId)) {
+				showAlert("Music added to playlist", "success");
+				await displayPlaylists();
+			}
+			closeDialog(addToPlaylistDialog);
+		}
+	});
+
+	async function displayPlaylists() {
+		let data = await fetchPlaylists();
+		playlistContainer.forEach((container) => {
+			container.innerHTML = data;
+		});
 	}
-});
 
-let navButtons = document.querySelectorAll(".nav-btn");
+	showCreatePlaylistDialog.forEach((btn) => {
+		btn.addEventListener("click", function () {
+			createPlaylistDialog.showModal();
+		});
+	});
+
+	let createPlaylistForm = document.querySelector(".create-playlist-form");
+	createPlaylistForm.addEventListener("submit", async function (e) {
+		e.preventDefault();
+		let formData = new FormData(createPlaylistForm);
+		if (await createPlaylist(formData)) {
+			showAlert("Playlist created successfully", "success");
+			closeDialog(createPlaylistDialog);
+			await displayPlaylists();
+			createPlaylistForm.reset();
+			formData.delete("playlist_cover");
+		}
+	});
+
+	playlistContainer.forEach((container) => {
+		container.addEventListener("click", async function (e) {
+			let createPlaylistBtn = e.target.closest(
+				".show-create-playlist-dialog-btn"
+			);
+			if (createPlaylistBtn) {
+				createPlaylistDialog.showModal();
+			}
+		});
+	});
+}
 
 function replaceActiveBtn(btn) {
 	let activeBtn = document.querySelector(".active");
@@ -356,21 +365,13 @@ function replaceActiveBtn(btn) {
 	btn.parentElement.classList.add("active");
 }
 
+let navButtons = document.querySelectorAll(".nav-btn");
 navButtons.forEach((btn) => {
 	btn.addEventListener("click", async function () {
 		replaceActiveBtn(btn);
 		let path = btn.getAttribute("data-path");
 		await loadPage(path, mainContent);
 	});
-});
-
-let uplodMusicPageShowBtn = document.querySelector(
-	".upload-music-page-show-btn"
-);
-let uploadMusicDialog = document.querySelector("#uploadMusicDialog");
-
-uplodMusicPageShowBtn.addEventListener("click", function () {
-	uploadMusicDialog.showModal();
 });
 
 //shortcuts

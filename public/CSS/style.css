@@ -95,16 +95,6 @@ button {
 	font-weight: 700;
 }
 
-#signupBtn {
-	background-color: #ff7f11;
-	color: white;
-	border-radius: 5px;
-}
-
-#loginBtn {
-	border-radius: 5px;
-	border: 2px solid #ff7f11;
-}
 .close-dialog-btn {
 	position: absolute;
 	top: 1rem;
@@ -284,5 +274,16 @@ input:not(:placeholder-shown) + label {
 	text-wrap: nowrap;
 	overflow: hidden;
 }
-
-/* show icon first then message */
+#loadingProgress {
+	position: fixed;
+	top: 7vh;
+	left: 0;
+	margin-left: 12vw;
+	max-width: calc(100% - 12vw);
+	height: 3px;
+	background-color: #ff7f11;
+	transition: all 0.5s ease;
+	border-radius: 2rem;
+	z-index: 1;
+	opacity: 1;
+}

@@ -2,7 +2,7 @@
 include_once "../../modules/database.php";
 include_once "../../modules/extraFunctions.php";
 
-$sql = "SELECT * FROM musics ORDER BY RAND() LIMIT 8";
+$sql = "SELECT * FROM musics ORDER BY RAND() LIMIT 12";
 $stmt = $mysqli->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();

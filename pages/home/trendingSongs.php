@@ -8,7 +8,7 @@ $sql = "SELECT *, COUNT(*) as plays
         INNER JOIN users ON musics.artist = users.username
         GROUP BY music_id 
         ORDER BY COUNT(*) DESC 
-        LIMIT 10;";
+        LIMIT 5;";
 $result = mysqli_query($mysqli, $sql);
 
 if ($result) {

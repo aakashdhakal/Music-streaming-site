@@ -1,7 +1,13 @@
+let baseUrl = "/WEB-PROJECT";
+
 let closeBtn = document.querySelectorAll(".close-dialog-btn");
 let mainContent = document.querySelector("#mainContent");
 
 function closeDialog(dialog) {
+	let form = dialog.querySelector("form");
+	if (form) {
+		form.reset();
+	}
 	dialog.animate([{ scale: 1 }, { scale: 0.5 }], 150, "ease-in-out").onfinish =
 		function () {
 			dialog.close();
@@ -67,7 +73,7 @@ function reloadMainScript() {
 	let mainScript = document.querySelector(".main-script");
 	mainScript.src = "";
 	setTimeout(() => {
-		mainScript.src = "/WEB-PROJECT/public/JS/script.js";
+		mainScript.src = baseUrl + "/public/JS/script.js";
 	}, 1000);
 }
 //alrets
@@ -153,6 +159,31 @@ function hideAlertAnimate(alert) {
 	}, 500);
 }
 
+function changeActiveBtn(btn) {
+	let activeBtn = document.querySelector(".nav-links .active");
+	btn = btn.parentElement;
+	activeBtn.classList.remove("active");
+	btn.classList.add("active");
+}
+
+let loadingProgress = document.querySelector("#loadingProgress");
+function animateProgress(progress = 100) {
+	loadingProgress.style.width = progress + "%";
+}
+
+let navBtns = document.querySelectorAll(".nav-btn");
+let mainContentContainer = document.querySelector("#mainContent");
+
+navBtns.forEach((btn) => {
+	btn.addEventListener("click", async function () {
+		changeActiveBtn(btn);
+		animateProgress(60);
+		await loadPage(btn.getAttribute("data-path"), mainContentContainer);
+		animateProgress();
+		playMusic();
+	});
+});
+
 //function to change pages
 async function loadPage(path, containerElement) {
 	try {
@@ -174,7 +205,7 @@ async function loadPage(path, containerElement) {
 //function to fetch music
 async function fetchMusic(musicId) {
 	try {
-		const response = await fetch("/WEB-PROJECT/modules/fetchMusic.php", {
+		const response = await fetch(baseUrl + "/modules/fetchMusic.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -192,7 +223,7 @@ async function fetchMusic(musicId) {
 //Function to like or dislike a music
 async function setLikeStatus(musicId, status) {
 	try {
-		const response = await fetch("/WEB-PROJECT/modules/addToFavourite.php", {
+		const response = await fetch(baseUrl + "/modules/addToFavourite.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -214,7 +245,7 @@ async function setLikeStatus(musicId, status) {
 //Function to add music to playlist
 async function addToPlaylist(playlistId, musicId) {
 	try {
-		const response = await fetch("/WEB-PROJECT/modules/addToPlaylist.php", {
+		const response = await fetch(baseUrl + "/modules/addToPlaylist.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -242,7 +273,7 @@ async function addToPlaylist(playlistId, musicId) {
 //Function to create a playlist
 async function createPlaylist(formData) {
 	try {
-		const response = await fetch("/WEB-PROJECT/modules/createPlaylist.php", {
+		const response = await fetch(baseUrl + "/modules/createPlaylist.php", {
 			method: "POST",
 			body: formData,
 		});
@@ -262,7 +293,7 @@ async function createPlaylist(formData) {
 //Function to fetch a playlist html
 async function fetchPlaylists() {
 	try {
-		const response = await fetch("/WEB-PROJECT/modules/getPlaylist.php", {
+		const response = await fetch(baseUrl + "/modules/getPlaylist.php", {
 			method: "POST",
 		});
 		const data = await response.text();
@@ -276,7 +307,7 @@ async function fetchPlaylists() {
 //Function to add to history
 async function addToHistory(musicId) {
 	try {
-		const response = await fetch("/WEB-PROJECT/modules/addToHistory.php", {
+		const response = await fetch(baseUrl + "/modules/addToHistory.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -287,11 +318,25 @@ async function addToHistory(musicId) {
 		if (data.status === "success") {
 			return true;
 		} else {
-			showAlert("Something went wrong! " + data.message, "error");
 			return false;
 		}
 	} catch (error) {
 		console.error("Error adding to history:", error);
 		return false;
+	}
+}
+
+async function checkLoginStatus() {
+	try {
+		const response = await fetch(baseUrl + "/modules/checkLoginStatus.php");
+		const data = await response.json();
+		if (data) {
+			return true;
+		} else {
+			return false;
+		}
+	} catch (error) {
+		console.error("Error checking login status:", error);
+		return {};
 	}
 }

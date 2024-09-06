@@ -8,7 +8,7 @@
                 Now</button>
 
         </div>
-        <img src="/WEB-PROJECT/public/images/sushantkc.png" alt="">
+        <img src="../../public/images/sushantkc.png" alt="">
     </div>
     <?php
     include 'recentlyPlayed.php';
