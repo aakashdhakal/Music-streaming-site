@@ -285,7 +285,7 @@ function mute() {
 	// Save the current volume value to local storage
 	localStorage.setItem("volume", volume.value);
 	// Change the volume button icon to indicate it is muted
-	volumeBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+	volumeBtn.innerHTML = '<i class="fa-regular fa-volume-xmark"></i>';
 	// Set the volume value to 0
 	volume.value = 0;
 	// Set the music volume to 0
@@ -305,9 +305,9 @@ function adjustVolume(volumeValue) {
 
 	// Change the volume button icon based on the volume value
 	if (volumeValue < 50) {
-		volumeBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
+		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-low"></i>';
 	} else {
-		volumeBtn.innerHTML = '<i class="fa-solid fa-volume"></i>';
+		volumeBtn.innerHTML = '<i class="fa-regular fa-volume"></i>';
 	}
 	console.log("unmuted");
 }
@@ -352,7 +352,7 @@ volume.addEventListener("mousemove", function () {
 });
 
 let addToPlaylistDialogShowBtn = document.querySelector(
-	".add-to-playlist-dialog-show-btn"
+	".add-to-playlist-dialog-show-btn",
 );
 let addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
 let playlistContainer = document.querySelectorAll(".playlists");
@@ -416,10 +416,10 @@ likeBtns.forEach((btn) => {
 
 document.addEventListener("click", async function (e) {
 	let createPlaylistDialogShowBtns = document.querySelectorAll(
-		".show-create-playlist-dialog-btn"
+		".show-create-playlist-dialog-btn",
 	);
 	let createNewPlaylistDialog = document.querySelector(
-		"#createNewPlaylistDialog"
+		"#createNewPlaylistDialog",
 	);
 
 	// Add click event listener to each playlistFornShowBtn elemen

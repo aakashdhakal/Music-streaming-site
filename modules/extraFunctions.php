@@ -60,20 +60,18 @@ function createSlug($string)
 
 function uploadFile($file, $type, $fileName)
 {
-    $baseUrl = '/WEB-PROJECT';
-
     switch ($type) {
         case 'music':
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/public/music/";
-            $webPath = "$baseUrl/public/music/"; // Path for web access
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/WEB-PROJECT/public/music/";
+            $webPath = "/WEB-PROJECT/public/music/"; // Path for web access
             break;
         case 'playlist_cover':
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "$baseUrl/public/images/playlist-cover/";
-            $webPath = "$baseUrl/public/images/playlist-cover/"; // Path for web access
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/WEB-PROJECT/public/images/playlist-cover/";
+            $webPath = "/WEB-PROJECT/public/images/playlist-cover/"; // Path for web access
             break;
         case 'song_cover':
-            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "$baseUrl/public/images/song-cover/";
-            $webPath = "$baseUrl/public/images/song-cover/"; // Path for web access
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/WEB-PROJECT/public/images/song-cover/";
+            $webPath = "/WEB-PROJECT/public/images/song-cover/"; // Path for web access
             break;
         default:
             echo "Invalid file type.";

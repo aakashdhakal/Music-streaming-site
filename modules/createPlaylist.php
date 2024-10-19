@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $userId = $_SESSION['user_id'];
 
     // Convert to absolute path using the document root
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "$baseUrl/public/images/playlist-cover/";
-    $webPath = "$baseUrl/public/images/playlist-cover/"; // Path for web access
+    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/WEB-PROJECT/public/images/playlist-cover/";
+    $webPath = "/WEB-PROJECT/public/images/playlist-cover/"; // Path for web access
 
     if (isset($_FILES["playlist_cover"]) && $_FILES["playlist_cover"]["error"] == 0) {
         $playlistCover = $_FILES["playlist_cover"];

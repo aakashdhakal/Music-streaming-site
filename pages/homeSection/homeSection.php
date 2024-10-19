@@ -1,5 +1,5 @@
 <?php
-$website_title = "Music Player";
+$website_title = "Sangeet - Your Music, Your Way";
 $baseUrl = 'http://localhost/WEB-PROJECT';
 include_once "../head.php";
 

@@ -28,6 +28,8 @@
     } else {
         ?>
         <div class="login-signup">
+            <!-- dark mode change -->
+            <button class="dark-mode-btn"><i class="fa-solid fa-moon"></i></button>
             <button class="secondary-btn login-form-show-btn">Login</button>
             <button class="primary-btn signup-form-show-btn">Signup</button>
         </div>

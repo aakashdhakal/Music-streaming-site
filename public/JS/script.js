@@ -142,7 +142,7 @@ function showAlertAnimate(alert) {
 			{ width: "100%", opacity: 1 },
 		],
 
-		{ duration: 500, fill: "forwards" }
+		{ duration: 500, fill: "forwards" },
 	);
 }
 
@@ -152,7 +152,7 @@ function hideAlertAnimate(alert) {
 			{ width: "100%", opacity: 1 },
 			{ width: "0%", opacity: 0 },
 		],
-		{ duration: 500, fill: "forwards" }
+		{ duration: 500, fill: "forwards" },
 	);
 	setTimeout(() => {
 		alert.remove();
@@ -184,6 +184,42 @@ navBtns.forEach((btn) => {
 	});
 });
 
+function changeTheme() {
+	console.log("changing theme");
+	let theme = localStorage.getItem("theme");
+	if (theme === "dark") {
+		document.body.classList.remove("dark");
+		localStorage.setItem("theme", "light");
+	} else {
+		document.body.classList.add("dark");
+		localStorage.setItem("theme", "dark");
+	}
+}
+
+// let darkModeBtn = document.querySelector(".dark-mode-btn");
+// darkModeBtn.addEventListener("click", function () {
+// 	console.log("clicked");
+// 	changeTheme();
+// });
+
+let collapseExpandSidebarButton = document.querySelector(
+	"#collapseExpandSidebar",
+);
+let sidebar = document.querySelector("#sideNav");
+if (localStorage.getItem("sidebar") === "collapse") {
+	sidebar.classList.add("collapse");
+}
+collapseExpandSidebarButton.addEventListener("click", function () {
+	sidebar.classList.toggle("collapse");
+	if (sidebar.classList.contains("collapse")) {
+		localStorage.setItem("sidebar", "collapse");
+	} else {
+		localStorage.setItem("sidebar", "expand");
+	}
+});
+
+//all api calls
+
 //function to change pages
 async function loadPage(path, containerElement) {
 	try {
@@ -199,9 +235,6 @@ async function loadPage(path, containerElement) {
 		return false;
 	}
 }
-
-//all api calls
-
 //function to fetch music
 async function fetchMusic(musicId) {
 	try {
@@ -251,7 +284,7 @@ async function addToPlaylist(playlistId, musicId) {
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
 			body: `playlistId=${encodeURIComponent(
-				playlistId
+				playlistId,
 			)}&musicId=${encodeURIComponent(musicId)}`,
 		});
 		const data = await response.json();

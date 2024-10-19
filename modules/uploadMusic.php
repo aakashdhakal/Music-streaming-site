@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $songCoverFilePath = uploadFile($songCover, 'song_cover', $fileName);
     } else {
         // Default cover path for web access
-        $songCoverFilePath = "$baseUrl/public/images/song-cover/music.jpg";
+        $songCoverFilePath = $webPath . "music.jpg";
     }
 
     $sql = "INSERT INTO musics (title, artist, genre, releaseDate, filePath, coverImage) VALUES (?, ?, ?, ?, ?,?)";

@@ -1,3 +1,28 @@
+:root {
+	--primary-color: #ff6a3a;
+	--primary-color-100: #ff6b3a23;
+	--primary-color-200: #ff6b3a47;
+	--primary-color-300: #ff6b3a6b;
+	--primary-color-400: #ff6b3a8f;
+	--primary-color-500: #ff6a3a;
+	--primary-color-600: #ff6b3ab4;
+	--primary-color-700: #ff6b3ad8;
+	--primary-color-800: #ff6b3afc;
+	--primary-color-900: #ff6b3aff;
+	--primary-color-1000: #ff6b3aff;
+	--text-color: #000;
+	--bg-color: #f5f5f5;
+	--sidenav-width: 250px;
+	--collapsed-sidenav-width: 80px;
+}
+
+.dark {
+	--primary-color: #ff6a3a;
+	--text-color: #fff;
+	--bg-color: #333;
+	--sidenav-width: 250px;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -5,7 +30,7 @@
 	font-family: Nunito;
 	outline: none;
 	touch-action: none;
-	/* outline: 1px dotted red; */
+	/* outline: 1px dotted #212121 !important; */
 }
 
 ::-webkit-scrollbar {
@@ -13,14 +38,14 @@
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #ff7f11;
+	background-color: var(--primary-color);
 	border-radius: 5px;
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-	-webkit-text-fill-color: #000 !important;
+	-webkit-text-fill-color: var(--text-color) !important;
 	-webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
 }
 
@@ -44,6 +69,7 @@ header {
 			margin-left: 10px;
 		}
 	}
+
 	ul {
 		display: flex;
 		list-style: none;
@@ -53,12 +79,14 @@ header {
 			margin-left: 20px;
 			cursor: pointer;
 		}
+
 		a {
 			text-decoration: none;
-			color: #000;
+			color: var(--text-color);
 		}
 	}
 }
+
 button {
 	border: none;
 	padding: 0.5rem 1rem;
@@ -77,14 +105,14 @@ button {
 }
 
 .primary-btn {
-	background-color: #ff7f11;
+	background-color: var(--primary-color);
 	color: white;
 	border-radius: 5px;
 }
 
 .secondary-btn {
 	border-radius: 5px;
-	border: 2px solid #ff7f11;
+	border: 2px solid var(--primary-color);
 }
 
 .login-signup {
@@ -102,10 +130,12 @@ button {
 	padding: 10px;
 	cursor: pointer;
 }
+
 @keyframes dialogShow {
 	from {
 		transform: scale(0.5);
 	}
+
 	to {
 		transform: scale(1);
 	}
@@ -123,11 +153,12 @@ dialog {
 dialog::backdrop {
 	background-color: rgba(0, 0, 0, 0.5);
 }
+
 .input-field {
 	width: 100%;
 	padding: 0.5rem 1rem;
 	border-radius: 5px;
-	border: 1px solid #ff7f11;
+	border: 1px solid var(--primary-color);
 	outline: none;
 	display: flex;
 	align-items: center;
@@ -143,7 +174,7 @@ dialog::backdrop {
 .form-group:has(input[type="file"]) {
 	border: none !important;
 }
-/* custom file upload */
+
 .custom-file-upload {
 	display: flex;
 	align-items: center;
@@ -151,7 +182,7 @@ dialog::backdrop {
 	gap: 1rem;
 	width: 6rem;
 	height: 6rem;
-	border: 1px solid #ff7f11;
+	border: 1px solid var(--primary-color);
 	border-radius: 5px;
 	position: relative;
 
@@ -167,14 +198,13 @@ dialog::backdrop {
 		object-fit: cover;
 		pointer-events: none;
 	}
+
 	label {
 		top: 0 !important;
 		z-index: 9;
-		background: linear-gradient(
-			0deg,
-			rgba(0, 0, 0, 0.6) 0%,
-			rgba(0, 0, 0, 0.6) 100%
-		) !important;
+		background: linear-gradient(0deg,
+				rgba(0, 0, 0, 0.6) 0%,
+				rgba(0, 0, 0, 0.6) 100%) !important;
 		display: none;
 		align-items: center;
 		justify-content: center;
@@ -198,6 +228,7 @@ dialog::backdrop {
 .custom-file-upload input[type="file"] {
 	display: none;
 }
+
 .form-group {
 	display: flex;
 	flex-direction: column;
@@ -206,7 +237,7 @@ dialog::backdrop {
 	border-bottom: 1.5px solid #a7a7a7;
 	padding: 0.2rem 0;
 }
-/* use label as placeholder */
+
 label {
 	position: absolute;
 	color: #808080;
@@ -214,6 +245,7 @@ label {
 	top: 0.3rem;
 	pointer-events: none;
 }
+
 input {
 	font-size: 1rem;
 	border: none;
@@ -221,20 +253,21 @@ input {
 	border-radius: 5px;
 	padding: 0rem 0.5rem;
 }
-/* //move label on focus */
-input:focus + label,
-input:not(:placeholder-shown) + label {
+
+input:focus+label,
+input:not(:placeholder-shown)+label {
 	top: -1.3rem;
 	left: 0;
 	font-size: 0.9rem;
-	color: #ff7f11;
+	color: var(--primary-color);
 	background-color: white;
 	font-weight: 700;
 }
 
 .form-group:has(input:focus) {
-	border-bottom: 1.5px solid #ff7f11;
+	border-bottom: 1.5px solid var(--primary-color);
 }
+
 .music-title,
 .song-info {
 	overflow: hidden;
@@ -257,6 +290,7 @@ input:not(:placeholder-shown) + label {
 	align-items: flex-end;
 	gap: 0.5rem;
 }
+
 .alert {
 	background-color: #e486865d;
 	color: #b93434;
@@ -274,6 +308,7 @@ input:not(:placeholder-shown) + label {
 	text-wrap: nowrap;
 	overflow: hidden;
 }
+
 #loadingProgress {
 	position: fixed;
 	top: 7vh;
@@ -281,9 +316,40 @@ input:not(:placeholder-shown) + label {
 	margin-left: 12vw;
 	max-width: calc(100% - 12vw);
 	height: 3px;
-	background-color: #ff7f11;
+	background-color: var(--primary-color);
 	transition: all 0.5s ease;
 	border-radius: 2rem;
 	z-index: 1;
 	opacity: 1;
+}
+
+input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 6px;
+	border-radius: 1rem;
+	background: #d3d3d3;
+	outline: none;
+	transition: all 0.5s ease;
+	padding: 0;
+	cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: var(--primary-color);
+	cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	background: var(--primary-color);
+	cursor: pointer;
 }

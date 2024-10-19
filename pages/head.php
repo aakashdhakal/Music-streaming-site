@@ -2,6 +2,8 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+$baseUrl = 'http://localhost/WEB-PROJECT/';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
