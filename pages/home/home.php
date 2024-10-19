@@ -33,3 +33,25 @@
         </div>
     </div>
 </div>
+    include 'recentlyPlayed.php';
+    ?>
+
+    <div class="recommended-music">
+        <h1 class="title">Recommended</h1>
+        <div class="music-card-container">
+            <?php
+            include 'recommendedSongs.php';
+            ?>
+        </div>
+    </div>
+</div>
+<div class="right">
+    <div class="top-playlist">
+        <h1 class="title">Trending</h1>
+        <div class="playlist-card-container">
+            <?php
+            include 'trendingSongs.php';
+            ?>
+        </div>
+    </div>
+</div>
