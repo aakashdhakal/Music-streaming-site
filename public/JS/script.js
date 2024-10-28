@@ -1,5 +1,208 @@
 let baseUrl = "/WEB-PROJECT";
 
+let notificationCount = 5;
+showNotifications(notificationCount);
+setInterval(() => {
+	console.log("checking for new notifications");
+	showNotifications(notificationCount);
+}, 10000);
+
+let openNotificationBtn = document.querySelector(".notification-btn");
+let notificationWindow = document.querySelector("#notificationWindow");
+let notificationBody = document.querySelector(".notification-body");
+let seeAllNotificationsBtn = document.querySelector("#seeAllNotifications");
+let unreadNotificationCount = 0;
+let documentTitle = document.title;
+let markAllAsReadBtn = document.querySelector(".mark-all-as-read");
+
+markAllAsReadBtn.addEventListener("click", function () {
+	let notifications = document.querySelectorAll(".notification-card");
+	notifications.forEach((notification) => {
+		let status = notification.getAttribute("data-readStatus");
+		let notificationId = notification.getAttribute("data-notificationId");
+		if (status === "0") {
+			markAsRead(notificationId);
+			notification.setAttribute("data-readStatus", 1);
+		}
+	});
+});
+
+seeAllNotificationsBtn.addEventListener("click", function () {
+	notificationCount = -1;
+	showNotifications();
+	seeAllNotificationsBtn.style.display = "none";
+});
+
+async function markAsRead(notificationId) {
+	let status = await setNotificationReadStatus(notificationId);
+	if (status) {
+		showNotifications(notificationCount);
+	}
+}
+
+async function showNotifications(number) {
+	let notifications = await fetchNotifications();
+	notificationBody.innerHTML = "";
+	openNotificationBtn.style.setProperty("--unreadNotificationMark", "none");
+	if (notifications.status === 404) {
+		notificationBody.innerHTML = `<div class="no-notifications">
+                    <iconify-icon icon="mynaui:bell-x"></iconify-icon>
+                    <p>No new notifications</p>
+                </div>`;
+		seeAllNotificationsBtn.style.display = "none";
+		return;
+	} else {
+		let notificationCount = 0;
+		unreadNotificationCount = notifications.filter(
+			(notification) => notification.read_status === "0",
+		).length;
+		notifications.forEach((notification) => {
+			if (notificationCount === number && number === 5) {
+				seeAllNotificationsBtn.style.display = "flex";
+				return;
+			}
+			if (notificationCount <= 5) {
+				seeAllNotificationsBtn.style.display = "none";
+			}
+			notificationCount++;
+
+			let notificationIcons = {
+				like: "fluent:thumb-like-16-filled",
+				follow: "si:user-fill",
+			};
+
+			let iconifyIcon = notificationIcons[notification.subject];
+			let message = notification.message;
+			let time = formatTime(notification.time);
+			// Create the notification card container
+
+			if (notification.read_status === "0") {
+				openNotificationBtn.style.setProperty(
+					"--unreadNotificationMark",
+					"block",
+				);
+			}
+
+			notificationBody.innerHTML += `<div class="notification-card" data-readStatus="${notification.read_status}" data-notificationId = "${notification.id}">
+                    <div class="notification-info">
+                        <iconify-icon icon="${iconifyIcon}"></iconify-icon>
+                        <div class="notification-details">
+                            <p class="notification-message">${message}</p>
+                            <p class="notification-time">${time}</p>
+                        </div>
+                    </div>
+                    <button id="clearNotification">
+                        <iconify-icon icon="ic:outline-delete"></iconify-icon>
+                    </button>
+                </div>`;
+		});
+	}
+	document.title =
+		unreadNotificationCount > 0
+			? `(${unreadNotificationCount}) ${documentTitle}`
+			: documentTitle;
+	if (unreadNotificationCount === 0) {
+		openNotificationBtn.style.setProperty("--unreadNotificationMark", "none");
+	} else {
+		openNotificationBtn.style.setProperty("--unreadNotificationMark", "block");
+	}
+	unreadNotificationCount = 0;
+}
+
+function formatTime(time) {
+	const now = new Date();
+	const date = new Date(time);
+	const diff = Math.abs(now - date);
+	const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+	const diffWeeks = Math.floor(diffDays / 7);
+	const diffYears = now.getFullYear() - date.getFullYear();
+	const diffmonths = diffYears * 12 + now.getMonth() - date.getMonth();
+
+	if (diffYears >= 1) {
+		// More than a year ago, return the specific date
+		const options = {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		};
+		return date.toLocaleDateString("en-US", options);
+	} else if (diffmonths < 12 && diffmonths >= 1) {
+		// More than a month ago, return months ago
+		return `${diffmonths} month${diffmonths > 1 ? "s" : ""} ago`;
+	} else if (diffWeeks >= 1) {
+		// More than a week ago, return weeks ago
+		return `${diffWeeks} week${diffWeeks > 1 ? "s" : ""} ago`;
+	} else if (diffDays >= 1) {
+		// More than a day ago, return days ago
+		return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+	} else {
+		// Less than a day ago, return hours or minutes ago
+		const diffHours = Math.floor(diff / (1000 * 60 * 60));
+		const diffMinutes = Math.floor(diff / (1000 * 60));
+		if (diffHours >= 1) {
+			return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+		} else {
+			return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+		}
+	}
+}
+
+openNotificationBtn.addEventListener("click", function () {
+	openNotificationBtn.classList.toggle("active");
+	notificationWindow.classList.toggle("openNotificationWindow");
+});
+
+document.addEventListener("click", function (e) {
+	if (
+		e.target &&
+		!e.target.matches("#notificationWindow *") &&
+		!e.target.matches(".notification-btn *")
+	) {
+		if (notificationWindow.classList.contains("openNotificationWindow")) {
+			openNotificationBtn.classList.remove("active");
+			notificationWindow.classList.remove("openNotificationWindow");
+		}
+	}
+
+	if (
+		e.target &&
+		e.target.matches(".notification-card *") &&
+		!e.target.matches("#clearNotification *")
+	) {
+		let status = e.target
+			.closest(".notification-card")
+			.getAttribute("data-readStatus");
+		let notificationId = e.target
+			.closest(".notification-card")
+			.getAttribute("data-notificationId");
+
+		if (status === "0") {
+			markAsRead(notificationId);
+			e.target.closest(".notification-card").setAttribute("data-readStatus", 1);
+		}
+	}
+
+	if (e.target && e.target.matches("#clearNotification *")) {
+		let notificationId = e.target
+			.closest(".notification-card")
+			.getAttribute("data-notificationId");
+		deleteNotification(notificationId);
+		showNotifications(notificationCount);
+	}
+	if (
+		e.target &&
+		!e.target.matches("#profileWindow *") &&
+		!e.target.matches(".profile-btn *")
+	) {
+		if (profileDropdownWindow.classList.contains("openProfileWindow")) {
+			profileDropdownWindow.classList.remove("openProfileWindow");
+		}
+	}
+	if (e.target && e.target.matches("dialog")) {
+		closeDialog(e.target);
+	}
+});
+
 let closeBtn = document.querySelectorAll(".close-dialog-btn");
 let mainContent = document.querySelector("#mainContent");
 
@@ -22,12 +225,6 @@ closeBtn.forEach((btn) => {
 		let dialog = btn.parentElement;
 		closeDialog(dialog);
 	});
-});
-
-document.addEventListener("click", function (e) {
-	if (e.target && e.target.matches("dialog")) {
-		closeDialog(e.target);
-	}
 });
 
 //close dialog on pressing escape key
@@ -371,5 +568,66 @@ async function checkLoginStatus() {
 	} catch (error) {
 		console.error("Error checking login status:", error);
 		return {};
+	}
+}
+
+async function fetchNotifications(numbers = 5) {
+	try {
+		const response = await fetch(baseUrl + "/modules/fetchNotifications.php", {
+			method: "POST",
+			body: `numbers=${encodeURIComponent(numbers)}`,
+		});
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error fetching notifications:", error);
+		return [];
+	}
+}
+
+async function deleteNotification(notificationId) {
+	try {
+		const response = await fetch(baseUrl + "/modules/deleteNotification.php", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			body: `notificationId=${encodeURIComponent(notificationId)}`,
+		});
+		const data = await response.json();
+		if (data.status === 200) {
+			console.log("notification deleted");
+			return true;
+		} else {
+			return false;
+		}
+	} catch (error) {
+		console.error("Error deleting notification:", error);
+		return false;
+	}
+}
+
+async function setNotificationReadStatus(notificationId) {
+	try {
+		const response = await fetch(
+			baseUrl + "/modules/setNotificationReadStatus.php",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `notificationId=${encodeURIComponent(notificationId)}`,
+			},
+		);
+		const data = await response.json();
+		if (data.status === 200) {
+			console.log("notification read status updated");
+			return true;
+		} else {
+			return false;
+		}
+	} catch (error) {
+		console.error("Error updating notification read status:", error);
+		return false;
 	}
 }

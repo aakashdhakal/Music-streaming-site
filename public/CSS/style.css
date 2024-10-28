@@ -1,5 +1,7 @@
 :root {
 	--primary-color: #ff6a3a;
+	--primary-color-10: #ff6b3a05;
+	--primary-color-50: #ff6b3a0d;
 	--primary-color-100: #ff6b3a23;
 	--primary-color-200: #ff6b3a47;
 	--primary-color-300: #ff6b3a6b;
@@ -30,7 +32,7 @@
 	font-family: Nunito;
 	outline: none;
 	touch-action: none;
-	/* outline: 1px dotted #212121 !important; */
+	outline: 1px dotted #212121 !important;
 }
 
 ::-webkit-scrollbar {
@@ -97,6 +99,7 @@ button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	gap: 1rem;
 	gap: 0.3rem;
 
 	i {
@@ -113,6 +116,8 @@ button {
 .secondary-btn {
 	border-radius: 5px;
 	border: 2px solid var(--primary-color);
+	background-color: transparent;
+	color: var(--primary-color);
 }
 
 .login-signup {
@@ -327,13 +332,14 @@ input[type="range"] {
 	-webkit-appearance: none;
 	appearance: none;
 	width: 100%;
-	height: 6px;
+	height: 5px;
 	border-radius: 1rem;
 	background: #d3d3d3;
 	outline: none;
 	transition: all 0.5s ease;
 	padding: 0;
 	cursor: pointer;
+	position: relative;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -352,4 +358,149 @@ input[type="range"]::-moz-range-thumb {
 	border-radius: 50%;
 	background: var(--primary-color);
 	cursor: pointer;
+}
+
+iconify-icon {
+	font-size: 1.5rem;
+}
+
+hr {
+	width: 100%;
+}
+
+.section-title {
+	font-size: 1.4rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.btn-container {
+	display: flex;
+	gap: 1.5rem;
+
+	.add-to-playlist-btn {
+		width: 3rem;
+		height: 3rem;
+		border-radius: 50%;
+	}
+
+	.start-play-music {
+		border-radius: 2rem;
+		gap: 0.5rem;
+	}
+
+}
+
+.song-list {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem;
+	border-radius: 5px;
+	cursor: pointer;
+	width: 100%;
+
+	&:hover {
+		background-color: var(--primary-color-100)
+	}
+
+	img {
+		width: 50px;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 5px;
+	}
+
+	.song-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+
+		.music-title {
+			font-size: 1.1rem;
+			font-weight: 600;
+			color: #333333;
+		}
+
+		.artist-name {
+			font-size: 0.95rem;
+			color: #777777;
+		}
+	}
+
+	p {
+		font-size: 0.9rem;
+		color: #777777;
+	}
+}
+
+.song-card {
+	display: flex;
+	flex-direction: column;
+	border-radius: 5px;
+	background-color: #333333;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	width: 120px;
+	height: max-content;
+	position: relative;
+
+	iconify-icon {
+		font-size: 0;
+		transition: all 0.3s ease;
+	}
+
+	&:hover {
+		img {
+			opacity: 0.7;
+		}
+
+		iconify-icon {
+			display: flex;
+			font-size: 2rem;
+		}
+	}
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: 5px;
+		transition: all 0.3s ease;
+	}
+
+	.start-play-music {
+		position: absolute;
+		color: var(--primary-color);
+		width: 100%;
+		height: calc(100% - 2rem);
+
+	}
+
+	.song-info {
+		height: 2rem;
+		background-color: #ffffff;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		.music-title {
+			font-size: 1.1rem;
+			font-weight: 600;
+			color: #333333;
+			text-align: center;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+.song-card-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: 2rem;
+	width: 100%;
+	overflow: hidden;
 }

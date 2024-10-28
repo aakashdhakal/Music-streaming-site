@@ -1,5 +1,5 @@
 // Select the element with class "top-nav"
-let topNav = document.querySelector(".top-nav");
+let topNav = document.querySelector("#topNav");
 
 // Add a scroll event listener to the document
 document.addEventListener("scroll", function () {
@@ -16,7 +16,7 @@ document.addEventListener("scroll", function () {
 });
 
 let playPauseBtn = document.querySelector(".play-pause-btn");
-let musicControls = document.querySelector(".music-controls");
+let musicControls = document.querySelector("#musicControls");
 let playIcon =
 	"<i class='fa-duotone fa-solid fa-circle-play' style='--fa-primary-color: #ffffff; --fa-secondary-color: #ff7f11; --fa-secondary-opacity: 1;'></i>";
 let pauseIcon =
@@ -80,7 +80,7 @@ function updateMusicControls(musicData) {
 	let musicArtist = document.querySelector(".music-artist");
 	let musicCover = document.querySelector(".music-cover");
 	let totalDuration = document.querySelector(".total-duration");
-	let likeBtn = musicControls.querySelector(".like-btn");
+	// let likeBtn = musicControls.querySelector(".like-btn");
 
 	if (musicData.isFavourite) {
 		setLikeBtnStatus(likeBtn, "like");
@@ -92,7 +92,7 @@ function updateMusicControls(musicData) {
 	totalDuration.innerHTML = formatDuration(music.duration);
 
 	if (!loaded) {
-		musicControls.animate([{ bottom: "-10%" }, { bottom: "0" }], {
+		musicControls.animate([{ bottom: "-10%" }, { bottom: "1rem" }], {
 			duration: 500,
 			easing: "ease-in-out",
 			fill: "forwards",
@@ -105,14 +105,6 @@ function playMusic() {
 	let startPlayBtn = document.querySelectorAll(".start-play-music");
 	// Iterate over each startPlayBtn element
 	startPlayBtn.forEach((btn) => {
-		// Check if the musicId attribute of the button matches the current musicId
-		if (btn.getAttribute("data-musicId") == musicId) {
-			// Change the innerHTML of the button to display a pause icon
-			btn.innerHTML = pauseIcon;
-		} else {
-			// Change the innerHTML of the button to display a play icon
-			btn.innerHTML = playIcon;
-		}
 		// Play the music
 		music.play();
 		// Set the isPlaying flag to true
@@ -127,11 +119,7 @@ function pauseMusic() {
 	let startPlayBtn = document.querySelectorAll(".start-play-music");
 	// Iterate over each startPlayBtn element
 	startPlayBtn.forEach((btn) => {
-		// Check if the musicId attribute of the button matches the current musicId
-		if (btn.getAttribute("data-musicId") == musicId) {
-			// Change the innerHTML of the button to display a play icon
-			btn.innerHTML = playIcon;
-		}
+		// Check if the musicId attribute of the button matches the current musicI
 		// Pause the music
 		music.pause();
 		// Set the isPlaying flag to false
@@ -232,6 +220,33 @@ playPauseBtn.addEventListener("click", function () {
 	}
 });
 
+let volumeControls = document.querySelector(".volume-control");
+
+// Add a click event listener to the volume controls element
+volumeControls.addEventListener(
+	"wheel",
+	function (e) {
+		// Get the current volume value
+		let currentVolume = parseInt(volume.value);
+		// Adjust the volume based on the scroll direction
+		if (e.deltaY < 0) {
+			// Scroll up, increase volume
+			currentVolume = Math.min(currentVolume + 5, 100);
+		} else {
+			// Scroll down, decrease volume
+			currentVolume = Math.max(currentVolume - 5, 0);
+		}
+		if (currentVolume <= 0) {
+			// If volume is less than or equal to 0, mute the music
+			mute();
+		} else {
+			// Update the volume
+			adjustVolume(currentVolume);
+		}
+	},
+	{ passive: true },
+);
+
 // Add event listener for keydown event
 document.addEventListener("keydown", function (e) {
 	// Check if the target element is an input, if so, return
@@ -306,10 +321,14 @@ function adjustVolume(volumeValue) {
 	// Change the volume button icon based on the volume value
 	if (volumeValue < 50) {
 		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-low"></i>';
+	} else if (volumeValue <= 0) {
+		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-xmark"></i>';
+		console.log("muted");
+	} else if (volumeValue > 80) {
+		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-high"></i>';
 	} else {
 		volumeBtn.innerHTML = '<i class="fa-regular fa-volume"></i>';
 	}
-	console.log("unmuted");
 }
 
 // Add a click event listener to the volume button
@@ -328,8 +347,10 @@ volumeBtn.addEventListener("click", function () {
 volume.addEventListener("input", function () {
 	// Check if the volume value is 0 or muted
 	if (volume.value <= 0) {
+		console.log("muted");
 		// If muted, mute the music
 		mute();
+		localStorage.setItem("volume", 20);
 	} else {
 		// If not muted, save the current volume value to local storage and adjust the volume
 		localStorage.setItem("volume", volume.value);
@@ -365,36 +386,36 @@ async function displayPlaylists() {
 	});
 }
 
-// Add click event listener to the addToPlaylistDialogShowBtn element
-addToPlaylistDialogShowBtn.addEventListener("click", function () {
-	// Show the add to playlist dialog
-	addToPlaylistDialog.showModal();
-});
+// // Add click event listener to the addToPlaylistDialogShowBtn element
+// addToPlaylistDialogShowBtn.addEventListener("click", function () {
+// 	// Show the add to playlist dialog
+// 	addToPlaylistDialog.showModal();
+// });
 
-addToPlaylistDialog.addEventListener("click", async function (e) {
-	//Add music to playlist
-	let playlistCard = e.target.closest(".playlist-card");
-	if (playlistCard) {
-		let playlistId = playlistCard.getAttribute("data-playlistId");
-		if (await addToPlaylist(playlistId, musicId)) {
-			showAlert("Music added to playlist", "success");
-			await displayPlaylists();
-		}
-		closeDialog(addToPlaylistDialog);
-	}
-});
+// addToPlaylistDialog.addEventListener("click", async function (e) {
+// 	//Add music to playlist
+// 	let playlistCard = e.target.closest(".playlist-card");
+// 	if (playlistCard) {
+// 		let playlistId = playlistCard.getAttribute("data-playlistId");
+// 		if (await addToPlaylist(playlistId, musicId)) {
+// 			showAlert("Music added to playlist", "success");
+// 			await displayPlaylists();
+// 		}
+// 		closeDialog(addToPlaylistDialog);
+// 	}
+// });
 
-let createPlaylistForm = document.querySelector(".create-playlist-form");
-createPlaylistForm.addEventListener("submit", async function (e) {
-	e.preventDefault();
-	let formData = new FormData(createPlaylistForm);
-	if (await createPlaylist(formData)) {
-		showAlert("Playlist created successfully", "success");
-		closeDialog(createNewPlaylistDialog);
-		formData.delete("playlist_cover");
-		await displayPlaylists();
-	}
-});
+// let createPlaylistForm = document.querySelector(".create-playlist-form");
+// createPlaylistForm.addEventListener("submit", async function (e) {
+// 	e.preventDefault();
+// 	let formData = new FormData(createPlaylistForm);
+// 	if (await createPlaylist(formData)) {
+// 		showAlert("Playlist created successfully", "success");
+// 		closeDialog(createNewPlaylistDialog);
+// 		formData.delete("playlist_cover");
+// 		await displayPlaylists();
+// 	}
+// });
 
 let likeBtns = document.querySelectorAll(".like-btn");
 likeBtns.forEach((btn) => {

@@ -88,3 +88,5 @@ function uploadFile($file, $type, $fileName)
         return $uploadFileWebPath;
     }
 }
+
+
