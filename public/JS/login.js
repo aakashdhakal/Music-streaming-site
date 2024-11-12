@@ -1,19 +1,4 @@
-// Select all elements with class "login-form-show-btn"
-let loginBtns = document.querySelectorAll(".login-form-show-btn");
-
-// Select the element with id "loginFormDialog"
-let loginFormDialog = document.querySelector("#loginFormDialog");
-
-// Select the element with id "loginForm"
-let loginForm = document.querySelector("#loginForm");
-
-// Select the element with class "login-submit"
-let loginSubmitBtn = document.querySelector(".login-submit");
-
-// Add event listener to the login form when it is submitted
-loginForm.addEventListener("submit", function (e) {
-	e.preventDefault(); // Prevent the default form submission behavior
-
+function loginUser(loginForm) {
 	// Create a new FormData object with the login form data
 	let data = new FormData(loginForm);
 	console.log(data);
@@ -27,18 +12,28 @@ loginForm.addEventListener("submit", function (e) {
 		.then((data) => {
 			if (data == "success") {
 				// If the response is "success", redirect to baseUrl + "/index.php"
-				window.location.href = baseUrl + "/index.php";
+				window.location.href = baseUrl;
 			} else {
 				// If the response is not "success", display an alert with the response data
 				alert(data);
 			}
 		});
+}
+
+document.addEventListener("click", (e) => {
+	// Check if the clicked element or its ancestor has the ID 'closeLoginForm'
+	if (e.target.closest(".login-form-show-btn")) {
+		// Close the login form dialog
+		document.querySelector("#loginForm").showModal();
+	}
 });
 
-// Add click event listener to each login button
-loginBtns.forEach((btn) => {
-	btn.addEventListener("click", function () {
-		// Show the login form dialog
-		loginFormDialog.showModal();
-	});
+document.addEventListener("submit", (e) => {
+	// Check if the submitted form has the ID 'registerForm'
+	if (e.target.matches(".login-form")) {
+		// Prevent the default form submission
+		e.preventDefault();
+		// Call the registerUser function with the submitted form
+		loginUser(e.target);
+	}
 });

@@ -2,8 +2,7 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-$baseUrl = 'http://localhost/WEB-PROJECT/';
-
+$baseUrl = "/WEB-PROJECT";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +16,10 @@ $baseUrl = 'http://localhost/WEB-PROJECT/';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Carattere&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Oswald:wght@200..700&family=Voltaire&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />

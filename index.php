@@ -9,8 +9,8 @@ require_once __DIR__ . '/router.php';
 $baseUrl = "/WEB-PROJECT";
 
 // Define routes
-get($baseUrl, "pages/tempHome/home.php"); // Route for the root URL
-get($baseUrl . '/home', "pages/tempHome/home.php"); // Route for the /home URL
+get($baseUrl, "pages/home/mainHome.php"); // Route for the root URL
+get($baseUrl . '/home', "pages/home/mainHome.php"); // Route for the /home URL
 
 // Example of a POST route (commented out)
 // post('/user', '/api/save_user');

@@ -8,5 +8,5 @@ if (session_status() == PHP_SESSION_ACTIVE) {
 }
 
 // Redirect to the home page
-header("Location: /WEB-PROJECT/index.php");
+header("Location: /WEB-PROJECT");
 exit();

@@ -2,7 +2,7 @@
 include_once 'database.php';
 include_once 'extraFunctions.php';
 
-$userId = $_SESSION['userId'];
+$userId = $_SESSION['user_id'];
 
 
 

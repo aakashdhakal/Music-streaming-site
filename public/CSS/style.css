@@ -12,17 +12,32 @@
 	--primary-color-800: #ff6b3afc;
 	--primary-color-900: #ff6b3aff;
 	--primary-color-1000: #ff6b3aff;
-	--text-color: #000;
-	--bg-color: #f5f5f5;
-	--sidenav-width: 250px;
+	--text-color: #333333;
+	--text-color-light: #777777;
+	--bg-color: #ffffff;
+	--bg-color-10: #f8f8f8;
+	--sidenav-width: 270px;
 	--collapsed-sidenav-width: 80px;
+	--button-color: #777777;
+	--logo-image: url(../images/logo-title-side.svg);
+	--button-bg-color: #ff6a3a;
+	--card-hover-color: #ececec;
+	--seekbar-color: #b9b9b9;
 }
 
 .dark {
 	--primary-color: #ff6a3a;
 	--text-color: #fff;
+	--text-color-light: #bbbbbb;
 	--bg-color: #333;
-	--sidenav-width: 250px;
+	--bg-color-10: #3d3d3d;
+	--sidenav-width: 270px;
+	--collapsed-sidenav-width: 80px;
+	--button-color: #ffffff;
+	--logo-image: url(../images/logo-title-side-dark.svg);
+	--button-bg-color: #d33300;
+	--card-hover-color: #525252;
+	--seekbar-color: #333;
 }
 
 * {
@@ -32,7 +47,12 @@
 	font-family: Nunito;
 	outline: none;
 	touch-action: none;
-	outline: 1px dotted #212121 !important;
+	/* outline: 1px dotted #212121 !important; */
+}
+
+body {
+	background-color: var(--bg-color);
+	color: var(--text-color);
 }
 
 ::-webkit-scrollbar {
@@ -49,6 +69,11 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
 	-webkit-text-fill-color: var(--text-color) !important;
 	-webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+}
+
+h1,
+p {
+	color: var(--text-color);
 }
 
 header {
@@ -101,6 +126,7 @@ button {
 	justify-content: center;
 	gap: 1rem;
 	gap: 0.3rem;
+	color: var(--button-color);
 
 	i {
 		pointer-events: none;
@@ -130,9 +156,9 @@ button {
 
 .close-dialog-btn {
 	position: absolute;
-	top: 1rem;
-	right: 1rem;
-	padding: 10px;
+	top: 0;
+	right: 0;
+	padding: 0;
 	cursor: pointer;
 }
 
@@ -159,6 +185,15 @@ dialog::backdrop {
 	background-color: rgba(0, 0, 0, 0.5);
 }
 
+dialog .max-width {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+}
+
 .input-field {
 	width: 100%;
 	padding: 0.5rem 1rem;
@@ -179,6 +214,7 @@ dialog::backdrop {
 .form-group:has(input[type="file"]) {
 	border: none !important;
 }
+
 
 .custom-file-upload {
 	display: flex;
@@ -236,11 +272,11 @@ dialog::backdrop {
 
 .form-group {
 	display: flex;
-	flex-direction: column;
 	gap: 0.5rem;
 	position: relative;
 	border-bottom: 1.5px solid #a7a7a7;
 	padding: 0.2rem 0;
+	width: 100%;
 }
 
 label {
@@ -257,6 +293,7 @@ input {
 	outline: none;
 	border-radius: 5px;
 	padding: 0rem 0.5rem;
+	width: 100%;
 }
 
 input:focus+label,
@@ -269,8 +306,18 @@ input:not(:placeholder-shown)+label {
 	font-weight: 700;
 }
 
-.form-group:has(input:focus) {
+&:has(input:focus) {
 	border-bottom: 1.5px solid var(--primary-color);
+}
+
+.toggle-password-visibility {
+	padding: 0;
+	right: 0;
+	top: -0.2rem;
+
+	iconify-icon {
+		pointer-events: none;
+	}
 }
 
 .music-title,
@@ -281,60 +328,13 @@ input:not(:placeholder-shown)+label {
 	width: 100%;
 }
 
-.alert-container {
-	position: fixed;
-	top: 5rem;
-	right: 1rem;
-	height: calc(100% - 5.5rem);
-	width: 20rem;
-	background-color: rgba(188, 143, 143, 0);
-	pointer-events: none;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-items: flex-end;
-	gap: 0.5rem;
-}
-
-.alert {
-	background-color: #e486865d;
-	color: #b93434;
-	border: 1px solid #b93434;
-	padding: 0.5rem 1rem;
-	border-radius: 5px;
-	margin-bottom: 0.5rem;
-	padding: 0.5rem 1rem;
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	border-radius: 5px;
-	transition: all 1s ease;
-	pointer-events: all;
-	text-wrap: nowrap;
-	overflow: hidden;
-}
-
-#loadingProgress {
-	position: fixed;
-	top: 7vh;
-	left: 0;
-	margin-left: 12vw;
-	max-width: calc(100% - 12vw);
-	height: 3px;
-	background-color: var(--primary-color);
-	transition: all 0.5s ease;
-	border-radius: 2rem;
-	z-index: 1;
-	opacity: 1;
-}
-
 input[type="range"] {
 	-webkit-appearance: none;
 	appearance: none;
 	width: 100%;
 	height: 5px;
 	border-radius: 1rem;
-	background: #d3d3d3;
+	background: var(--seekbar-color);
 	outline: none;
 	transition: all 0.5s ease;
 	padding: 0;
@@ -369,10 +369,12 @@ hr {
 }
 
 .section-title {
-	font-size: 1.4rem;
+	font-size: 1.2rem;
+	letter-spacing: 1px;
 	display: flex;
 	align-items: center;
 	gap: 1rem;
+	color: var(--text-color);
 }
 
 .btn-container {
@@ -392,6 +394,18 @@ hr {
 
 }
 
+.song-list-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	width: 100%;
+
+	p {
+		font-size: 1rem;
+		color: var(--text-color-light);
+	}
+}
+
 .song-list {
 	display: flex;
 	gap: 1rem;
@@ -401,50 +415,103 @@ hr {
 	border-radius: 5px;
 	cursor: pointer;
 	width: 100%;
+	position: relative;
+	transition: all 0.3s ease;
 
-	&:hover {
-		background-color: var(--primary-color-100)
+	.start-play-music {
+		color: var(--primary-color) !important;
 	}
 
+	.btn-container {
+		gap: 0.1rem;
+
+		button {
+			padding: 0.3rem;
+			color: var(--text-color-light);
+
+			&:hover {
+				color: var(--primary-color) !important;
+			}
+		}
+	}
+
+
+
+	&:hover {
+		background-color: var(--primary-color-100);
+
+		.start-play-music iconify-icon {
+			font-size: 1.3rem !important;
+		}
+
+		img {
+
+			filter: brightness(0.5);
+		}
+
+		.music-title {
+			color: var(--primary-color) !important;
+		}
+	}
+
+
 	img {
-		width: 50px;
+		width: 55px;
 		height: 100%;
 		object-fit: cover;
 		border-radius: 5px;
+		aspect-ratio: 1/1;
+		position: relative;
 	}
 
 	.song-info {
 		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
+		width: 12rem;
 
 		.music-title {
 			font-size: 1.1rem;
 			font-weight: 600;
-			color: #333333;
+			color: var(--text-color);
 		}
 
 		.artist-name {
 			font-size: 0.95rem;
-			color: #777777;
+			color: var(--text-color-light);
 		}
 	}
 
 	p {
 		font-size: 0.9rem;
-		color: #777777;
+		color: var(--text-color-light);
 	}
+
+	.start-play-music {
+		position: absolute;
+		left: 0.4rem;
+		transition: all 0.3s ease;
+		color: var(--primary-color);
+		width: 50px;
+		height: 100%;
+
+		iconify-icon {
+			transition: all 0.3s ease;
+			font-size: 0;
+		}
+	}
+
+
 }
 
 .song-card {
 	display: flex;
 	flex-direction: column;
 	border-radius: 5px;
-	background-color: #333333;
-	transition: all 0.3s ease;
+	background-color: transparent;
 	cursor: pointer;
-	width: 120px;
-	height: max-content;
+	width: 8rem;
+	height: 100%;
 	position: relative;
 
 	iconify-icon {
@@ -453,13 +520,22 @@ hr {
 	}
 
 	&:hover {
+
 		img {
-			opacity: 0.7;
+			filter: brightness(0.5);
 		}
 
 		iconify-icon {
 			display: flex;
 			font-size: 2rem;
+		}
+
+		.music-title {
+			color: var(--primary-color) !important;
+		}
+
+		.song-info {
+			background-color: var(--bg-color) !important;
 		}
 	}
 
@@ -468,39 +544,100 @@ hr {
 		height: 100%;
 		object-fit: cover;
 		border-radius: 5px;
+		aspect-ratio: 1/1;
 		transition: all 0.3s ease;
 	}
 
 	.start-play-music {
 		position: absolute;
-		color: var(--primary-color);
+		color: var(--primary-color) !important;
 		width: 100%;
 		height: calc(100% - 2rem);
-
 	}
 
 	.song-info {
 		height: 2rem;
-		background-color: #ffffff;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 
 		.music-title {
-			font-size: 1.1rem;
+			font-size: 1rem;
 			font-weight: 600;
-			color: #333333;
+			color: var(--text-color);
 			text-align: center;
 			text-overflow: ellipsis;
 		}
 	}
+
+
 }
 
 .song-card-container {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	width: calc(100% - 5rem);
+	height: 100%;
+	position: relative;
+	transition: all 0.5s ease;
+	overflow-x: scroll;
+	margin: auto;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+}
+
+.song-card-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+	width: max-content;
+	height: 100%;
+	overflow-x: scroll;
+	flex-shrink: 0;
+}
+
+.songs-container {
+	display: flex;
+	flex-direction: column;
 	gap: 2rem;
 	width: 100%;
+	height: 100%;
+	position: relative;
 	overflow: hidden;
+	flex-wrap: nowrap;
+
+	#nextInContainer,
+	#prevInContainer {
+		background-color: transparent;
+		color: var(--primary-color) !important;
+		border: none;
+		padding: 0.5rem;
+		cursor: pointer;
+		height: 100%;
+		position: absolute;
+		z-index: 1;
+		width: 2.5rem;
+
+		iconify-icon {
+			font-size: 2rem;
+		}
+
+	}
+
+	#nextInContainer {
+		right: 0;
+	}
+}
+
+.artist-card {
+	img {
+		border-radius: 50%;
+	}
 }

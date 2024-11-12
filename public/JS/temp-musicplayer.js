@@ -1,30 +1,15 @@
-// Select the element with class "top-nav"
-let topNav = document.querySelector("#topNav");
-
-// Add a scroll event listener to the document
-document.addEventListener("scroll", function () {
-	// Check if the user has scrolled down
-	if (window.scrollY > 0) {
-		// If scrolled down, change the background color and add a box shadow to the topNav element
-		topNav.style.backgroundColor = "#ffffff";
-		topNav.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
-	} else {
-		// If not scrolled down, make the background transparent and remove the box shadow from the topNav element
-		topNav.style.backgroundColor = "transparent";
-		topNav.style.boxShadow = "none";
-	}
-});
-
 let playPauseBtn = document.querySelector(".play-pause-btn");
 let musicControls = document.querySelector("#musicControls");
 let playIcon =
-	"<i class='fa-duotone fa-solid fa-circle-play' style='--fa-primary-color: #ffffff; --fa-secondary-color: #ff7f11; --fa-secondary-opacity: 1;'></i>";
+	"<iconify-icon icon='solar:play-bold'  style='color:#ff7f11 '></iconify-icon>";
 let pauseIcon =
-	"<i class='fa-duotone fa-solid fa-circle-pause' style='--fa-primary-color: #ffffff; --fa-secondary-color: #ff7f11; --fa-secondary-opacity: 1;'></i>";
+	"<iconify-icon icon='solar:pause-bold' style='color:#ff7f11 '></iconify-icon>";
 let isPlaying = false;
 let music = new Audio();
 let musicId = null;
 let loaded = false;
+let playedSongs = [];
+let nextSong = [];
 
 //function to set like status of the song
 function setLikeBtnStatus(btn, status) {
@@ -53,7 +38,6 @@ function isMusicLoaded(id) {
 async function loadMusic(id) {
 	musicData = await fetchMusic(id);
 	musicId = musicData.id;
-	console.log(musicData);
 	document.title =
 		musicData.title + " - " + musicData.firstname + " " + musicData.lastname;
 	music.src = musicData.filePath;
@@ -92,7 +76,7 @@ function updateMusicControls(musicData) {
 	totalDuration.innerHTML = formatDuration(music.duration);
 
 	if (!loaded) {
-		musicControls.animate([{ bottom: "-10%" }, { bottom: "1rem" }], {
+		musicControls.animate([{ bottom: "-10%" }, { bottom: "0" }], {
 			duration: 500,
 			easing: "ease-in-out",
 			fill: "forwards",
@@ -179,7 +163,7 @@ function toggleButton(button, attribute, otherButton, otherAttribute) {
 	// Check if the button attribute is "false"
 	if (button.getAttribute(attribute) === "false") {
 		// Change the button color to indicate it is active
-		button.style.color = "#ff7f11";
+		button.style.color = "#ff7f11 ";
 		// Set the button attribute to "true"
 		button.setAttribute(attribute, "true");
 
@@ -190,7 +174,7 @@ function toggleButton(button, attribute, otherButton, otherAttribute) {
 		}
 	} else {
 		// Change the button color to indicate it is inactive
-		button.style.color = "#000";
+		button.style.color = "var(--text-color-light)";
 		// Set the button attribute to "false"
 		button.setAttribute(attribute, "false");
 	}
@@ -226,6 +210,7 @@ let volumeControls = document.querySelector(".volume-control");
 volumeControls.addEventListener(
 	"wheel",
 	function (e) {
+		e.preventDefault();
 		// Get the current volume value
 		let currentVolume = parseInt(volume.value);
 		// Adjust the volume based on the scroll direction
@@ -300,7 +285,7 @@ function mute() {
 	// Save the current volume value to local storage
 	localStorage.setItem("volume", volume.value);
 	// Change the volume button icon to indicate it is muted
-	volumeBtn.innerHTML = '<i class="fa-regular fa-volume-xmark"></i>';
+	volumeBtn.innerHTML = '<iconify-icon icon="mage:volume-mute"></iconify-icon>';
 	// Set the volume value to 0
 	volume.value = 0;
 	// Set the music volume to 0
@@ -320,14 +305,13 @@ function adjustVolume(volumeValue) {
 
 	// Change the volume button icon based on the volume value
 	if (volumeValue < 50) {
-		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-low"></i>';
+		volumeBtn.innerHTML =
+			'<iconify-icon icon="mage:volume-down"></iconify-icon>';
 	} else if (volumeValue <= 0) {
-		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-xmark"></i>';
-		console.log("muted");
-	} else if (volumeValue > 80) {
-		volumeBtn.innerHTML = '<i class="fa-regular fa-volume-high"></i>';
+		volumeBtn.innerHTML =
+			'<iconify-icon icon="mage:volume-mute"></iconify-icon>';
 	} else {
-		volumeBtn.innerHTML = '<i class="fa-regular fa-volume"></i>';
+		volumeBtn.innerHTML = '<iconify-icon icon="mage:volume-up"></iconify-icon>';
 	}
 }
 
@@ -347,7 +331,6 @@ volumeBtn.addEventListener("click", function () {
 volume.addEventListener("input", function () {
 	// Check if the volume value is 0 or muted
 	if (volume.value <= 0) {
-		console.log("muted");
 		// If muted, mute the music
 		mute();
 		localStorage.setItem("volume", 20);
@@ -420,7 +403,6 @@ async function displayPlaylists() {
 let likeBtns = document.querySelectorAll(".like-btn");
 likeBtns.forEach((btn) => {
 	btn.addEventListener("click", async function () {
-		console.log("like button clicked");
 		let musicId = btn.getAttribute("data-musicId");
 		let action = btn.getAttribute("data-liked") === "false" ? "like" : "unlike";
 		if (await setLikeStatus(musicId, action)) {
