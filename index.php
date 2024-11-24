@@ -14,6 +14,7 @@ get($baseUrl . '/home', "pages/home/mainHome.php"); // Route for the /home URL
 
 // Example of a POST route (commented out)
 // post('/user', '/api/save_user');
+post($baseUrl . '/getPlaylistQueue', 'modules/getPlaylistQueue.php');
 
 // Define a catch-all route for 404 errors
 any('/404', 'pages/404.php');

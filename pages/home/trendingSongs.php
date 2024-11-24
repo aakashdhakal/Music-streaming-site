@@ -1,12 +1,12 @@
 <?php
 include_once realpath($_SERVER["DOCUMENT_ROOT"]) . "/WEB-PROJECT/modules/database.php";
 include_once realpath($_SERVER["DOCUMENT_ROOT"]) . "/WEB-PROJECT/modules/extraFunctions.php";
-$sql = 'SELECT *, COUNT(*) as plays 
+$sql = 'SELECT musics.id, musics.coverImage, musics.title, musics.artist, COUNT(music_history.music_id) as plays 
         FROM music_history
         INNER JOIN musics ON music_history.music_id = musics.id
         INNER JOIN users ON musics.artist = users.username
-        GROUP BY music_id 
-        ORDER BY COUNT(*) DESC 
+        GROUP BY musics.id, musics.coverImage, musics.title, musics.artist 
+        ORDER BY plays DESC 
         LIMIT 5;';
 $result = mysqli_query($mysqli, $sql);
 
@@ -17,8 +17,9 @@ if ($result) {
             $cover = $row['coverImage'];
             $title = $row['title'];
             $artist = getFullName($row['artist']);
-            $musicId = $row['music_id'];
+            $musicId = $row['id'];
             $plays = $row['plays'];
+
 
             echo "
              <div class='song-list-wrapper'>
@@ -31,8 +32,6 @@ if ($result) {
         <p class='artist-name'>$artist</p>
     </div>
     <div class='song-options btn-container'>
-        <button class='like-btn' title='Add to Favourites' data-liked='false' data-musicId='2'>
-            <iconify-icon icon='fe:heart-o'></iconify-icon></button>
         <button class='add-to-playlist-btn' title='Add to Playlist' data-musicId='2'>
             <iconify-icon icon='tabler:playlist-add'></iconify-icon></button>
 </div>

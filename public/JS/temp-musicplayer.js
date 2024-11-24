@@ -1,77 +1,90 @@
-let playPauseBtn = document.querySelector(".play-pause-btn");
-let musicControls = document.querySelector("#musicControls");
-let playIcon =
-	"<iconify-icon icon='solar:play-bold'  style='color:#ff7f11 '></iconify-icon>";
-let pauseIcon =
-	"<iconify-icon icon='solar:pause-bold' style='color:#ff7f11 '></iconify-icon>";
+// Select DOM elements
+const playPauseBtn = document.querySelector(".play-pause-btn");
+const musicControls = document.querySelector("#musicControls");
+const seekbar = document.querySelector("#seekbar");
+const shuffleBtn = document.querySelector(".shuffle-btn");
+const repeatBtn = document.querySelector(".repeat-btn");
+const volumeBtn = document.querySelector(".volume-btn");
+const volume = document.querySelector("#volume");
+const addToPlaylistDialogShowBtn = document.querySelector(
+	".add-to-playlist-dialog-show-btn",
+);
+const addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
+const playlistContainer = document.querySelectorAll(".playlists");
+const likeBtns = document.querySelectorAll(".like-btn");
+const prevMusicBtn = document.querySelector(".prev-btn");
+const nextMusicBtn = document.querySelector(".next-btn");
+
+const playIcon =
+	"<iconify-icon icon='solar:play-bold' style='color:#ff7f11'></iconify-icon>";
+const pauseIcon =
+	"<iconify-icon icon='solar:pause-bold' style='color:#ff7f11'></iconify-icon>";
+
 let isPlaying = false;
 let music = new Audio();
 let musicId = null;
 let loaded = false;
-let playedSongs = [];
-let nextSong = [];
+let playedMusicQueue = [];
+let nextMusicQueue = [];
 
-//function to set like status of the song
+async function addMusicToQueue(currentPlayMode = "normal", queueId = null) {
+	// Add music to the queue
+	let queue = await fetchMusicQueue(currentPlayMode, queueId);
+	//add ids to the queue
+	nextMusicQueue = queue.map((music) => music.id);
+}
+
+// Function to set like status of the song
 function setLikeBtnStatus(btn, status) {
-	switch (status) {
-		case "like":
-			btn.innerHTML =
-				'<i class="fa-solid fa-heart" style="color: #ff7f11;"></i>';
-			btn.setAttribute("data-liked", "true");
-			break;
-		case "unlike":
-			btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
-			btn.setAttribute("data-liked", "false");
-			break;
-	}
+	// btn.innerHTML =
+	// 	status === "like"
+	// 		? '<i class="fa-solid fa-heart" style="color: #ff7f11;"></i>'
+	// 		: '<i class="fa-regular fa-heart"></i>';
+	// btn.setAttribute("data-liked", status === "like" ? "true" : "false");
 }
 
 // Check if the given music ID is already loaded
 function isMusicLoaded(id) {
-	if (musicId == id) {
-		return true;
-	} else {
-		return false;
-	}
+	return musicId === id;
 }
 
+// Load music by ID
 async function loadMusic(id) {
-	musicData = await fetchMusic(id);
+	const musicData = await fetchMusic(id);
 	musicId = musicData.id;
-	document.title =
-		musicData.title + " - " + musicData.firstname + " " + musicData.lastname;
+	document.title = `${musicData.title} - ${musicData.firstname} ${musicData.lastname}`;
 	music.src = musicData.filePath;
 	music.load();
-	music.addEventListener("loadedmetadata", function () {
+	music.addEventListener("loadedmetadata", () => {
 		updateMusicControls(musicData);
 		loaded = true;
 	});
 	await addToHistory(musicData.id);
+	addToPrevMusic(musicData.id);
 }
 
 // Format the duration of the music in minutes and seconds
 function formatDuration(duration) {
-	let minutes = Math.floor(duration / 60);
-	let seconds = Math.floor(duration % 60);
-	if (seconds < 10) {
-		seconds = "0" + seconds;
-	}
-	return minutes + ":" + seconds;
+	const minutes = Math.floor(duration / 60);
+	const seconds = Math.floor(duration % 60)
+		.toString()
+		.padStart(2, "0");
+	return `${minutes}:${seconds}`;
 }
 
+// Update music controls with music data
 function updateMusicControls(musicData) {
-	let musicTitle = document.querySelector(".music-title");
-	let musicArtist = document.querySelector(".music-artist");
-	let musicCover = document.querySelector(".music-cover");
-	let totalDuration = document.querySelector(".total-duration");
-	// let likeBtn = musicControls.querySelector(".like-btn");
+	const musicTitle = document.querySelector(".music-title");
+	const musicArtist = document.querySelector(".music-artist");
+	const musicCover = document.querySelector(".music-cover");
+	const totalDuration = document.querySelector(".total-duration");
 
 	if (musicData.isFavourite) {
-		setLikeBtnStatus(likeBtn, "like");
+		setLikeBtnStatus(likeBtns, "like");
 	}
 
 	musicTitle.innerHTML = musicData.title;
-	musicArtist.innerHTML = musicData.firstname + " " + musicData.lastname;
+	musicArtist.innerHTML = `${musicData.firstname} ${musicData.lastname}`;
 	musicCover.src = musicData.coverImage;
 	totalDuration.innerHTML = formatDuration(music.duration);
 
@@ -86,372 +99,253 @@ function updateMusicControls(musicData) {
 
 // Function to play the music
 function playMusic() {
-	let startPlayBtn = document.querySelectorAll(".start-play-music");
-	// Iterate over each startPlayBtn element
-	startPlayBtn.forEach((btn) => {
-		// Play the music
-		music.play();
-		// Set the isPlaying flag to true
-		isPlaying = true;
-		// Change the play/pause button icon to a pause icon
-		playPauseBtn.innerHTML = pauseIcon;
-	});
+	music.play();
+	isPlaying = true;
+	playPauseBtn.innerHTML = pauseIcon;
 }
 
 // Function to pause the music
 function pauseMusic() {
-	let startPlayBtn = document.querySelectorAll(".start-play-music");
-	// Iterate over each startPlayBtn element
-	startPlayBtn.forEach((btn) => {
-		// Check if the musicId attribute of the button matches the current musicI
-		// Pause the music
-		music.pause();
-		// Set the isPlaying flag to false
-		isPlaying = false;
-		// Change the play/pause button icon to a play icon
-		playPauseBtn.innerHTML = playIcon;
-	});
+	music.pause();
+	isPlaying = false;
+	playPauseBtn.innerHTML = playIcon;
+}
+// Function to add current music to the nextMusicQueue list
+function addToNextMusic(currentMusicId) {
+	if (!nextMusicQueue.includes(currentMusicId)) {
+		nextMusicQueue.push(currentMusicId);
+	}
 }
 
-let seekbar = document.querySelector("#seekbar");
-// Add a timeupdate event listener to the music element
-music.addEventListener("timeupdate", function () {
-	// Check if the music duration is not NaN or undefined
+// Function to add current music to the playedMusicQueue list
+function addToPrevMusic(currentMusicId) {
+	if (!playedMusicQueue.includes(currentMusicId)) {
+		playedMusicQueue.push(currentMusicId);
+	}
+}
+
+prevMusicBtn.addEventListener("click", async () => {
+	if (playedMusicQueue.length > 1) {
+		// Add current music to nextMusicQueue list
+		addToNextMusic(musicId);
+
+		// Remove the last played music and load the previous one
+		playedMusicQueue.pop();
+		await loadMusic(playedMusicQueue.pop());
+		playMusic();
+	}
+});
+
+nextMusicBtn.addEventListener("click", async () => {
+	if (nextMusicQueue.length) {
+		// Add current music to playedMusicQueue list
+		addToHistory(musicId);
+
+		// Load the next music from the nextMusicQueue list
+		await loadMusic(nextMusicQueue.shift());
+		playMusic();
+	}
+});
+
+// Event listener for updating seekbar and current duration
+music.addEventListener("timeupdate", () => {
 	if (music.duration) {
-		let currentDuration = document.querySelector(".current-duration");
-		let position = (music.currentTime / music.duration) * 100;
-		seekbar.value = position; // Update the seekbar's value
-		seekbar.style.setProperty("--seek-before-width", position + "%");
+		const currentDuration = document.querySelector(".current-duration");
+		const position = (music.currentTime / music.duration) * 100;
+		seekbar.value = position;
+		seekbar.style.setProperty("--seek-before-width", `${position}%`);
 		currentDuration.innerText = formatDuration(music.currentTime);
 	}
 });
 
-music.addEventListener("ended", function () {
-	// Check if the repeat button is active
+// Event listener for music end
+music.addEventListener("ended", () => {
 	if (repeatBtn.getAttribute("data-repeat") === "true") {
-		// If active, play the music again
 		playMusic();
 	} else {
-		// If not active, pause the music
-		pauseMusic();
+		setTimeout(() => {
+			nextMusicBtn.click();
+		}, 2000);
 	}
 });
 
-// Add event listener to hide the thumb when mouse is out of the seekbar
-seekbar.addEventListener("mouseout", function () {
-	seekbar.style.setProperty("--thumb-display", "none");
-});
+// Event listeners for seekbar
+seekbar.addEventListener("mouseout", () =>
+	seekbar.style.setProperty("--thumb-display", "none"),
+);
+seekbar.addEventListener("mousemove", () =>
+	seekbar.style.setProperty("--thumb-display", "block"),
+);
+seekbar.addEventListener(
+	"input",
+	() => (music.currentTime = music.duration * (seekbar.value / 100)),
+);
 
-// Add event listener to show the thumb when mouse is moving over the seekbar
-seekbar.addEventListener("mousemove", function () {
-	seekbar.style.setProperty("--thumb-display", "block");
-});
-
-// Add event listener to update the current time of the music when the seekbar value changes
-seekbar.addEventListener("input", function () {
-	music.currentTime = music.duration * (seekbar.value / 100);
-});
-
-// Select the shuffle button element
-let shuffleBtn = document.querySelector(".shuffle-btn");
-
-// Select the repeat button element
-let repeatBtn = document.querySelector(".repeat-btn");
-
-// Function to toggle the button state and handle the other button
+// Function to toggle button state
 function toggleButton(button, attribute, otherButton, otherAttribute) {
-	// Check if the button attribute is "false"
-	if (button.getAttribute(attribute) === "false") {
-		// Change the button color to indicate it is active
-		button.style.color = "#ff7f11 ";
-		// Set the button attribute to "true"
-		button.setAttribute(attribute, "true");
+	const isActive = button.getAttribute(attribute) === "true";
+	button.style.color = isActive ? "var(--text-color-light)" : "#ff7f11";
+	button.setAttribute(attribute, isActive ? "false" : "true");
 
-		// Check if the other button attribute is "true"
-		if (otherButton.getAttribute(otherAttribute) === "true") {
-			// Click the other button to deactivate it
-			otherButton.click();
-		}
-	} else {
-		// Change the button color to indicate it is inactive
-		button.style.color = "var(--text-color-light)";
-		// Set the button attribute to "false"
-		button.setAttribute(attribute, "false");
+	if (otherButton.getAttribute(otherAttribute) === "true") {
+		otherButton.click();
 	}
 }
 
-// Add a click event listener to the shuffle button
-shuffleBtn.addEventListener("click", function () {
-	// Call the toggleButton function to toggle the shuffle button state and handle the repeat button
-	toggleButton(shuffleBtn, "data-shuffle", repeatBtn, "data-repeat");
-});
-
-// Add a click event listener to the repeat button
-repeatBtn.addEventListener("click", function () {
-	// Call the toggleButton function to toggle the repeat button state and handle the shuffle button
-	toggleButton(repeatBtn, "data-repeat", shuffleBtn, "data-shuffle");
-});
-
-// Add a click event listener to the play/pause button
-playPauseBtn.addEventListener("click", function () {
-	// Check if the music is currently playing
-	if (isPlaying) {
-		// Pause the music
-		pauseMusic();
-	} else {
-		// Play the music
-		playMusic();
-	}
-});
-
-let volumeControls = document.querySelector(".volume-control");
-
-// Add a click event listener to the volume controls element
-volumeControls.addEventListener(
-	"wheel",
-	function (e) {
-		e.preventDefault();
-		// Get the current volume value
-		let currentVolume = parseInt(volume.value);
-		// Adjust the volume based on the scroll direction
-		if (e.deltaY < 0) {
-			// Scroll up, increase volume
-			currentVolume = Math.min(currentVolume + 5, 100);
-		} else {
-			// Scroll down, decrease volume
-			currentVolume = Math.max(currentVolume - 5, 0);
-		}
-		if (currentVolume <= 0) {
-			// If volume is less than or equal to 0, mute the music
-			mute();
-		} else {
-			// Update the volume
-			adjustVolume(currentVolume);
-		}
-	},
-	{ passive: true },
+// Event listeners for shuffle and repeat buttons
+shuffleBtn.addEventListener("click", () =>
+	toggleButton(shuffleBtn, "data-shuffle", repeatBtn, "data-repeat"),
+);
+repeatBtn.addEventListener("click", () =>
+	toggleButton(repeatBtn, "data-repeat", shuffleBtn, "data-shuffle"),
 );
 
-// Add event listener for keydown event
-document.addEventListener("keydown", function (e) {
-	// Check if the target element is an input, if so, return
-	if (e.target.matches("input")) return;
-
-	// Check the key that was pressed
-	if (e.key === " ") {
-		e.preventDefault();
-		// If spacebar is pressed, toggle play/pause
-		if (isPlaying) {
-			pauseMusic();
-		} else {
-			playMusic();
-		}
-	}
-	if (e.key === "ArrowRight") {
-		// If right arrow key is pressed, skip forward 5 seconds
-		music.currentTime += 5;
-	}
-	if (e.key === "ArrowLeft") {
-		// If left arrow key is pressed, skip backward 5 seconds
-		music.currentTime -= 5;
-	}
-	if (e.key === "m") {
-		// If 'm' key is pressed, trigger volume button click
-		volumeBtn.click();
-	}
-	if (e.key === "f") {
-		// If 'f' key is pressed, trigger like button click
-		likeBtn.click();
-	}
-	if (e.key === "r") {
-		// If 'r' key is pressed, trigger repeat button click
-		repeatBtn.click();
-	}
-	if (e.key === "s") {
-		// If 's' key is pressed, trigger shuffle button click
-		shuffleBtn.click();
-	}
-	if (e.key === "p") {
-		// If 'p' key is pressed, trigger add to playlist button click
-		addToPlaylistBtn.click();
-	}
-});
-
-let volumeBtn = document.querySelector(".volume-btn");
-let volume = document.querySelector("#volume");
+// Event listener for play/pause button
+playPauseBtn.addEventListener("click", () =>
+	isPlaying ? pauseMusic() : playMusic(),
+);
 
 // Function to mute the music
 function mute() {
-	// Save the current volume value to local storage
 	localStorage.setItem("volume", volume.value);
-	// Change the volume button icon to indicate it is muted
 	volumeBtn.innerHTML = '<iconify-icon icon="mage:volume-mute"></iconify-icon>';
-	// Set the volume value to 0
 	volume.value = 0;
-	// Set the music volume to 0
 	music.volume = 0;
-	// Update the volume range input style
-	volume.style.setProperty("--volume-before-width", volume.value + "px");
+	volume.style.setProperty("--volume-before-width", `${volume.value}px`);
 }
 
 // Function to adjust the volume
 function adjustVolume(volumeValue) {
-	// Update the volume range input style
-	volume.style.setProperty("--volume-before-width", volumeValue + "px");
-	// Set the music volume based on the volume value
+	volume.style.setProperty("--volume-before-width", `${volumeValue}px`);
 	music.volume = volumeValue / 100;
-	// Update the volume range input value
 	volume.value = volumeValue;
 
-	// Change the volume button icon based on the volume value
-	if (volumeValue < 50) {
-		volumeBtn.innerHTML =
-			'<iconify-icon icon="mage:volume-down"></iconify-icon>';
-	} else if (volumeValue <= 0) {
+	if (volumeValue <= 0) {
 		volumeBtn.innerHTML =
 			'<iconify-icon icon="mage:volume-mute"></iconify-icon>';
+	} else if (volumeValue < 50) {
+		volumeBtn.innerHTML =
+			'<iconify-icon icon="mage:volume-down"></iconify-icon>';
 	} else {
 		volumeBtn.innerHTML = '<iconify-icon icon="mage:volume-up"></iconify-icon>';
 	}
 }
 
-// Add a click event listener to the volume button
-volumeBtn.addEventListener("click", function () {
-	// Check if the volume value is 0 or muted
+// Event listener for volume button
+volumeBtn.addEventListener("click", () => {
 	if (volume.value <= 0) {
-		// If muted, adjust the volume to the previously saved volume value
 		adjustVolume(localStorage.getItem("volume"));
 	} else {
-		// If not muted, mute the music
 		mute();
 	}
 });
 
-// Add an input event listener to the volume range input
-volume.addEventListener("input", function () {
-	// Check if the volume value is 0 or muted
+// Event listener for volume input
+volume.addEventListener("input", () => {
 	if (volume.value <= 0) {
-		// If muted, mute the music
 		mute();
 		localStorage.setItem("volume", 20);
 	} else {
-		// If not muted, save the current volume value to local storage and adjust the volume
 		localStorage.setItem("volume", volume.value);
 		adjustVolume(volume.value);
 	}
-	// Update the volume range input title with the current volume percentage
-	volume.title = Math.floor(volume.value) + "%";
+	volume.title = `${Math.floor(volume.value)}%`;
 });
 
-// Add a mouseout event listener to the volume range input
-volume.addEventListener("mouseout", function () {
-	// Hide the volume range input thumb
-	volume.style.setProperty("--thumb-display", "none");
-});
-
-// Add a mousemove event listener to the volume range input
-volume.addEventListener("mousemove", function () {
-	// Show the volume range input thumb
-	volume.style.setProperty("--thumb-display", "block");
-});
-
-let addToPlaylistDialogShowBtn = document.querySelector(
-	".add-to-playlist-dialog-show-btn",
+// Event listeners for volume input mouse events
+volume.addEventListener("mouseout", () =>
+	volume.style.setProperty("--thumb-display", "none"),
 );
-let addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
-let playlistContainer = document.querySelectorAll(".playlists");
+volume.addEventListener("mousemove", () =>
+	volume.style.setProperty("--thumb-display", "block"),
+);
 
-// Function to display the playlists
+// Event listener for keydown events
+document.addEventListener("keydown", (e) => {
+	if (e.target.matches("input")) return;
+
+	switch (e.key) {
+		case " ":
+			e.preventDefault();
+			isPlaying ? pauseMusic() : playMusic();
+			break;
+		case "ArrowRight":
+			music.currentTime += 5;
+			break;
+		case "ArrowLeft":
+			music.currentTime -= 5;
+			break;
+		case "m":
+			volumeBtn.click();
+			break;
+		case "f":
+			likeBtns.click();
+			break;
+		case "r":
+			repeatBtn.click();
+			break;
+		case "s":
+			shuffleBtn.click();
+			break;
+		case "p":
+			addToPlaylistBtn.click();
+			break;
+	}
+});
+
+// Function to display playlists
 async function displayPlaylists() {
-	let data = await fetchPlaylists();
+	const data = await fetchPlaylists();
 	playlistContainer.forEach((container) => {
 		container.innerHTML = data;
 	});
 }
 
-// // Add click event listener to the addToPlaylistDialogShowBtn element
-// addToPlaylistDialogShowBtn.addEventListener("click", function () {
-// 	// Show the add to playlist dialog
-// 	addToPlaylistDialog.showModal();
-// });
-
-// addToPlaylistDialog.addEventListener("click", async function (e) {
-// 	//Add music to playlist
-// 	let playlistCard = e.target.closest(".playlist-card");
-// 	if (playlistCard) {
-// 		let playlistId = playlistCard.getAttribute("data-playlistId");
-// 		if (await addToPlaylist(playlistId, musicId)) {
-// 			showAlert("Music added to playlist", "success");
-// 			await displayPlaylists();
-// 		}
-// 		closeDialog(addToPlaylistDialog);
-// 	}
-// });
-
-// let createPlaylistForm = document.querySelector(".create-playlist-form");
-// createPlaylistForm.addEventListener("submit", async function (e) {
-// 	e.preventDefault();
-// 	let formData = new FormData(createPlaylistForm);
-// 	if (await createPlaylist(formData)) {
-// 		showAlert("Playlist created successfully", "success");
-// 		closeDialog(createNewPlaylistDialog);
-// 		formData.delete("playlist_cover");
-// 		await displayPlaylists();
-// 	}
-// });
-
-let likeBtns = document.querySelectorAll(".like-btn");
+// Event listener for like buttons
 likeBtns.forEach((btn) => {
-	btn.addEventListener("click", async function () {
-		let musicId = btn.getAttribute("data-musicId");
-		let action = btn.getAttribute("data-liked") === "false" ? "like" : "unlike";
-		if (await setLikeStatus(musicId, action)) {
-			if (action === "like") {
-				setLikeBtnStatus(btn, "like");
-				showAlert("Music added to favourites", "success");
-			} else {
-				setLikeBtnStatus(btn, "unlike");
-				showAlert("Music removed from favourites", "success");
-			}
+	btn.addEventListener("click", async () => {
+		const musicId = btn.getAttribute("data-musicId");
+		const action =
+			btn.getAttribute("data-liked") === "false" ? "like" : "unlike";
+		if (setLikeBtnStatus(musicId, action)) {
+			setLikeBtnStatus(btn, action);
+			showAlert(
+				`Music ${action === "like" ? "added to" : "removed from"} favourites`,
+				"success",
+			);
 		}
 	});
 });
 
-document.addEventListener("click", async function (e) {
-	let createPlaylistDialogShowBtns = document.querySelectorAll(
-		".show-create-playlist-dialog-btn",
-	);
-	let createNewPlaylistDialog = document.querySelector(
-		"#createNewPlaylistDialog",
-	);
-
-	// Add click event listener to each playlistFornShowBtn elemen
-	createPlaylistDialogShowBtns.forEach((btn) => {
-		btn.addEventListener("click", function () {
-			// Show the create new playlist dialog
-			createNewPlaylistDialog.showModal();
-		});
-	});
-
-	let startPlayBtn = e.target.closest(".start-play-music");
+// Event listener for document clicks
+document.addEventListener("click", async (e) => {
+	const startPlayBtn = e.target.closest(".start-play-music");
 	if (startPlayBtn) {
-		// Get the musicId attribute from the clicked button
-		let musicId = startPlayBtn.getAttribute("data-musicId");
-		// If the music is already loaded
+		const musicId = startPlayBtn.getAttribute("data-musicId");
 		if (isMusicLoaded(musicId)) {
-			// If the music is currently playing
-			if (isPlaying) {
-				// Pause the music
-				pauseMusic();
-			} else {
-				// Play the music
-				playMusic();
-			}
+			isPlaying ? pauseMusic() : playMusic();
 		} else {
-			// If the music is not loaded, load it
 			await loadMusic(musicId);
-			// Play the music
 			playMusic();
 		}
+		await addMusicToQueue();
+	}
+
+	if (e.target.closest(".expand-current-song")) {
+		const currentSongContainer = e.target.closest("#musicControls");
+		currentSongContainer.classList.toggle("expanded");
+		if (currentSongContainer.classList.contains("expanded")) {
+			document.documentElement.requestFullscreen();
+		} else {
+			document.exitFullscreen();
+		}
+	}
+});
+
+// Event listener for fullscreen change
+document.addEventListener("fullscreenchange", () => {
+	const currentSongContainer = document.querySelector("#musicControls");
+	if (!document.fullscreenElement) {
+		currentSongContainer.classList.remove("expanded");
 	}
 });

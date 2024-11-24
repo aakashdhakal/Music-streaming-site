@@ -1,12 +1,47 @@
 let baseUrl = "/WEB-PROJECT";
 let title = document.title;
 
+//preloader
+
+let preloader = document.querySelector(".preloader");
+window.addEventListener("load", () => {
+	preloader.style.display = "none";
+});
+
+function showError(form, message) {
+	console.log(form);
+	let errorContainer = form.parentElement.previousElementSibling;
+	console.log(errorContainer);
+	console.log(errorContainer);
+	errorContainer.style.display = "flex";
+	let errorText = errorContainer.querySelector(".error-text");
+	errorText.innerText = message;
+}
+
+function hideError() {
+	let errorContainer = document.querySelectorAll(".error-container");
+	errorContainer.forEach((container) => {
+		container.style.display = "none";
+	});
+}
+
+function checkEmptyInput(input) {
+	if (input.value === "") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // Close dialog function
 function closeDialog(dialog) {
 	let form = dialog.querySelector("form");
 	if (form) form.reset();
 	dialog.animate([{ scale: 1 }, { scale: 0.5 }], 150, "ease-in-out").onfinish =
-		() => dialog.close();
+		() => {
+			dialog.close();
+			hideError();
+		};
 }
 
 // Event listeners for close buttons
@@ -29,8 +64,10 @@ document.addEventListener("keydown", (e) => {
 // Event listener for file upload preview
 document.addEventListener("change", (e) => {
 	if (e.target.matches(".file-upload")) {
-		let previewImage = e.target.nextElementSibling.nextElementSibling;
-		previewImage.src = URL.createObjectURL(e.target.files[0]);
+		let previewImage = e.target.parentElement;
+		let file = e.target.files[0];
+		let imageUrl = URL.createObjectURL(file);
+		previewImage.style.backgroundImage = `url(${imageUrl})`;
 	}
 });
 
@@ -70,7 +107,6 @@ document.querySelectorAll(".nav-btn").forEach((btn) => {
 
 // Change theme function
 function changeTheme() {
-	console.log("changing theme");
 	document.body.classList.toggle("dark");
 	localStorage.setItem("darkMode", document.body.classList.contains("dark"));
 	document.querySelector(".dark-mode-btn").innerHTML =
@@ -94,8 +130,7 @@ document
 	});
 
 // Dark mode toggle
-if (localStorage.getItem("darkMode") === "true")
-	document.body.classList.add("dark");
+if (localStorage.getItem("darkMode") === "true") changeTheme();
 
 function toggleProfileWindow() {
 	document
@@ -122,7 +157,6 @@ async function showNotifications(number) {
 	notificationBody.innerHTML = "";
 	if (notifications.status === 404) {
 		notificationBody.innerHTML = `<div class="no-notifications"><iconify-icon icon="mynaui:bell-x"></iconify-icon><p>No new notifications</p></div>`;
-		document.querySelector("#seeAllNotifications").style.display = "none";
 		return;
 	}
 	notifications.slice(0, number).forEach((notification) => {
@@ -192,6 +226,14 @@ function formatTime(time) {
 	return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
 }
 
+function removeCustomSelectDropdown() {
+	document.querySelectorAll(".custom-select").forEach((select) => {
+		if (select.querySelector(".select-options").classList.contains("show")) {
+			select.querySelector(".select-options").classList.remove("show");
+		}
+	});
+}
+
 document.addEventListener("click", (e) => {
 	if (!e.target.closest("#notificationWindow, .notification-btn")) {
 		document
@@ -222,7 +264,6 @@ document.addEventListener("click", (e) => {
 			.classList.remove("openProfileWindow");
 	}
 	if (e.target.closest(".notification-btn")) toggleNotificationWindow();
-	if (e.target.matches("dialog")) closeDialog(e.target);
 	if (e.target.closest("#seeAllNotifications")) showNotifications(-1);
 	if (e.target.closest(".mark-all-as-read")) markAllAsRead();
 	if (e.target.closest(".dark-mode-btn")) changeTheme();
@@ -236,6 +277,14 @@ document.addEventListener("click", (e) => {
 			passwordField.type === "password"
 				? `<iconify-icon icon="fluent:eye-24-regular"></iconify-icon>`
 				: `<iconify-icon icon="fluent:eye-off-20-regular"></iconify-icon>`;
+	}
+	if (e.target.closest(".custom-select")) {
+		let select = e.target.closest(".custom-select");
+		let selectOptions = select.querySelector(".select-options");
+		selectOptions.classList.toggle("show");
+	}
+	if (!e.target.closest(".custom-select")) {
+		removeCustomSelectDropdown();
 	}
 });
 
@@ -460,7 +509,7 @@ async function setNotificationReadStatus(notificationId) {
 	}
 }
 
-async function sendOtp(email, username) {
+async function sendOtp(email, purpose = "register") {
 	try {
 		const response = await fetch(baseUrl + "/modules/otpConfig.php", {
 			method: "POST",
@@ -469,7 +518,7 @@ async function sendOtp(email, username) {
 			},
 			body: `email=${encodeURIComponent(
 				email,
-			)}&action=sendOtp&username=${encodeURIComponent(username)}`,
+			)}&action=sendOtp&purpose=${purpose}`,
 		});
 		const data = await response.json();
 		if (data.status === 200) {
@@ -483,16 +532,19 @@ async function sendOtp(email, username) {
 	}
 }
 
-async function checkOtp(otp) {
+async function checkOtp(otp, email) {
 	try {
 		const response = await fetch(baseUrl + "/modules/otpConfig.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
-			body: `otp=${encodeURIComponent(otp)}&action=verifyOtp`,
+			body: `otp=${encodeURIComponent(
+				otp,
+			)}&action=verifyOtp&email=${encodeURIComponent(email)}`,
 		});
 		const data = await response.json();
+		console.log(data);
 		if (data.status === 200) {
 			return true;
 		} else {
@@ -501,5 +553,147 @@ async function checkOtp(otp) {
 	} catch (error) {
 		console.error("Error checking OTP:", error);
 		return false;
+	}
+}
+
+async function checkUsername(username) {
+	try {
+		const response = await fetch(baseUrl + "/modules/checkUsername.php", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			body: `username=${encodeURIComponent(username)}`,
+		});
+		const data = await response.json();
+		if (data.status === 200) {
+			return true;
+		} else if (data.status === 409) {
+			return false;
+		}
+	} catch (error) {
+		console.error("Error checking username:", error);
+		return false;
+	}
+}
+
+async function checkEmail(email) {
+	try {
+		const response = await fetch(baseUrl + "/modules/checkEmail.php", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			body: `email=${encodeURIComponent(email)}`,
+		});
+		const data = await response.json();
+		if (data.status === 200) {
+			return true;
+		} else if (data.status === 409) {
+			return false;
+		}
+	} catch (error) {
+		console.error("Error checking email:", error);
+		return false;
+	}
+}
+
+// Function to handle user login
+async function loginUser(loginForm) {
+	// Create a new FormData object with the login form data
+	let data = new FormData(loginForm);
+
+	try {
+		// Send a POST request to baseUrl + "/modules/loginUser.php" with the form data
+		let response = await fetch(baseUrl + "/modules/loginUser.php", {
+			method: "POST",
+			body: data,
+		});
+
+		// Parse the response as JSON
+		let result = await response.json();
+
+		// Handle the response based on the status code
+		if (result.status == 200) {
+			window.location.href = baseUrl;
+		} else if (result.status == 400) {
+			showError(loginForm, "The username or password is invalid");
+		}
+	} catch (error) {
+		console.error("Error logging in:", error);
+		showError(loginForm, "An error occurred. Please try again.");
+	}
+}
+
+async function registerUser(formData) {
+	try {
+		const response = await fetch(baseUrl + "/modules/registerUser.php", {
+			method: "POST",
+			body: formData,
+		});
+		const data = await response.json();
+
+		if (data.status === 200) {
+			loginUser(formData.get("username"), formData.get("password"));
+		} else {
+			showError(data);
+		}
+	} catch (error) {
+		showError(error.message);
+	}
+}
+
+async function resetPassword(email, password) {
+	try {
+		const response = await fetch(baseUrl + "/modules/resetPassword.php", {
+			method: "POST",
+			body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(
+				password,
+			)}`,
+		});
+		const data = await response.json();
+
+		if (data.status === 200) {
+			return true;
+		} else {
+			showError(data);
+		}
+	} catch (error) {
+		showError(error.message);
+	}
+}
+
+async function fetchMusicQueue(mode, queueId) {
+	let endpoint = baseUrl + "/modules/";
+	switch (mode) {
+		case "playlist":
+			endpoint += "getPlaylistQueue.php";
+			break;
+
+		case "trending":
+			endpoint += "getTrendingQueue.php";
+			break;
+		case "favourites":
+			endpoint += "getFavouritesQueue.php";
+			break;
+
+		default:
+			endpoint += "getMusicQueue.php";
+			break;
+	}
+
+	try {
+		const response = await fetch(endpoint, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			body: `playlistId=${encodeURIComponent(queueId)}`,
+		});
+		const data = await response.json();
+		return data;
+	} catch (error) {
+		console.error("Error fetching music queue:", error);
+		return [];
 	}
 }

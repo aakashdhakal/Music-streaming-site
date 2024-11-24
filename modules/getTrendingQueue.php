@@ -1,0 +1,21 @@
+<?php
+include_once 'database.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql = 'SELECT musics.id ,COUNT(music_history.music_id) as plays 
+        FROM music_history
+        INNER JOIN musics ON music_history.music_id = musics.id
+        INNER JOIN users ON musics.artist = users.username
+        GROUP BY musics.id
+        ORDER BY plays DESC;';
+    $stmt = $mysqli->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $songs = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $songs[] = $row;
+    }
+    echo json_encode($songs);
+} else {
+    echo json_encode(["error" => "Invalid request method"]);
+}

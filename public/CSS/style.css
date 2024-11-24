@@ -68,7 +68,20 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
 	-webkit-text-fill-color: var(--text-color) !important;
-	-webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+	-webkit-box-shadow: 0 0 0px 1000px var(--bg-color-10) inset !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+	-moz-appearance: textfield;
+	appearance: textfield;
 }
 
 h1,
@@ -144,6 +157,10 @@ button {
 	border: 2px solid var(--primary-color);
 	background-color: transparent;
 	color: var(--primary-color);
+
+	p {
+		color: var(--primary-color) !important;
+	}
 }
 
 .login-signup {
@@ -179,6 +196,7 @@ dialog {
 	padding: 1rem;
 	position: fixed;
 	animation: dialogShow 0.2s ease;
+	background-color: var(--bg-color-10);
 }
 
 dialog::backdrop {
@@ -194,20 +212,44 @@ dialog .max-width {
 
 }
 
-.input-field {
-	width: 100%;
-	padding: 0.5rem 1rem;
-	border-radius: 5px;
-	border: 1px solid var(--primary-color);
-	outline: none;
+.form-group {
 	display: flex;
 	align-items: center;
+	gap: 0.5rem;
+	position: relative;
+	border-bottom: 1.5px solid #a7a7a7;
+	width: 100%;
 
 	input {
 		width: 100%;
 		padding: 0.5rem 1rem;
 		border: none;
 		outline: none;
+		background: none;
+		color: var(--text-color);
+		font-size: 1rem;
+	}
+
+	label {
+		position: absolute;
+		color: #808080;
+		transition: all 0.5s ease-in-out;
+		top: 0.3rem;
+		pointer-events: none;
+	}
+
+	input:focus+label,
+	input:not(:placeholder-shown)+label {
+		top: -1.3rem;
+		left: 0;
+		font-size: 0.9rem;
+		color: var(--primary-color);
+		background-color: var(--bg-color-10);
+		font-weight: 700;
+	}
+
+	&:has(input:focus) {
+		border-bottom: 1.5px solid var(--primary-color);
 	}
 }
 
@@ -226,6 +268,10 @@ dialog .max-width {
 	border: 1px solid var(--primary-color);
 	border-radius: 5px;
 	position: relative;
+	padding: 0%;
+	background-size: cover;
+	background-position: center;
+
 
 	&:hover {
 		label {
@@ -270,45 +316,71 @@ dialog .max-width {
 	display: none;
 }
 
-.form-group {
-	display: flex;
-	gap: 0.5rem;
-	position: relative;
-	border-bottom: 1.5px solid #a7a7a7;
-	padding: 0.2rem 0;
-	width: 100%;
-}
-
-label {
-	position: absolute;
-	color: #808080;
-	transition: all 0.5s ease-in-out;
-	top: 0.3rem;
-	pointer-events: none;
-}
-
-input {
-	font-size: 1rem;
-	border: none;
-	outline: none;
+.custom-select {
+	border: 1px solid var(--primary-color);
 	border-radius: 5px;
-	padding: 0rem 0.5rem;
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+	height: max-content;
+	position: relative;
 	width: 100%;
+
+	.select-display {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		width: 100%;
+		color: #838383;
+	}
+
+	.select-options {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		position: absolute;
+		background-color: var(--bg-color);
+		box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+		width: 100%;
+		top: 2.7rem;
+		left: 0;
+		max-height: 0;
+		transition: all 0.3s ease;
+		overflow: hidden;
+
+		&.show {
+			max-height: 10rem;
+			overflow: auto;
+		}
+
+		li {
+			padding: 0.5rem 1rem;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			margin: 0;
+
+			&:hover {
+				background-color: var(--primary-color-100);
+			}
+		}
+
+	}
 }
 
-input:focus+label,
-input:not(:placeholder-shown)+label {
-	top: -1.3rem;
-	left: 0;
-	font-size: 0.9rem;
-	color: var(--primary-color);
-	background-color: white;
-	font-weight: 700;
+input[type="number"] {
+	-moz-appearance: textfield;
+	appearance: textfield;
 }
 
-&:has(input:focus) {
-	border-bottom: 1.5px solid var(--primary-color);
+input[type="date"] {
+	-webkit-appearance: none;
+	appearance: none;
 }
+
+
+
+
+
 
 .toggle-password-visibility {
 	padding: 0;
@@ -639,5 +711,23 @@ hr {
 .artist-card {
 	img {
 		border-radius: 50%;
+	}
+}
+
+.error-container {
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-size: 1rem;
+	font-weight: bold;
+	color: red;
+	background-color: #f8d7da;
+	padding: 0.5rem;
+	border-radius: 5px;
+	display: none;
+
+	.error-text {
+		color: red;
+		font-size: 0.9rem;
 	}
 }

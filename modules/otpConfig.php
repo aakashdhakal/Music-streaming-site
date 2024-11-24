@@ -13,37 +13,95 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
         $otpCode = rand(100000, 999999);
         $email = $_POST['email'];
-        $username = $_POST['username'];
-        echo $otpCode . $email . $username;
-
-        $sql = "INSERT INTO verify_email (otp, username) VALUES ('$otpCode', '$username')";
+        $purpose = $_POST['purpose'];
+        $sql = "INSERT INTO verify_email (otp, email) VALUES ('$otpCode', '$email')";
         $result = mysqli_query($mysqli, $sql);
+        $message = "Welcome to SANGEET <br>Thank you for registering with us. Please use the following One-Time Password (OTP) to complete your verification process:";
+
+        if ($purpose == "forgot") {
+            $message = "Please use the following One-Time Password (OTP) to reset your password:";
+        }
 
         $htmlContent = "
-      <!DOCTYPE html>
-   <html lang='en'>
+    <!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>OTP Verification</title>
 
-   <head>
-       <meta charset='UTF-8'>
-       <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-       <title>Document</title>
-   </head>
-
-   <body style='margin:auto;padding:20px;border:2px dashed black;width:40%;color:black;'>
-           <img src='https://raw.githubusercontent.com/aakashdhakal/Music-streaming-site/887b3a2a1071d3fee985de3b8568aa9c27b10244/public/images/logo-title-side.svg' width='50%' height='120px' style='margin-left: auto; object-fit:cover'>
-           <section id='body' style='width: 83%; padding: 40px; font-family:Tahoma; margin: auto;'>
-               <p style='font-size: 1rem; font-weight: 500; letter-spacing: 1px; line-height: 2;'>Hello &nbsp;<span style='font-weight: 700;'>" . $username . "</span></p>
-               <p style='font-size: 1rem; font-weight: 500; letter-spacing: 1px; line-height: 2;'>Welcome to SANGEET. Your verification code is : <span style='font-weight: 70'>" . $otpCode . "</span></p>
-               <p style='font-size: 1rem; font-weight: 500; letter-spacing: 1px; line-height: 2;'>Thank you <br> The SANGEET Team</p>
-           </section>
-           <hr style='width: 83%; margin: 30px auto 30px;'>
-           <section id='copyright' style='width: 83%; margin: auto;'>
-               <p style='width: 100%; font-size: 0.9rem; font-weight: 500; letter-spacing: 1px; line-height: 1.8; color: gray; text-align: center;'>Copyright &copy; " . date('Y') . " Aakash Dhakal. All rights reserved.</p>
-           </section>
-
-   </body>
-
-   </html>
+</head>
+<body>
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #dddddd;
+            
+        }
+        .header h1 {
+            margin: 0;
+            color: #ff6a3a;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .content p {
+            font-size: 16px;
+            color: #666666;
+            line-height: 1.5rem;
+        }
+        .otp {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6a3a;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #dddddd;
+            margin-top: 20px;
+        }
+        .footer p {
+            font-size: 14px;
+            color: #999999;
+          margin-top: 1rem;
+        }
+    </style>
+    <div class='container'>
+        <div class='header'>
+            <h1>OTP Verification</h1>
+        </div>
+        <div class='content'>
+            <p>Dear User,</p>
+            <p>$message</p>
+            <div class='otp'>$otpCode</div>
+            <p>This OTP is valid for 10 minutes. Please do not share this OTP with anyone.</p>
+        </div>
+        <div class='footer'>
+            <p>If you did not request this, please ignore this email.</p>
+            <p>Thank you,<br>SANGEET</p>
+        </div>
+    </div>
+</body>
+</html>
 
     ";
 
@@ -59,24 +117,42 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $mail->setFrom("noreply@aakashdhakal.com.np");
         $mail->addAddress($email);
         $mail->isHTML(true);
-        $mail->Subject = "Welcome to A.D Blogs";
+        $mail->Subject = "Welcome to SANGEET";
         $mail->Body = $htmlContent;
 
         if ($mail->send()) {
-            echo "success";
+            echo json_encode(["status" => 200]);
         } else {
-            echo "Error occured" . $mail->ErrorInfo;
+            echo json_encode(["status" => 400, "error" => $mail->ErrorInfo]);
         }
     } else if ($_POST['action'] == "verifyOtp") {
         $otp = $_POST['otp'];
-        $username = $_POST['username'];
+        $email = $_POST['email'];
 
-        $sql = "SELECT * FROM verify_email WHERE otp = '$otp' AND username = '$username'";
-        $result = mysqli_query($conn, $sql);
+        $sql = "SELECT * FROM verify_email WHERE otp = ? AND email = ?";
+        $stmt = $mysqli->prepare($sql);
+        $stmt->bind_param("is", $otp, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
 
         if (mysqli_num_rows($result) > 0) {
+            $result = mysqli_fetch_assoc($result);
+            $time = strtotime($result['time']);
+            $curtime = time();
+            $interval = $curtime - $time;
+            if ($interval < 600) {
+                $sql = "DELETE FROM verify_email WHERE otp = ? AND email = ?";
+                $stmt = $mysqli->prepare($sql);
+                $stmt->bind_param("is", $otp, $email);
+                $stmt->execute();
+                echo json_encode(["status" => 200]);
+            } else {
+                echo json_encode(["status" => 400, "error" => "OTP expired"]);
+            }
+
         } else {
-            echo "Invalid OTP";
+            echo json_encode(["status" => 404, "error" => "Invalid OTP"]);
         }
     }
 }

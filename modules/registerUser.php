@@ -1,22 +1,33 @@
 <?php
 include_once "database.php";
+include_once "extraFunctions.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST["username"];
-    $password = $_POST["password"];
-    $sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("ss", $email, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $_SESSION["user_id"] = $row["id"];
-        $_SESSION["user_name"] = $row["firstname"] . " " . $row["lastname"];
-        $_SESSION["user_email"] = $row["email"];
-        $_SESSION["user_image"] = $row["profile_picture"];
-        $_SESSION["username"] = $row["username"];
-        echo "success";
+
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $dob = $_POST['dob'];
+    $profilePicture = $_FILES['profile_pic']['name'];
+
+    //if profilepicture is empty use default profile picture
+    if (empty($profilePicture)) {
+        $profilePicture = "/WEB-PROJECT/public/images/profile-pics/default.jpg";
     } else {
-        echo "error: {$mysqli->error}";
+        $profilePicture = createSlug($username) . "-" . $profilePicture;
+        $profilePicture = uploadFile($_FILES['profilePicture'], 'profile_picture', $profilePicture);
     }
+
+    $sql = "INSERT INTO users (username, email, password, firstName, lastName, dob,profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("sssssss", $username, $email, $password, $firstName, $lastName, $dob, $profilePicture);
+    $stmt->execute();
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(["message" => "User registered successfully", "status" => 200]);
+    } else {
+        echo json_encode(["message" => "Failed to register user", "status" => 500]);
+    }
+} else {
+    echo json_encode(["message" => "Invalid Request", "status" => 400]);
 }
