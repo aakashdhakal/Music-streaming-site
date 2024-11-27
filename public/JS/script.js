@@ -106,13 +106,15 @@ document.querySelectorAll(".nav-btn").forEach((btn) => {
 });
 
 // Change theme function
-function changeTheme() {
-	document.body.classList.toggle("dark");
-	localStorage.setItem("darkMode", document.body.classList.contains("dark"));
-	document.querySelector(".dark-mode-btn").innerHTML =
-		document.body.classList.contains("dark")
-			? `<iconify-icon icon="clarity:sun-line"></iconify-icon>`
-			: `<iconify-icon icon="flowbite:moon-outline"></iconify-icon>`;
+async function changeTheme() {
+	if (await checkLoginStatus()) {
+		document.body.classList.toggle("dark");
+		localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+		document.querySelector(".dark-mode-btn").innerHTML =
+			document.body.classList.contains("dark")
+				? `<iconify-icon icon="clarity:sun-line"></iconify-icon>`
+				: `<iconify-icon icon="flowbite:moon-outline"></iconify-icon>`;
+	}
 }
 
 // Sidebar collapse/expand
@@ -328,19 +330,19 @@ async function fetchMusic(musicId) {
 }
 
 //Function to like or dislike a music
-async function setLikeStatus(musicId, status) {
+async function setLikeStatus(musicId, action = "check") {
 	try {
 		const response = await fetch(baseUrl + "/modules/addToFavourite.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
-			body: `musicId=${encodeURIComponent(musicId)}&action=${status}`,
+			body: `musicId=${encodeURIComponent(musicId)}&action=${action}`,
 		});
 		const data = await response.json();
-		if (data.status === "success") {
+		if (data.status === 200) {
 			return true;
-		} else {
+		} else if ((data.status = 201)) {
 			return false;
 		}
 	} catch (error) {
@@ -663,7 +665,7 @@ async function resetPassword(email, password) {
 	}
 }
 
-async function fetchMusicQueue(mode, queueId) {
+async function fetchMusicQueue(musicId, mode, queueId) {
 	let endpoint = baseUrl + "/modules/";
 	switch (mode) {
 		case "playlist":
@@ -688,10 +690,12 @@ async function fetchMusicQueue(mode, queueId) {
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
-			body: `playlistId=${encodeURIComponent(queueId)}`,
+			body: `id= ${encodeURIComponent(musicId)}&playlistId=${encodeURIComponent(
+				queueId,
+			)}`,
 		});
 		const data = await response.json();
-		return data;
+		return Object.values(data);
 	} catch (error) {
 		console.error("Error fetching music queue:", error);
 		return [];

@@ -11,7 +11,7 @@ const addToPlaylistDialogShowBtn = document.querySelector(
 );
 const addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
 const playlistContainer = document.querySelectorAll(".playlists");
-const likeBtns = document.querySelectorAll(".like-btn");
+const likeBtn = document.querySelector(".like-btn");
 const prevMusicBtn = document.querySelector(".prev-btn");
 const nextMusicBtn = document.querySelector(".next-btn");
 
@@ -19,6 +19,9 @@ const playIcon =
 	"<iconify-icon icon='solar:play-bold' style='color:#ff7f11'></iconify-icon>";
 const pauseIcon =
 	"<iconify-icon icon='solar:pause-bold' style='color:#ff7f11'></iconify-icon>";
+const unlikedIcon = "<iconify-icon icon='fe:heart-o'></iconify-icon>";
+const likedIcon =
+	"<iconify-icon icon='fe:heart'  style='color: #ff6a3a'></iconify-icon>";
 
 let isPlaying = false;
 let music = new Audio();
@@ -26,21 +29,71 @@ let musicId = null;
 let loaded = false;
 let playedMusicQueue = [];
 let nextMusicQueue = [];
+let nextMusicQueueCopy = [];
+let lyrics = [];
+let currentLyric = [];
+let nextLyric = [];
+let previousLyric = [];
 
-async function addMusicToQueue(currentPlayMode = "normal", queueId = null) {
-	// Add music to the queue
-	let queue = await fetchMusicQueue(currentPlayMode, queueId);
-	//add ids to the queue
-	nextMusicQueue = queue.map((music) => music.id);
+// Function to parse LRC file text and return an array of time-text objects
+function parseLyric(lrc) {
+	const lines = lrc.split("\n");
+	const regex = /^\[(\d{2}:\d{2}\.\d{2})\](.*)/;
+	const output = [];
+
+	lines.forEach((line) => {
+		const match = line.match(regex);
+		if (match) {
+			const [_, time, text] = match;
+			output.push({ time: parseTime(time), text: text.trim() });
+		}
+	});
+
+	// Convert "mm:ss.xx" to total seconds
+	function parseTime(time) {
+		const [min, sec] = time.split(":");
+		return parseInt(min) * 60 + parseFloat(sec);
+	}
+
+	return output;
 }
 
-// Function to set like status of the song
-function setLikeBtnStatus(btn, status) {
-	// btn.innerHTML =
-	// 	status === "like"
-	// 		? '<i class="fa-solid fa-heart" style="color: #ff7f11;"></i>'
-	// 		: '<i class="fa-regular fa-heart"></i>';
-	// btn.setAttribute("data-liked", status === "like" ? "true" : "false");
+function syncLyric(lyrics, time) {
+	const scores = lyrics
+		.map((lyric) => time - lyric.time)
+		.filter((score) => score >= 0);
+
+	if (scores.length === 0) return null;
+
+	const closest = Math.min(...scores);
+	return scores.indexOf(closest);
+}
+
+function displayLyric(lyrics, time) {
+	const lyricContainer = document.querySelector(".lyrics-container");
+	const lyricIndex = syncLyric(lyrics, time);
+	if (lyricIndex !== null) {
+		//get the current lyric and the next lyric and previous lyric
+		currentLyric = lyrics[lyricIndex];
+		nextLyric = lyrics[lyricIndex + 1];
+		previousLyric = lyrics[lyricIndex - 1];
+
+		lyricContainer.innerHTML = `
+            <p class="lyric previous">${
+							previousLyric ? previousLyric.text : ""
+						}</p>
+            <p class="lyric current">${currentLyric.text}</p>
+            <p class="lyric next">${nextLyric ? nextLyric.text : ""}</p>
+        `;
+	} else {
+		lyricContainer.innerHTML = "";
+	}
+}
+
+// Function to update like button status
+function setLikeBtnStatus(action) {
+	likeBtn.innerHTML = action === "like" ? likedIcon : unlikedIcon;
+	likeBtn.setAttribute("data-liked", action === "like" ? "true" : "false");
 }
 
 // Check if the given music ID is already loaded
@@ -61,6 +114,14 @@ async function loadMusic(id) {
 	});
 	await addToHistory(musicData.id);
 	addToPrevMusic(musicData.id);
+	if (await setLikeStatus(musicData.id)) {
+		setLikeBtnStatus("like");
+	}
+
+	// Fetch and display lyrics
+	currentLyric = nextLyric = previousLyric = [];
+	const lrc = await fetch(musicData.lyricsPath).then((res) => res.text());
+	lyrics = parseLyric(lrc);
 }
 
 // Format the duration of the music in minutes and seconds
@@ -79,10 +140,6 @@ function updateMusicControls(musicData) {
 	const musicCover = document.querySelector(".music-cover");
 	const totalDuration = document.querySelector(".total-duration");
 
-	if (musicData.isFavourite) {
-		setLikeBtnStatus(likeBtns, "like");
-	}
-
 	musicTitle.innerHTML = musicData.title;
 	musicArtist.innerHTML = `${musicData.firstname} ${musicData.lastname}`;
 	musicCover.src = musicData.coverImage;
@@ -98,8 +155,9 @@ function updateMusicControls(musicData) {
 }
 
 // Function to play the music
-function playMusic() {
+async function playMusic() {
 	music.play();
+	displayLyric(lyrics, music.currentTime);
 	isPlaying = true;
 	playPauseBtn.innerHTML = pauseIcon;
 }
@@ -110,6 +168,7 @@ function pauseMusic() {
 	isPlaying = false;
 	playPauseBtn.innerHTML = playIcon;
 }
+
 // Function to add current music to the nextMusicQueue list
 function addToNextMusic(currentMusicId) {
 	if (!nextMusicQueue.includes(currentMusicId)) {
@@ -128,7 +187,6 @@ prevMusicBtn.addEventListener("click", async () => {
 	if (playedMusicQueue.length > 1) {
 		// Add current music to nextMusicQueue list
 		addToNextMusic(musicId);
-
 		// Remove the last played music and load the previous one
 		playedMusicQueue.pop();
 		await loadMusic(playedMusicQueue.pop());
@@ -139,15 +197,14 @@ prevMusicBtn.addEventListener("click", async () => {
 nextMusicBtn.addEventListener("click", async () => {
 	if (nextMusicQueue.length) {
 		// Add current music to playedMusicQueue list
-		addToHistory(musicId);
-
+		addToPrevMusic(musicId);
 		// Load the next music from the nextMusicQueue list
 		await loadMusic(nextMusicQueue.shift());
 		playMusic();
 	}
 });
 
-// Event listener for updating seekbar and current duration
+// Event listener for updating seekbar, current duration, and lyrics
 music.addEventListener("timeupdate", () => {
 	if (music.duration) {
 		const currentDuration = document.querySelector(".current-duration");
@@ -155,6 +212,9 @@ music.addEventListener("timeupdate", () => {
 		seekbar.value = position;
 		seekbar.style.setProperty("--seek-before-width", `${position}%`);
 		currentDuration.innerText = formatDuration(music.currentTime);
+
+		// Update lyrics display
+		displayLyric(lyrics, music.currentTime);
 	}
 });
 
@@ -193,9 +253,17 @@ function toggleButton(button, attribute, otherButton, otherAttribute) {
 }
 
 // Event listeners for shuffle and repeat buttons
-shuffleBtn.addEventListener("click", () =>
-	toggleButton(shuffleBtn, "data-shuffle", repeatBtn, "data-repeat"),
-);
+shuffleBtn.addEventListener("click", function () {
+	toggleButton(shuffleBtn, "data-shuffle", repeatBtn, "data-repeat");
+
+	for (let i = nextMusicQueue.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[nextMusicQueue[i], nextMusicQueue[j]] = [
+			nextMusicQueue[j],
+			nextMusicQueue[i],
+		];
+	}
+});
 repeatBtn.addEventListener("click", () =>
 	toggleButton(repeatBtn, "data-repeat", shuffleBtn, "data-shuffle"),
 );
@@ -279,7 +347,7 @@ document.addEventListener("keydown", (e) => {
 			volumeBtn.click();
 			break;
 		case "f":
-			likeBtns.click();
+			likeBtn.click();
 			break;
 		case "r":
 			repeatBtn.click();
@@ -301,20 +369,18 @@ async function displayPlaylists() {
 	});
 }
 
-// Event listener for like buttons
-likeBtns.forEach((btn) => {
-	btn.addEventListener("click", async () => {
-		const musicId = btn.getAttribute("data-musicId");
-		const action =
-			btn.getAttribute("data-liked") === "false" ? "like" : "unlike";
-		if (setLikeBtnStatus(musicId, action)) {
-			setLikeBtnStatus(btn, action);
-			showAlert(
-				`Music ${action === "like" ? "added to" : "removed from"} favourites`,
-				"success",
-			);
-		}
-	});
+// Event listener for like button
+likeBtn.addEventListener("click", async () => {
+	const musicId = likeBtn.getAttribute("data-musicId");
+	const action =
+		likeBtn.getAttribute("data-liked") === "false" ? "like" : "unlike";
+	if (await setLikeStatus(musicId, action)) {
+		setLikeBtnStatus(action);
+		// showAlert(
+		//     `Music ${action === 'like' ? 'added to' : 'removed from'} favourites`,
+		//     'success',
+		// );
+	}
 });
 
 // Event listener for document clicks
@@ -326,9 +392,13 @@ document.addEventListener("click", async (e) => {
 			isPlaying ? pauseMusic() : playMusic();
 		} else {
 			await loadMusic(musicId);
+			nextMusicQueue = (await fetchMusicQueue(musicId)).map(
+				(music) => music.id,
+			);
+			nextMusicQueueCopy = [...nextMusicQueue];
 			playMusic();
 		}
-		await addMusicToQueue();
+		addToNextMusic(musicId);
 	}
 
 	if (e.target.closest(".expand-current-song")) {
@@ -336,7 +406,9 @@ document.addEventListener("click", async (e) => {
 		currentSongContainer.classList.toggle("expanded");
 		if (currentSongContainer.classList.contains("expanded")) {
 			document.documentElement.requestFullscreen();
+			document.body.style.overflow = "hidden";
 		} else {
+			document.body.style.overflow = "auto";
 			document.exitFullscreen();
 		}
 	}
@@ -347,5 +419,10 @@ document.addEventListener("fullscreenchange", () => {
 	const currentSongContainer = document.querySelector("#musicControls");
 	if (!document.fullscreenElement) {
 		currentSongContainer.classList.remove("expanded");
+		document.body.style.overflow = "auto";
 	}
+});
+
+music.addEventListener("seeked", () => {
+	displayLyric(lyrics, music.currentTime);
 });

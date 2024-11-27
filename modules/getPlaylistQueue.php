@@ -2,11 +2,13 @@
 include_once 'database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id = $_POST["id"];
+
     if (isset($_POST["playlistId"])) {
         $playlistId = $_POST["playlistId"];
-        $sql = "SELECT music_id from playlist_songs where playlist_id = ?";
+        $sql = "SELECT music_id from playlist_songs where playlist_id = ? and music_id != ?";
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("i", $playlistId);
+        $stmt->bind_param("ii", $playlistId, $id);
         $stmt->execute();
         $result = $stmt->get_result();
         $songs = [];

@@ -2,8 +2,10 @@
 include_once 'database.php';
 //fetch random music queue
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $sql = "SELECT id FROM musics ORDER BY RAND() LIMIT 10";
+    $id = $_POST["id"];
+    $sql = "SELECT id FROM musics WHERE id != ? ORDER BY RAND()";
     $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
     $songs = [];

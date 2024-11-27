@@ -16,16 +16,22 @@ include_once "pages/head.php"; ?>
 
     <div id="musicControls">
         <div class="full-screen-show">
-            <img src="
-            <?php echo $baseUrl ?>\public\images\song-cover\sarangi.jpg
-            " alt="">
+            <div class="playing-on">
+                <img src="<?php echo $baseUrl ?>\public\images\logo-circle.png" alt="" srcset="">
+                <p>PLAYING ON SANGEET</p>
+            </div>
+            <div id="lyricsContainer" class="lyrics-container">
+                <p class="previous"></p>
+                <p class="current"></p>
+                <p class="next"></p>
+            </div>
         </div>
         <div class="controls">
             <div class="left">
                 <img src="<?php echo $baseUrl ?>\public\images\song-cover\sarangi.jpg" alt="album art"
                     class="music-cover">
                 <div class="song-info">
-                    <h3 class="music-title">Saarangi</h3>
+                    <h3 class="music-title">Saarangi wadawdawd awd</h3>
                     <p class="music-artist">Sushant K.C</p>
                 </div>
             </div>
