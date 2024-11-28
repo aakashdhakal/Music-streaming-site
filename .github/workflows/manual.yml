@@ -20,7 +20,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no aakashdhakal@aakashdhakal.com.np << 'EOF'
+          ssh -o StrictHostKeyChecking=no aakashdhakal@remotessh.aakashdhakal.com.np << 'EOF'
             cd /var/www/sangeet.aakashdhakal.com.np
             git pull origin main
             # Add any additional deployment commands here
