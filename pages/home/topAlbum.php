@@ -1,6 +1,6 @@
 <?php
-include_once "$baseUrl/modules/database.php";
-include_once realpath($_SERVER["DOCUMENT_ROOT"]) . "/WEB-PROJECT/modules/extraFunctions.php";
+include_once "modules/database.php";
+include_once "modules/extraFunctions.php";
 
 $sql = 'SELECT * from musics WHERE artist = ? ORDER BY id DESC LIMIT 5';
 $stmt = $mysqli->prepare($sql);

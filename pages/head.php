@@ -2,7 +2,6 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-$baseUrl = "/WEB-PROJECT";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,8 +10,8 @@ $baseUrl = "/WEB-PROJECT";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $website_title ?></title>
-    <link rel="shortcut icon" href="<?php echo $baseUrl ?>/public/images/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="<?php echo $baseUrl ?>/public/CSS/style.css">
+    <link rel="shortcut icon" href="/public/images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="/public/CSS/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"

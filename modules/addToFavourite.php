@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
 
         if ($action == 'check' && isFavourites($musicId)) {
-            echo json_encode(['status' => 201, 'message' => 'Music already in favourites']);
+            echo json_encode(['status' => 200, 'message' => 'Music already in favourites']);
         } else if ($action == 'check' && !isFavourites($musicId)) {
-            echo json_encode(['status' => 200, 'message' => 'Music not in favourites']);
+            echo json_encode(['status' => 201, 'message' => 'Music not in favourites']);
         } else {
 
             $message;

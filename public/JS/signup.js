@@ -1,3 +1,4 @@
+let signupForm = document.querySelector(".signup-form");
 document.addEventListener("click", (e) => {
 	const signupFormElement = document.querySelector("#signupForm");
 	const loginFormElement = document.querySelector("#loginForm");
@@ -87,7 +88,7 @@ function handleOtpVerifyForm(form) {
 }
 
 // Handle personal info form submission
-function handlePersonalInfoForm(_form, formData) {
+async function handlePersonalInfoForm(_form, formData) {
 	registerData.append(
 		"dob",
 		formatDate(
@@ -100,7 +101,10 @@ function handlePersonalInfoForm(_form, formData) {
 	registerData.append("firstName", formData.get("firstName"));
 	registerData.append("lastName", formData.get("lastName"));
 
-	registerUser(registerData);
+	if (await registerUser(registerData)) {
+		//send form element to loginUser function
+		loginUser(signupForm);
+	}
 }
 
 // Combine OTP input values into a single string
@@ -221,6 +225,29 @@ function validatePersonalInfoForm(form) {
 
 	if (!year || !month || !day || !firstName || !lastName) {
 		showError(form, "Please fill in all fields");
+		return false;
+	} else if (!validateDate(year, month, day)) {
+		showError(form, "Invalid date of birth");
+		return false;
+	}
+
+	return true;
+}
+
+// Validate date of birth
+function validateDate(year, month, day) {
+	const date = new Date(year, month - 1, day);
+	const currentDate = new Date();
+
+	if (date > currentDate) {
+		return false;
+	} else if (year < 1900) {
+		return false;
+	} else if (
+		date.getFullYear() != year ||
+		date.getMonth() != month - 1 ||
+		date.getDate() != day
+	) {
 		return false;
 	}
 

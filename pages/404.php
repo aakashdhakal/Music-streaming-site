@@ -9,7 +9,7 @@ require_once "pages/head.php"
     <img src="public/images/404.svg" alt="" srcset="">
     <h1>OOPS ! Something went wrong</h1>
     <p>Sorry, the page you are looking for does not exist.</p>
-    <a href="<?php echo $baseUrl ?>">Go back to the homepage</a>
+    <a href="<?php echo "/" ?>">Go back to the homepage</a>
 </body>
 
 </html>

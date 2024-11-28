@@ -17,7 +17,7 @@ include_once "pages/head.php"; ?>
     <div id="musicControls">
         <div class="full-screen-show">
             <div class="playing-on">
-                <img src="<?php echo $baseUrl ?>\public\images\logo-circle.png" alt="" srcset="">
+                <img src="public/images/logo-circle.png" alt="" srcset="">
                 <p>PLAYING ON SANGEET</p>
             </div>
             <div id="lyricsContainer" class="lyrics-container">
@@ -28,8 +28,7 @@ include_once "pages/head.php"; ?>
         </div>
         <div class="controls">
             <div class="left">
-                <img src="<?php echo $baseUrl ?>\public\images\song-cover\sarangi.jpg" alt="album art"
-                    class="music-cover">
+                <img src="public\images\song-cover\sarangi.jpg" alt="album art" class="music-cover">
                 <div class="song-info">
                     <h3 class="music-title">Saarangi wadawdawd awd</h3>
                     <p class="music-artist">Sushant K.C</p>
@@ -57,7 +56,7 @@ include_once "pages/head.php"; ?>
                 </div>
             </div>
             <div class="right">
-                <button class="like-btn" title="Add to Favourites" data-liked="false" data-musicId="2">
+                <button class="like-btn" title="Add to Favourites" data-liked="false">
                     <iconify-icon icon='fe:heart-o'></iconify-icon></button>
                 <button class="add-to-playlist-dialog-show-btn" title="Add to Playlist">
                     <iconify-icon icon='tabler:playlist-add'></iconify-icon> </button>
@@ -144,8 +143,7 @@ include_once "pages/head.php"; ?>
                 <i class="fa-solid fa-bars-staggered"></i>
             </button>
             <div class="logo-container">
-                <a href="
-                    <?php echo $baseUrl ?>">
+                <a href="/">
                 </a>
             </div>
 
@@ -155,8 +153,7 @@ include_once "pages/head.php"; ?>
             if (isset($_SESSION['user_id'])) {
                 ?>
                 <button id="uploadMusicShowBtn" title="Upload Music">
-                    <iconify-icon icon="icon-park-solid:add-music"></iconify-icon>
-                </button>
+                    <iconify-icon icon="iconoir:music-note-plus"></iconify-icon> </button>
                 <button class="dark-mode-btn">
                     <iconify-icon icon="flowbite:moon-outline"></iconify-icon>
                 </button>

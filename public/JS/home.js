@@ -18,4 +18,10 @@ document.addEventListener("click", (e) => {
 		// Scroll the container to the left by its own width
 		cardContainer.scrollLeft -= cardContainer.offsetWidth;
 	}
+
+	// Check if the clicked element or its ancestor has the id uploadMusicShowBtn
+	if (e.target.closest("#uploadMusicShowBtn")) {
+		// Show the upload form modal
+		document.querySelector("#uploadMusic").showModal();
+	}
 });

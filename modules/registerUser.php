@@ -13,10 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     //if profilepicture is empty use default profile picture
     if (empty($profilePicture)) {
-        $profilePicture = "/WEB-PROJECT/public/images/profile-pics/default.jpg";
+        $profilePicture = "public/images/profile-pics/default.jpg";
     } else {
-        $profilePicture = createSlug($username) . "-" . $profilePicture;
-        $profilePicture = uploadFile($_FILES['profilePicture'], 'profile_picture', $profilePicture);
+        $profilePicture = createSlug($username) . "-profile-pic." . pathinfo($profilePicture, PATHINFO_EXTENSION);
+        $profilePicture = uploadFile($_FILES['profile_pic'], 'profile_pic', $profilePicture);
     }
 
     $sql = "INSERT INTO users (username, email, password, firstName, lastName, dob,profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)";

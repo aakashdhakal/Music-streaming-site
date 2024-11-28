@@ -1016,6 +1016,7 @@
                     font-weight: bold;
                     font-family: Chau Philomene One !important;
                     width: 100% !important;
+                    letter-spacing: 0.1rem;
                 }
 
                 .music-artist {
@@ -1222,26 +1223,12 @@ main {
     height: max-content;
 
 
-    .recently-played-songs {
+    /* .recently-played-songs {
         grid-row: 1;
         grid-column: 1;
         width: 100%;
         height: min-content;
-    }
-
-    .recently-added-songs {
-        width: 100%;
-        grid-row: 2;
-        grid-column: 1;
-        height: min-content;
-    }
-
-    .recently-modified-songs {
-        width: 100%;
-        grid-row: 3;
-        grid-column: 1;
-        height: min-content;
-    }
+    } */
 
     .top-album {
         grid-row: 1 / 4;

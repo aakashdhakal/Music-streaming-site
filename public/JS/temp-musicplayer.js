@@ -116,6 +116,8 @@ async function loadMusic(id) {
 	addToPrevMusic(musicData.id);
 	if (await setLikeStatus(musicData.id)) {
 		setLikeBtnStatus("like");
+	} else {
+		setLikeBtnStatus("unlike");
 	}
 
 	// Fetch and display lyrics
@@ -144,6 +146,7 @@ function updateMusicControls(musicData) {
 	musicArtist.innerHTML = `${musicData.firstname} ${musicData.lastname}`;
 	musicCover.src = musicData.coverImage;
 	totalDuration.innerHTML = formatDuration(music.duration);
+	likeBtn.setAttribute("data-musicId", musicData.id);
 
 	if (!loaded) {
 		musicControls.animate([{ bottom: "-10%" }, { bottom: "0" }], {
@@ -172,7 +175,7 @@ function pauseMusic() {
 // Function to add current music to the nextMusicQueue list
 function addToNextMusic(currentMusicId) {
 	if (!nextMusicQueue.includes(currentMusicId)) {
-		nextMusicQueue.push(currentMusicId);
+		nextMusicQueue.unshift(currentMusicId);
 	}
 }
 
@@ -186,9 +189,9 @@ function addToPrevMusic(currentMusicId) {
 prevMusicBtn.addEventListener("click", async () => {
 	if (playedMusicQueue.length > 1) {
 		// Add current music to nextMusicQueue list
-		addToNextMusic(musicId);
+		addToNextMusic(playedMusicQueue.pop());
 		// Remove the last played music and load the previous one
-		playedMusicQueue.pop();
+
 		await loadMusic(playedMusicQueue.pop());
 		playMusic();
 	}
@@ -197,7 +200,6 @@ prevMusicBtn.addEventListener("click", async () => {
 nextMusicBtn.addEventListener("click", async () => {
 	if (nextMusicQueue.length) {
 		// Add current music to playedMusicQueue list
-		addToPrevMusic(musicId);
 		// Load the next music from the nextMusicQueue list
 		await loadMusic(nextMusicQueue.shift());
 		playMusic();
@@ -398,7 +400,6 @@ document.addEventListener("click", async (e) => {
 			nextMusicQueueCopy = [...nextMusicQueue];
 			playMusic();
 		}
-		addToNextMusic(musicId);
 	}
 
 	if (e.target.closest(".expand-current-song")) {

@@ -3,7 +3,7 @@
 //connect to the database
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "A@kash123";
 $database = "web_project";
 $mysqli = new mysqli($servername, $username, $password, $database);
 if ($mysqli->connect_error) {

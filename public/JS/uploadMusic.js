@@ -39,7 +39,6 @@ dragDropArea.addEventListener("drop", function (e) {
 	let file = e.dataTransfer.files[0];
 	if (checkMusicFileType(file)) {
 		songInput.files = e.dataTransfer.files;
-		console.log(songInput.files);
 		dragDropText.innerHTML = songInput.files[0].name;
 	} else {
 		showAlert("Only music files are allowed", "error");
@@ -63,7 +62,7 @@ songInput.addEventListener("change", function () {
 uploadMusicForm.addEventListener("submit", function (e) {
 	e.preventDefault();
 	let formData = new FormData(uploadMusicForm);
-	fetch(baseUrl + "/modules/uploadMusic.php", {
+	fetch("/modules/uploadMusic.php", {
 		method: "POST",
 		body: formData,
 	})
