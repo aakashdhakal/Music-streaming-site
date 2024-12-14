@@ -77,17 +77,17 @@ include_once "pages/head.php"; ?>
     <nav id="sideNav">
         <ul>
             <li class="active">
-                <button data-path="pages/home/home.php" data-script="public/JS/home.js" class="nav-btn">
+                <button data-path="/" data-script="public/JS/home.js" class="nav-btn">
                     <iconify-icon icon="fluent:home-24-filled"></iconify-icon>Home
                 </button>
             </li>
             <li>
-                <button data-path="pages/tempHome/home.php" data-script="public/JS/home.js" class="nav-btn">
+                <button data-path="/discover" data-script="public/JS/home.js" class="nav-btn">
                     <iconify-icon icon="mingcute:compass-fill"></iconify-icon>Discover
                 </button>
             </li>
             <li>
-                <button data-path="pages/tempHome/home.php" data-script="public/JS/home.js" class="nav-btn">
+                <button data-path="/trending" data-script="public/JS/home.js" class="nav-btn">
                     <iconify-icon icon="mage:fire-b-fill"></iconify-icon>Trending
                 </button>
             </li>
@@ -102,7 +102,7 @@ include_once "pages/head.php"; ?>
                 </div>
                 <!-- Favourites -->
                 <li>
-                    <button data-path="pages/favourites/favourites.php" data-script="public/JS/favourites.js"
+                    <button data-path="/favourites" data-script="public/JS/favourites.js" data-title="Favourites"
                         class="nav-btn">
                         <iconify-icon icon="si:heart-fill"></iconify-icon>Favourites
                     </button>
@@ -377,7 +377,7 @@ include_once "pages/head.php"; ?>
                     </a>
                 </li>
                 <li>
-                    <a href="modules/logoutUser.php">
+                    <a href="/logout">
                         <iconify-icon icon="bi:box-arrow-right"></iconify-icon>Logout
                     </a>
                 </li>

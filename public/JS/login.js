@@ -17,12 +17,15 @@ document.addEventListener("submit", async (e) => {
 	// Handle login form submission
 	if (e.target.matches(".login-form")) {
 		e.preventDefault();
+		let btn = e.target.querySelector("button[type='submit']");
+		setBtnStatus(btn, "loading", "Logging in");
 		let username = e.target.querySelector("#username").value;
 		let password = e.target.querySelector("#password").value;
 
 		// Validate form fields
 		if (username === "" || password === "") {
 			showError(e.target, "Please fill in all the fields");
+			setBtnStatus(btn, "normal", "Login");
 		} else {
 			await loginUser(e.target);
 		}

@@ -1,6 +1,6 @@
 <?php
-include_once "modules/database.php";
-include_once "modules/extraFunctions.php";
+require_once __DIR__ . '/../../modules/database.php';
+require_once __DIR__ . '/../../modules/extraFunctions.php';
 $sql = "SELECT music_history.music_id, musics.*, MAX(music_history.id) as max_id
         FROM music_history 
         INNER JOIN musics ON music_history.music_id = musics.id 

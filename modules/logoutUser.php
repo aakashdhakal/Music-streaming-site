@@ -6,7 +6,7 @@ session_start();
 if (session_status() == PHP_SESSION_ACTIVE) {
     session_destroy();
 }
-
+echo "sadsdasd";
 // Redirect to the home page
-header("Location: /");
+header("Location: /home");
 exit();

@@ -1,10 +1,50 @@
 let title = document.title;
 
+//function to load pages dynamically
+
+async function loadPageDynamic(url) {
+	setPagePreloader(true);
+	let path = url.split("/").pop();
+	history.pushState({ path: path }, null, url);
+	//select nab-tn where data-url is equal to url
+	let btn = document.querySelector(`#sideNav button[data-path="/${path}"]`);
+	if (btn) changeActiveBtn(btn);
+	document.title = getTitle(path);
+	await loadPage(url);
+}
+
+function setPagePreloader(display) {
+	let main = document.querySelector("main");
+	if (display) {
+		main.innerHTML = `<iconify-icon icon="svg-spinners:6-dots-rotate" width="60" height="60"  style="color: #ff7f11; position:absolute; left: 50%;top:50%;"></iconify-icon>`;
+	}
+}
+
+function getTitle(path) {
+	switch (path) {
+		case "":
+		case "home":
+			return "Sangeet - The Heartbeat of Music";
+		case "favourites":
+			return "Sangeet - Favourites";
+		case "history":
+			return "Sangeet - History";
+		case "discover":
+			return "Sangeet - Discover";
+		case "trending":
+			return "Sangeet - Trending";
+	}
+}
+
 //preloader
 
 let preloader = document.querySelector(".preloader");
-window.addEventListener("load", () => {
-	preloader.style.display = "none";
+window.addEventListener("load", async () => {
+	let url = window.location.href;
+	await loadPageDynamic(url);
+	setTimeout(() => {
+		preloader.style.display = "none";
+	}, 1000);
 });
 
 function showError(form, message) {
@@ -21,11 +61,17 @@ function hideError() {
 	});
 }
 
-function checkEmptyInput(input) {
-	if (input.value === "") {
-		return true;
-	} else {
-		return false;
+function setBtnStatus(btn, status, text) {
+	switch (status) {
+		case "loading":
+			btn.innerHTML = `<iconify-icon icon="eos-icons:bubble-loading"></iconify-icon>&nbsp;&nbsp;${text}`;
+			btn.disabled = true;
+			btn.style.opacity = 0.7;
+			break;
+		case "normal":
+			btn.innerHTML = `${text}`;
+			btn.style.opacity = 1;
+			break;
 	}
 }
 
@@ -93,11 +139,9 @@ function changeActiveBtn(btn) {
 document.querySelectorAll(".nav-btn").forEach((btn) => {
 	btn.addEventListener("click", async () => {
 		changeActiveBtn(btn);
-		await loadPage(
-			btn.getAttribute("data-path"),
-			document.querySelector("main"),
-		);
-		appendScript(btn.getAttribute("data-script"));
+		let path = btn.getAttribute("data-path");
+		await loadPageDynamic(path);
+		await appendScript(btn.getAttribute("data-script"));
 	});
 });
 
@@ -292,9 +336,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 //all api calls
 
 //function to change pages
-async function loadPage(path, containerElement) {
+async function loadPage(path) {
+	let containerElement = document.querySelector("main");
 	try {
-		const response = await fetch(path);
+		const response = await fetch(path, {
+			method: "POST",
+		});
 		if (!response.ok) {
 			throw new Error("Network response was not ok");
 		}
@@ -309,7 +356,7 @@ async function loadPage(path, containerElement) {
 //function to fetch music
 async function fetchMusic(musicId) {
 	try {
-		const response = await fetch("/modules/fetchMusic.php", {
+		const response = await fetch("/fetchmusic", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -327,7 +374,7 @@ async function fetchMusic(musicId) {
 //Function to like or dislike a music
 async function setLikeStatus(musicId, action = "check") {
 	try {
-		const response = await fetch("/modules/addToFavourite.php", {
+		const response = await fetch("/addToFavourite", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -349,7 +396,7 @@ async function setLikeStatus(musicId, action = "check") {
 //Function to add music to playlist
 async function addToPlaylist(playlistId, musicId) {
 	try {
-		const response = await fetch("/modules/addToPlaylist.php", {
+		const response = await fetch("/addToPlaylist", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -377,7 +424,7 @@ async function addToPlaylist(playlistId, musicId) {
 //Function to create a playlist
 async function createPlaylist(formData) {
 	try {
-		const response = await fetch("/modules/createPlaylist.php", {
+		const response = await fetch("/createPlaylist", {
 			method: "POST",
 			body: formData,
 		});
@@ -397,7 +444,7 @@ async function createPlaylist(formData) {
 //Function to fetch a playlist html
 async function fetchPlaylists() {
 	try {
-		const response = await fetch("/modules/getPlaylist.php", {
+		const response = await fetch("/getPlaylist", {
 			method: "POST",
 		});
 		const data = await response.text();
@@ -411,7 +458,7 @@ async function fetchPlaylists() {
 //Function to add to history
 async function addToHistory(musicId) {
 	try {
-		const response = await fetch("/modules/addToHistory.php", {
+		const response = await fetch("/addToHistory", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -432,7 +479,9 @@ async function addToHistory(musicId) {
 
 async function checkLoginStatus() {
 	try {
-		const response = await fetch("/modules/checkLoginStatus.php");
+		const response = await fetch("/checkLoginStatus", {
+			method: "POST",
+		});
 		const data = await response.json();
 		if (data) {
 			return true;
@@ -447,7 +496,7 @@ async function checkLoginStatus() {
 
 async function fetchNotifications(numbers = 5) {
 	try {
-		const response = await fetch("/modules/fetchNotifications.php", {
+		const response = await fetch("/fetchNotifications", {
 			method: "POST",
 			body: `numbers=${encodeURIComponent(numbers)}`,
 		});
@@ -461,7 +510,7 @@ async function fetchNotifications(numbers = 5) {
 
 async function deleteNotification(notificationId) {
 	try {
-		const response = await fetch("/modules/deleteNotification.php", {
+		const response = await fetch("/deleteNotification", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -482,7 +531,7 @@ async function deleteNotification(notificationId) {
 
 async function setNotificationReadStatus(notificationId) {
 	try {
-		const response = await fetch("/modules/setNotificationReadStatus.php", {
+		const response = await fetch("/setNotificationReadStatus", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -503,7 +552,7 @@ async function setNotificationReadStatus(notificationId) {
 
 async function sendOtp(email, purpose = "register") {
 	try {
-		const response = await fetch("/modules/otpConfig.php", {
+		const response = await fetch("/modules/otpConfig", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -526,7 +575,7 @@ async function sendOtp(email, purpose = "register") {
 
 async function checkOtp(otp, email) {
 	try {
-		const response = await fetch("/modules/otpConfig.php", {
+		const response = await fetch("/otpConfig", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -549,7 +598,7 @@ async function checkOtp(otp, email) {
 
 async function checkUsername(username) {
 	try {
-		const response = await fetch("/modules/checkUsername.php", {
+		const response = await fetch("/checkUsername", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -570,7 +619,7 @@ async function checkUsername(username) {
 
 async function checkEmail(email) {
 	try {
-		const response = await fetch("/modules/checkEmail.php", {
+		const response = await fetch("/checkEmail", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -596,7 +645,7 @@ async function loginUser(loginForm) {
 
 	try {
 		// Send a POST request to "/modules/loginUser.php" with the form data
-		let response = await fetch("/modules/loginUser.php", {
+		let response = await fetch("/loginUser", {
 			method: "POST",
 			body: data,
 		});
@@ -618,7 +667,7 @@ async function loginUser(loginForm) {
 
 async function registerUser(formData) {
 	try {
-		const response = await fetch("/modules/registerUser.php", {
+		const response = await fetch("/registerUser", {
 			method: "POST",
 			body: formData,
 		});
@@ -636,7 +685,7 @@ async function registerUser(formData) {
 
 async function resetPassword(email, password) {
 	try {
-		const response = await fetch("/modules/resetPassword.php", {
+		const response = await fetch("/resetPassword", {
 			method: "POST",
 			body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(
 				password,
@@ -655,21 +704,21 @@ async function resetPassword(email, password) {
 }
 
 async function fetchMusicQueue(musicId, mode, queueId) {
-	let endpoint = "/modules/";
+	let endpoint;
 	switch (mode) {
 		case "playlist":
-			endpoint += "getPlaylistQueue.php";
+			endpoint = "/getPlaylistQueue";
 			break;
 
 		case "trending":
-			endpoint += "getTrendingQueue.php";
+			endpoint = "/getTrendingQueue";
 			break;
 		case "favourites":
-			endpoint += "getFavouritesQueue.php";
+			endpoint = "/getFavouritesQueue";
 			break;
 
 		default:
-			endpoint += "getMusicQueue.php";
+			endpoint = "/getMusicQueue";
 			break;
 	}
 

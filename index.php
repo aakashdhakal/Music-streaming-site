@@ -1,19 +1,43 @@
 <?php
-// Commented out header redirection to the home section
-// header("Location: /pages/homeSection/homeSection.php");
-
 // Include the router file
-require_once __DIR__ . '/router.php';
+require_once 'router.php';
 
-// Define the base URL of the application
+// Define GET routes
+get('/', 'pages/home/mainHome.php'); // Route for the root URL
+get('/home', 'pages/home/mainHome.php'); // Route for the /home URL
+get('/discover', 'pages/home/mainHome.php'); // Route for the /discover URL
+get('/trending', 'pages/home/mainHome.php'); // Route for the /trending URL
 
-// Define routes
-get("/", "pages/home/mainHome.php"); // Route for the root URL
-get('/home', "pages/home/mainHome.php"); // Route for the /home URL
+// Route for logging out
+get('/logout', 'modules/logoutUser.php');
 
-// Example of a POST route (commented out)
-// post('/user', '/api/save_user');
-post('/getPlaylistQueue', 'modules/getPlaylistQueue.php');
+// Define POST routes for dynamically loading pages
+post('/', 'pages/home/home.php'); // Route for the root URL
+post('/favourites', 'pages/favourites/favourites.php'); // Route for the /favourites URL
+post('/discover', 'pages/discover/discover.php'); // Route for the /discover URL
+post('/trending', 'pages/trending/trending.php'); // Route for the /trending URL
+
+// Define POST routes for various modules
+post('/checkUsername', 'modules/checkUsername.php'); // Route for checking username availability
+post('/getPlaylistQueue', 'modules/getPlaylistQueue.php'); // Route for getting playlist queue
+post('/fetchmusic', 'modules/fetchMusic.php'); // Route for fetching music
+post('/addToFavourite', 'modules/addToFavourite.php'); // Route for adding to favourites
+post('/addToPlaylist', 'modules/addToPlaylist.php'); // Route for adding to playlist
+post('/createPlaylist', 'modules/createPlaylist.php'); // Route for creating a playlist
+post('/getPlaylist', 'modules/getPlaylist.php'); // Route for getting a playlist
+post('/addToHistory', 'modules/addToHistory.php'); // Route for adding to history
+post('/checkLoginStatus', 'modules/checkLoginStatus.php'); // Route for checking login status
+post('/setNotificationReadStatus', 'modules/setNotificationReadStatus.php'); // Route for setting notification read status
+post('/deleteNotification', 'modules/deleteNotification.php'); // Route for deleting a notification
+post('/otpConfig', 'modules/otpConfig.php'); // Route for OTP configuration
+post('/checkEmail', 'modules/checkEmail.php'); // Route for checking email
+post('/loginUser', 'modules/loginUser.php'); // Route for logging in a user
+post('/registerUser', 'modules/registerUser.php'); // Route for registering a user
+post('/resetPassword', 'modules/resetPassword.php'); // Route for resetting password
+post('/getTrendingQueue', 'modules/getTrendingQueue.php'); // Route for getting trending queue
+post('/getFavouritesQueue', 'modules/getFavouritesQueue.php'); // Route for getting favourites queue
+post('/getMusicQueue', 'modules/getMusicQueue.php'); // Route for getting music queue
+post('/fetchNotifications', 'modules/fetchNotifications.php'); // Route for fetching notifications
 
 // Define a catch-all route for 404 errors
-any('/404', 'pages/404.php');
+any('/404', 'pages/404.php'); // Route for 404 error page
