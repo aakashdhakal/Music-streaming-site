@@ -1,5 +1,7 @@
 <?php
 include "database.php";
+header('Content-Type: application/json');
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 

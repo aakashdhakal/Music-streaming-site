@@ -1,35 +1,82 @@
 let title = document.title;
 
-//preloader
+// Function to load pages dynamically
+async function loadPageDynamic(url) {
+	setPagePreloader(true);
+	let path = url.split("/").pop();
+	history.pushState({ path }, null, url); // Update URL without reloading
 
-let preloader = document.querySelector(".preloader");
-window.addEventListener("load", () => {
-	preloader.style.display = "none";
-});
+	let btn = document.querySelector(`button[data-path="/${path}"]`);
+	if (btn) {
+		if (btn.classList.contains("nav-btn")) {
+			changeActiveBtn(btn);
+		}
+		appendScript(btn.dataset.script);
+		appendStyle(btn.dataset.style);
+		document.title = btn.dataset.title;
 
-function showError(form, message) {
-	let errorContainer = form.parentElement.previousElementSibling;
-	errorContainer.style.display = "flex";
-	let errorText = errorContainer.querySelector(".error-text");
-	errorText.innerText = message;
-}
-
-function hideError() {
-	let errorContainer = document.querySelectorAll(".error-container");
-	errorContainer.forEach((container) => {
-		container.style.display = "none";
-	});
-}
-
-function checkEmptyInput(input) {
-	if (input.value === "") {
-		return true;
 	} else {
-		return false;
+		changeActiveBtn(null);
+	}
+
+	await loadPage(url); // Load the page content
+}
+
+// Show preloader
+function setPagePreloader(display) {
+	let main = document.querySelector("main");
+	if (display) {
+		main.innerHTML = `<iconify-icon icon="svg-spinners:6-dots-rotate" width="60" height="60" style="color: #ff7f11; position:absolute; left: 50%;top:50%;"></iconify-icon>`;
 	}
 }
 
-// Close dialog function
+// Preloader and initial page load
+window.addEventListener("load", async () => {
+	let url = window.location.href;
+	let searchValue = url.split("/").filter(Boolean);
+	if (searchValue.includes("search") && searchValue.length === 3) {
+		loadPageDynamic("/");
+	} else if (searchValue.includes("search")) {
+		document.title = "Sangeet - Search";
+		let searchTerm = searchValue.pop();
+		if (searchTerm !== "search") {
+			document.querySelector("#search").value = decodeURIComponent(
+				searchTerm.replace(/\+/g, " "),
+			);
+		}
+	}
+	await loadPageDynamic(url);
+	setTimeout(
+		() => (document.querySelector(".preloader").style.display = "none"),
+		1000,
+	);
+});
+
+// Show error message
+function showError(form, message) {
+	let errorContainer = form.parentElement.previousElementSibling;
+	errorContainer.style.display = "flex";
+	errorContainer.querySelector(".error-text").innerText = message;
+}
+
+// Hide error messages
+function hideError() {
+	document
+		.querySelectorAll(".error-container")
+		.forEach((container) => (container.style.display = "none"));
+}
+
+// Set button status
+function setBtnStatus(btn, status, text) {
+	btn.innerHTML =
+		status === "loading"
+			? `<iconify-icon icon="eos-icons:bubble-loading"></iconify-icon>&nbsp;&nbsp;${text}`
+			: text;
+	btn.disabled = status === "loading";
+	btn.style.opacity = status === "loading" ? 0.7 : 1;
+}
+
+// Close dialog
 function closeDialog(dialog) {
 	let form = dialog.querySelector("form");
 	if (form) form.reset();
@@ -45,7 +92,7 @@ document.querySelectorAll(".close-dialog-btn").forEach((btn) => {
 	btn.title = "Close";
 	btn.addEventListener("click", (e) => {
 		e.stopPropagation();
-		closeDialog(btn.parentElement.parentElement);
+		closeDialog(btn.closest("dialog"));
 	});
 });
 
@@ -57,15 +104,20 @@ document.addEventListener("keydown", (e) => {
 	}
 });
 
-// Event listener for file upload preview
+// File upload preview
 document.addEventListener("change", (e) => {
-	if (e.target.matches(".file-upload")) {
+	if (e.target.matches(".image-upload")) {
 		let previewImage = e.target.parentElement;
+		console.log(previewImage);
 		let file = e.target.files[0];
-		let imageUrl = URL.createObjectURL(file);
-		previewImage.style.backgroundImage = `url(${imageUrl})`;
+		previewImage.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
 	}
 });
+
+function uploadedFileName(input, name) {
+	let previewText = input.parentElement.parentElement.querySelector(".music-upload-text");
+	if (previewText) previewText.innerHTML = name;
+}
 
 // Append script dynamically
 function appendScript(src) {
@@ -74,7 +126,7 @@ function appendScript(src) {
 	let script = document.createElement("script");
 	script.src = src;
 	script.classList.add("dynamic-script");
-	document.body.appendChild(script);
+	setTimeout(() => document.body.appendChild(script), 1000);
 }
 
 // Append style dynamically
@@ -85,23 +137,21 @@ function appendStyle(href) {
 
 // Change active button
 function changeActiveBtn(btn) {
-	document.querySelector("#sideNav ul .active").classList.remove("active");
-	btn.parentElement.classList.add("active");
+	let currentActiveBtn = document.querySelector("#sideNav .active");
+	if (currentActiveBtn) currentActiveBtn.classList.remove("active");
+	if (btn) btn.parentElement.classList.add("active");
 }
 
 // Event listeners for navigation buttons
-document.querySelectorAll(".nav-btn").forEach((btn) => {
+document.querySelectorAll(".page-load-btn").forEach((btn) => {
 	btn.addEventListener("click", async () => {
 		changeActiveBtn(btn);
-		await loadPage(
-			btn.getAttribute("data-path"),
-			document.querySelector("main"),
-		);
-		appendScript(btn.getAttribute("data-script"));
+		document.title = btn.dataset.title;
+		await loadPageDynamic(btn.dataset.path);
 	});
 });
 
-// Change theme function
+// Change theme
 async function changeTheme() {
 	if (await checkLoginStatus()) {
 		document.body.classList.toggle("dark");
@@ -130,6 +180,7 @@ document
 // Dark mode toggle
 if (localStorage.getItem("darkMode") === "true") changeTheme();
 
+// Toggle profile window
 function toggleProfileWindow() {
 	document
 		.querySelector("#profileWindow")
@@ -142,6 +193,7 @@ setInterval(async () => {
 	if (await checkLoginStatus()) showNotifications(notificationCount);
 }, 10000);
 
+// Toggle notification window
 function toggleNotificationWindow() {
 	document
 		.querySelector("#notificationWindow")
@@ -169,35 +221,35 @@ async function showNotifications(number) {
 	let unreadNotificationCount = document.querySelectorAll(
 		".notification-card[data-readStatus='0']",
 	).length;
-
-	if (unreadNotificationCount > 0) {
-		document
-			.querySelector(".notification-btn")
-			.style.setProperty("--unreadNotificationMark", "flex");
-		document.title = "(" + unreadNotificationCount + ") " + title;
-	} else {
-		document
-			.querySelector(".notification-btn")
-			.style.setProperty("--unreadNotificationMark", "none");
-		document.title = title;
-	}
+	document
+		.querySelector(".notification-btn")
+		.style.setProperty(
+			"--unreadNotificationMark",
+			unreadNotificationCount > 0 ? "flex" : "none",
+		);
+	document.title =
+		unreadNotificationCount > 0
+			? `(${unreadNotificationCount}) ${title}`
+			: title;
 }
 
+// Mark notification as read
 async function markAsRead(notificationId) {
 	if (await setNotificationReadStatus(notificationId))
 		showNotifications(notificationCount);
 }
 
+// Mark all notifications as read
 async function markAllAsRead() {
 	let notifications = await fetchNotifications(-1);
-	notifications.forEach(async (notification) => {
+	for (let notification of notifications) {
 		if (notification.read_status === 0)
 			await setNotificationReadStatus(notification.id);
-	});
+	}
 	showNotifications(notificationCount);
 }
 
-// Format time function
+// Format time
 function formatTime(time) {
 	const now = new Date();
 	const date = new Date(time);
@@ -224,14 +276,14 @@ function formatTime(time) {
 	return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
 }
 
+// Remove custom select dropdown
 function removeCustomSelectDropdown() {
-	document.querySelectorAll(".custom-select").forEach((select) => {
-		if (select.querySelector(".select-options").classList.contains("show")) {
-			select.querySelector(".select-options").classList.remove("show");
-		}
-	});
+	document
+		.querySelectorAll(".custom-select .select-options.show")
+		.forEach((select) => select.classList.remove("show"));
 }
 
+// Event listeners for various actions
 document.addEventListener("click", (e) => {
 	if (!e.target.closest("#notificationWindow, .notification-btn")) {
 		document
@@ -243,16 +295,14 @@ document.addEventListener("click", (e) => {
 		!e.target.matches("#clearNotification *")
 	) {
 		let notificationCard = e.target.closest(".notification-card");
-		if (notificationCard.getAttribute("data-readStatus") === "0") {
-			markAsRead(notificationCard.getAttribute("data-notificationId"));
-			notificationCard.setAttribute("data-readStatus", 1);
+		if (notificationCard.dataset.readStatus === "0") {
+			markAsRead(notificationCard.dataset.notificationId);
+			notificationCard.dataset.readStatus = "1";
 		}
 	}
 	if (e.target.matches("#clearNotification *")) {
 		deleteNotification(
-			e.target
-				.closest(".notification-card")
-				.getAttribute("data-notificationId"),
+			e.target.closest(".notification-card").dataset.notificationId,
 		);
 		showNotifications(notificationCount);
 	}
@@ -277,24 +327,81 @@ document.addEventListener("click", (e) => {
 	}
 	if (e.target.closest(".custom-select")) {
 		let select = e.target.closest(".custom-select");
-		let selectOptions = select.querySelector(".select-options");
-		selectOptions.classList.toggle("show");
+		select.querySelector(".select-options").classList.toggle("show");
 	}
 	if (!e.target.closest(".custom-select")) {
 		removeCustomSelectDropdown();
 	}
+	if (e.target.closest(".select-option")) {
+		let option = e.target.closest(".select-option");
+		let value = option.getAttribute("data-value");
+		let visibilityInput = option.parentElement.parentElement.querySelector("input[type='hidden']");
+		let selectDisplay = option.parentElement.parentElement.querySelector(".select-display");
+		selectDisplay.innerHTML = option.innerHTML;
+		visibilityInput.value = value;
+	}
+	if (e.target.closest(".custom-file-upload")) {
+		let input = e.target.querySelector("input[type='file']");
+		if (input) input.click();
+	}
 });
 
+// Show notifications on page load if logged in
 document.addEventListener("DOMContentLoaded", async () => {
 	if (await checkLoginStatus()) showNotifications(notificationCount);
 });
 
+function showAlert(message, type) {
+	console.log(message);
+	let alertIcons = {
+		success: "qlementine-icons:success-16",
+		error: "material-symbols:error-outline",
+		info: "clarity:help-info-line",
+		warning: "qlementine-icons:warning-16",
+	};
+	let alertTextColors = {
+		success: "#4CAF50",
+		error: "#f44336",
+		info: "#2196F3",
+		warning: "#ff9800",
+	};
+	let alertBgColors = {
+		success: "#D4EDDA",
+		error: "#F8D7DA",
+		info: "#D1ECF1",
+		warning: "#FFF3CD",
+	};
+
+	let alertContainer = document.querySelector(".alert-container");
+	if (!alertContainer) {
+		alertContainer = document.createElement("div");
+		alertContainer.classList.add("alert-container");
+		document.body.appendChild(alertContainer);
+	}
+
+	let alert = document.createElement("div");
+	alert.classList.add("alert");
+	alert.style.backgroundColor = alertBgColors[type];
+	alert.innerHTML = `<iconify-icon icon="${alertIcons[type]}" style='color: ${alertTextColors[type]}'></iconify-icon>
+        <p class="alert-text" style='color: ${alertTextColors[type]}'>${message}</p>`;
+
+	alertContainer.appendChild(alert);
+
+	// Remove the alert after a certain time
+	setTimeout(() => {
+		alert.remove();
+	}, 5000); // Adjust the timeout duration as needed
+}
+
 //all api calls
 
 //function to change pages
-async function loadPage(path, containerElement) {
+async function loadPage(path) {
+	let containerElement = document.querySelector("main");
 	try {
-		const response = await fetch(path);
+		const response = await fetch(path, {
+			method: "POST",
+		});
 		if (!response.ok) {
 			throw new Error("Network response was not ok");
 		}
@@ -309,7 +416,7 @@ async function loadPage(path, containerElement) {
 //function to fetch music
 async function fetchMusic(musicId) {
 	try {
-		const response = await fetch("/modules/fetchMusic.php", {
+		const response = await fetch("/fetchmusic", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -327,7 +434,7 @@ async function fetchMusic(musicId) {
 //Function to like or dislike a music
 async function setLikeStatus(musicId, action = "check") {
 	try {
-		const response = await fetch("/modules/addToFavourite.php", {
+		const response = await fetch("/addToFavourite", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -349,7 +456,7 @@ async function setLikeStatus(musicId, action = "check") {
 //Function to add music to playlist
 async function addToPlaylist(playlistId, musicId) {
 	try {
-		const response = await fetch("/modules/addToPlaylist.php", {
+		const response = await fetch("/addToPlaylist", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -377,7 +484,7 @@ async function addToPlaylist(playlistId, musicId) {
 //Function to create a playlist
 async function createPlaylist(formData) {
 	try {
-		const response = await fetch("/modules/createPlaylist.php", {
+		const response = await fetch("/createPlaylist", {
 			method: "POST",
 			body: formData,
 		});
@@ -397,7 +504,7 @@ async function createPlaylist(formData) {
 //Function to fetch a playlist html
 async function fetchPlaylists() {
 	try {
-		const response = await fetch("/modules/getPlaylist.php", {
+		const response = await fetch("/getPlaylist", {
 			method: "POST",
 		});
 		const data = await response.text();
@@ -411,7 +518,7 @@ async function fetchPlaylists() {
 //Function to add to history
 async function addToHistory(musicId) {
 	try {
-		const response = await fetch("/modules/addToHistory.php", {
+		const response = await fetch("/addToHistory", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -432,9 +539,11 @@ async function addToHistory(musicId) {
 
 async function checkLoginStatus() {
 	try {
-		const response = await fetch("/modules/checkLoginStatus.php");
+		const response = await fetch("/checkLoginStatus", {
+			method: "POST",
+		});
 		const data = await response.json();
-		if (data) {
+		if (data.status === 200) {
 			return true;
 		} else {
 			return false;
@@ -447,7 +556,7 @@ async function checkLoginStatus() {
 
 async function fetchNotifications(numbers = 5) {
 	try {
-		const response = await fetch("/modules/fetchNotifications.php", {
+		const response = await fetch("/fetchNotifications", {
 			method: "POST",
 			body: `numbers=${encodeURIComponent(numbers)}`,
 		});
@@ -461,7 +570,7 @@ async function fetchNotifications(numbers = 5) {
 
 async function deleteNotification(notificationId) {
 	try {
-		const response = await fetch("/modules/deleteNotification.php", {
+		const response = await fetch("/deleteNotification", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -482,7 +591,7 @@ async function deleteNotification(notificationId) {
 
 async function setNotificationReadStatus(notificationId) {
 	try {
-		const response = await fetch("/modules/setNotificationReadStatus.php", {
+		const response = await fetch("/setNotificationReadStatus", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -503,7 +612,7 @@ async function setNotificationReadStatus(notificationId) {
 
 async function sendOtp(email, purpose = "register") {
 	try {
-		const response = await fetch("/modules/otpConfig.php", {
+		const response = await fetch("/modules/otpConfig", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -526,7 +635,7 @@ async function sendOtp(email, purpose = "register") {
 
 async function checkOtp(otp, email) {
 	try {
-		const response = await fetch("/modules/otpConfig.php", {
+		const response = await fetch("/otpConfig", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -549,7 +658,7 @@ async function checkOtp(otp, email) {
 
 async function checkUsername(username) {
 	try {
-		const response = await fetch("/modules/checkUsername.php", {
+		const response = await fetch("/checkUsername", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -570,7 +679,7 @@ async function checkUsername(username) {
 
 async function checkEmail(email) {
 	try {
-		const response = await fetch("/modules/checkEmail.php", {
+		const response = await fetch("/checkEmail", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -596,7 +705,7 @@ async function loginUser(loginForm) {
 
 	try {
 		// Send a POST request to "/modules/loginUser.php" with the form data
-		let response = await fetch("/modules/loginUser.php", {
+		let response = await fetch("/loginUser", {
 			method: "POST",
 			body: data,
 		});
@@ -618,7 +727,7 @@ async function loginUser(loginForm) {
 
 async function registerUser(formData) {
 	try {
-		const response = await fetch("/modules/registerUser.php", {
+		const response = await fetch("/registerUser", {
 			method: "POST",
 			body: formData,
 		});
@@ -636,7 +745,7 @@ async function registerUser(formData) {
 
 async function resetPassword(email, password) {
 	try {
-		const response = await fetch("/modules/resetPassword.php", {
+		const response = await fetch("/resetPassword", {
 			method: "POST",
 			body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(
 				password,
@@ -655,21 +764,21 @@ async function resetPassword(email, password) {
 }
 
 async function fetchMusicQueue(musicId, mode, queueId) {
-	let endpoint = "/modules/";
+	let endpoint;
 	switch (mode) {
 		case "playlist":
-			endpoint += "getPlaylistQueue.php";
+			endpoint = "/getPlaylistQueue";
 			break;
 
 		case "trending":
-			endpoint += "getTrendingQueue.php";
+			endpoint = "/getTrendingQueue";
 			break;
 		case "favourites":
-			endpoint += "getFavouritesQueue.php";
+			endpoint = "/getFavouritesQueue";
 			break;
 
 		default:
-			endpoint += "getMusicQueue.php";
+			endpoint = "/getMusicQueue";
 			break;
 	}
 

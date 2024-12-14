@@ -1,5 +1,7 @@
 <?php
 include_once 'database.php';
+header('Content-Type: application/json');
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = 'SELECT song_id FROM favourite_songs WHERE user_id = ?;';

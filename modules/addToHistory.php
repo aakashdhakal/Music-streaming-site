@@ -1,6 +1,7 @@
 <?php
 // add music to history
 include_once 'database.php';
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_SESSION['user_id'])) {

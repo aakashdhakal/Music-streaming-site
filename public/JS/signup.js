@@ -1,5 +1,5 @@
 let signupForm = document.querySelector(".signup-form");
-document.addEventListener("click", (e) => {
+document.addEventListener("click", async (e) => {
 	const signupFormElement = document.querySelector("#signupForm");
 	const loginFormElement = document.querySelector("#loginForm");
 
@@ -13,7 +13,9 @@ document.addEventListener("click", (e) => {
 		loginFormElement.showModal();
 	}
 	if (e.target.closest(".resend")) {
-		sendOtp(registerData.get("email"));
+		setBtnStatus(e.target, "loading", "Resending OTP");
+		await sendOtp(registerData.get("email"));
+		setBtnStatus(e.target, "normal", "");
 		resendOtpCounter();
 	}
 });
@@ -21,6 +23,7 @@ document.addEventListener("click", (e) => {
 document.addEventListener("submit", async (e) => {
 	e.preventDefault();
 	const form = e.target.closest("form");
+	let btn = e.target.querySelector("button[type='submit']");
 
 	if (!form) return;
 
@@ -30,12 +33,15 @@ document.addEventListener("submit", async (e) => {
 
 		switch (form.className) {
 			case "signup-form":
+				setBtnStatus(btn, "loading", "Sending OTP");
 				handleSignupForm(form, formData);
 				break;
 			case "otp-verify":
+				setBtnStatus(btn, "loading", "Verifying OTP");
 				handleOtpVerifyForm(form);
 				break;
 			case "personal-info":
+				setBtnStatus(btn, "loading", "Signing up");
 				handlePersonalInfoForm(form, formData);
 				break;
 		}

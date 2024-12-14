@@ -2,6 +2,8 @@
 
 include_once 'database.php';
 include_once 'extraFunctions.php';
+header('Content-Type: application/json');
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];

@@ -1,6 +1,8 @@
 <?php
 include_once "database.php";
 include_once "extraFunctions.php";
+header('Content-Type: application/json');
+
 //upload music in database
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['song-name'];

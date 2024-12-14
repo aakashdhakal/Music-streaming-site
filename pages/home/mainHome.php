@@ -76,18 +76,21 @@ include_once "pages/head.php"; ?>
     </div>
     <nav id="sideNav">
         <ul>
-            <li class="active">
-                <button data-path="pages/home/home.php" data-script="public/JS/home.js" class="nav-btn">
+            <li>
+                <button data-path="/" data-script="public/JS/home.js" data-title="Sangeet - The Heartbeat of Music"
+                    class="nav-btn page-load-btn">
                     <iconify-icon icon="fluent:home-24-filled"></iconify-icon>Home
                 </button>
             </li>
             <li>
-                <button data-path="pages/tempHome/home.php" data-script="public/JS/home.js" class="nav-btn">
+                <button data-path="/discover" class="nav-btn page-load-btn" data-script="public/JS/discover.js"
+                    data-title="Discover new music">
                     <iconify-icon icon="mingcute:compass-fill"></iconify-icon>Discover
                 </button>
             </li>
             <li>
-                <button data-path="pages/tempHome/home.php" data-script="public/JS/home.js" class="nav-btn">
+                <button data-path="/trending" class="nav-btn page-load-btn" data-title="Trending Music"
+                    data-script="public/JS/trending.js">
                     <iconify-icon icon="mage:fire-b-fill"></iconify-icon>Trending
                 </button>
             </li>
@@ -102,14 +105,13 @@ include_once "pages/head.php"; ?>
                 </div>
                 <!-- Favourites -->
                 <li>
-                    <button data-path="pages/favourites/favourites.php" data-script="public/JS/favourites.js"
-                        class="nav-btn">
+                    <button data-path="/library" data-script="public/JS/favourites.js" class="nav-btn page-load-btn">
                         <iconify-icon icon="si:heart-fill"></iconify-icon>Favourites
                     </button>
                 </li>
                 <!-- Recently Played -->
                 <li>
-                    <button data-path="pages/tempHome/home.php" class="nav-btn">
+                    <button data-path="/history" class="nav-btn page-load-btn" data-script="public/JS/history.js">
                         <iconify-icon icon="akar-icons:history"></iconify-icon>History
                     </button>
                 </li>
@@ -148,11 +150,22 @@ include_once "pages/head.php"; ?>
             </div>
 
         </div>
+        <div class="search-container">
+            <form class="search-form">
+                <div class="form-group">
+                    <input type="text" name="search" id="search" placeholder="Search for songs, artists, albums">
+                    <button type="submit">
+                        <iconify-icon icon="mingcute:search-3-line"></iconify-icon>
+                    </button>
+                </div>
+            </form>
+        </div>
         <div class="right">
             <?php
             if (isset($_SESSION['user_id'])) {
                 ?>
-                <button id="uploadMusicShowBtn" title="Upload Music">
+                <button id="uploadMusicShowBtn" title="Upload Music" data-title="Upload Music" data-path="/upload"
+                    class="page-load-btn" data-script="public/JS/uploadMusic.js">
                     <iconify-icon icon="iconoir:music-note-plus"></iconify-icon> </button>
                 <button class="dark-mode-btn">
                     <iconify-icon icon="flowbite:moon-outline"></iconify-icon>
@@ -164,7 +177,6 @@ include_once "pages/head.php"; ?>
                     <img src="<?php echo $_SESSION["user_image"] ?>" alt="profile-pic">
                 </button>
                 <?php
-                include "addMusic.php";
             } else {
                 ?>
                 <div class="login-signup-btn-container">
@@ -362,22 +374,22 @@ include_once "pages/head.php"; ?>
             <ul>
 
                 <li>
-                    <a href="pages/tempHome/profile.php">
+                    <a href="/<?php echo $_SESSION["username"] ?>">
                         <iconify-icon icon="bi:person-circle"></iconify-icon>Profile
                     </a>
                 </li>
                 <li>
-                    <a href="pages/tempHome/settings.php">
+                    <a href="/settings">
                         <iconify-icon icon="bi:gear-wide-connected"></iconify-icon>Settings
                     </a>
                 </li>
                 <li>
-                    <a href="pages/tempHome/help.php">
+                    <a href="/help">
                         <iconify-icon icon="bi:question-circle"></iconify-icon>Help
                     </a>
                 </li>
                 <li>
-                    <a href="modules/logoutUser.php">
+                    <a href="/logout">
                         <iconify-icon icon="bi:box-arrow-right"></iconify-icon>Logout
                     </a>
                 </li>
@@ -389,7 +401,7 @@ include_once "pages/head.php"; ?>
     <main>
         <?php include "home.php" ?>
     </main>
-    <script class="dynamic-script" src="public/JS/home.js"></script>
+    <script class="dynamic-script" src=""></script>
     <script src="public/JS/script.js"></script>
     <script src="public/JS/temp-musicplayer.js"></script>
     <?php
@@ -400,9 +412,7 @@ include_once "pages/head.php"; ?>
         <script src="public/JS/forgotPassword.js"></script>
         <?php
     } else {
-        ?>
-        <script src="public/JS/addMusic.js"></script>
-        <?php
+
     }
     ?>
 </body>

@@ -67,15 +67,15 @@ function uploadFile($file, $type, $fileName)
             break;
         case 'playlist_cover':
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/public/images/playlist-cover/";
-            $webPath = "public/images/playlist-cover/"; // Path for web access
+            $webPath = "/public/images/playlist-cover/"; // Path for web access
             break;
         case 'song_cover':
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/public/images/song-cover/";
-            $webPath = "public/images/song-cover/"; // Path for web access
+            $webPath = "/public/images/song-cover/"; // Path for web access
             break;
         case 'profile_pic':
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/public/images/song-cover/";
-            $webPath = "public/images/song-cover/"; // Path for web access
+            $webPath = "/public/images/song-cover/"; // Path for web access
             break;
         default:
             echo "Invalid file type.";

@@ -1,3 +1,4 @@
+console.log("home.js loaded");
 document.addEventListener("click", (e) => {
 	// Check if the clicked element or its ancestor has the ID 'nextInContainer'
 	if (e.target.closest("#nextInContainer")) {
@@ -18,10 +19,48 @@ document.addEventListener("click", (e) => {
 		// Scroll the container to the left by its own width
 		cardContainer.scrollLeft -= cardContainer.offsetWidth;
 	}
+});
+// Debounce function to limit the rate at which a function can fire
+function debounce(func, wait) {
+	let timeout;
+	return function (...args) {
+		const context = this;
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(context, args), wait);
+	};
+}
 
-	// Check if the clicked element or its ancestor has the id uploadMusicShowBtn
-	if (e.target.closest("#uploadMusicShowBtn")) {
-		// Show the upload form modal
-		document.querySelector("#uploadMusic").showModal();
+// Debounced search input handler
+const handleSearchInput = debounce(async (e) => {
+	// Check if the text on search bar has changed
+	if (e.target.id === "search") {
+		// Get the search value
+		let searchValue = e.target.value;
+		// If the search value is empty, load the home page
+		if (searchValue === "") {
+			document.title = "Sangeet - The Heartbeat of Music";
+			await loadPageDynamic("/");
+		} else {
+			document.title = "Sangeet - Search ";
+			await loadSearchPage(searchValue);
+		}
+	}
+}, 300); // Adjust the debounce delay as needed (300ms in this example)
+
+document.addEventListener("input", handleSearchInput);
+
+document.addEventListener("reset", async (e) => {
+	// Check if the clicked element or its ancestor has the id search
+	if (e.target.closest(".search-form")) {
+		// Prevent the reset event from triggering loadPageDynamic if input event has already handled it
+		e.preventDefault();
+		document.querySelector("#search").value = "";
+		document.title = "Sangeet - The Heartbeat of Music";
+		await loadPageDynamic("/");
 	}
 });
+
+async function loadSearchPage(searchValue) {
+	document.title = "Sangeet - Search ";
+	await loadPageDynamic("/search/" + encodeURIComponent(searchValue));
+}

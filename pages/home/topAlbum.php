@@ -1,7 +1,6 @@
 <?php
-include_once "modules/database.php";
-include_once "modules/extraFunctions.php";
-
+require_once __DIR__ . '/../../modules/database.php';
+require_once __DIR__ . '/../../modules/extraFunctions.php';
 $sql = 'SELECT * from musics WHERE artist = ? ORDER BY id DESC LIMIT 5';
 $stmt = $mysqli->prepare($sql);
 $artist = 'sushantkc';
@@ -12,7 +11,7 @@ $result = $stmt->get_result();
 if ($result) {
     echo "
        <div class='playlist-image'>
-                        <img src='public/images/profile-pics/sushantkc.jpg' alt=''>
+                        <img src='/public/images/profile-pics/sushantkc.jpg' alt=''>
                     </div>
                     <div class='playlist-info'>
                         <div class='title-artist'>

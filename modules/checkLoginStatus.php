@@ -1,7 +1,9 @@
 <?php
 session_start();
+header('Content-Type: application/json');
+
 if (isset($_SESSION["user_id"])) {
-    echo "true";
+    echo json_encode(['status' => 200, 'message' => 'User is logged in']);
 } else {
-    echo "false";
+    echo json_encode(['status' => 401, 'message' => 'User is not logged in']);
 }

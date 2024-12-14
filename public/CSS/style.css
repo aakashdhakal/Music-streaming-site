@@ -53,6 +53,7 @@
 body {
 	background-color: var(--bg-color);
 	color: var(--text-color);
+	height: calc(100vh - 4rem);
 }
 
 ::-webkit-scrollbar {
@@ -217,8 +218,9 @@ dialog .max-width {
 	align-items: center;
 	gap: 0.5rem;
 	position: relative;
-	border-bottom: 1.5px solid #a7a7a7;
 	width: 100%;
+	border-bottom: 1.5px solid #a7a7a7;
+	text-align: left;
 
 	input {
 		width: 100%;
@@ -228,37 +230,114 @@ dialog .max-width {
 		background: none;
 		color: var(--text-color);
 		font-size: 1rem;
+		cursor: text;
 	}
 
-	label {
-		position: absolute;
-		color: #808080;
-		transition: all 0.5s ease-in-out;
-		top: 0.3rem;
-		pointer-events: none;
-	}
+	&:not(:has(input[type="file"])) {
 
-	input:focus+label,
-	input:not(:placeholder-shown)+label {
-		top: -1.3rem;
-		left: 0;
-		font-size: 0.9rem;
-		color: var(--primary-color);
-		background-color: var(--bg-color-10);
-		font-weight: 700;
-	}
+		textarea {
+			outline: none;
+			border: none;
+			border-radius: 1rem;
+			font-size: 1rem;
+			resize: none;
+			width: 100%;
+			padding: 0.5rem 1rem;
+		}
 
-	&:has(input:focus) {
-		border-bottom: 1.5px solid var(--primary-color);
+		label {
+			position: absolute;
+			color: #808080;
+			transition: all 0.5s ease-in-out;
+			top: 0.3rem;
+			left: 0.5rem;
+			pointer-events: none;
+			width: 100%;
+			background: transparent !important;
+		}
+
+		&:has(textarea) {
+			border: 1px solid #a7a7a7 !important;
+			border-radius: 1rem !important;
+
+			label {
+				left: 0.6rem;
+				top: 0.5rem;
+			}
+		}
+
+		input:focus+label,
+		input:not(:placeholder-shown)+label,
+		textarea:focus+label,
+		textarea:not(:placeholder-shown)+label {
+			top: -1.3rem;
+			left: 0;
+			font-size: 0.95rem;
+			color: var(--primary-color);
+			background-color: var(--bg-color-10);
+			font-weight: 700;
+		}
+
+		textarea:focus+label,
+		textarea:not(:placeholder-shown)+label {
+			top: -1.5rem;
+		}
+
+		&:has(input:focus) {
+			border-bottom: 1.5px solid var(--primary-color);
+		}
+
+		&:has(textarea:focus) {
+			border: 1px solid var(--primary-color) !important;
+		}
 	}
 }
 
-.form-group:has(input[type="file"]) {
+.form-group:has(input[type="file"]),
+.form-group:has(#visibility) {
 	border: none !important;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1rem;
+
+	.input-title {
+		font-size: 1rem;
+		color: var(--text-color);
+		font-weight: bold;
+
+		.optional {
+			color: var(--text-color-light);
+			font-weight: normal;
+		}
+	}
 }
 
 
 .custom-file-upload {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	border-radius: 5px;
+	height: max-content;
+	cursor: pointer;
+	width: 100%;
+
+
+	label {
+		pointer-events: none;
+		border: 1px solid var(--primary-color);
+		padding: 0.5rem 1rem;
+		border-radius: 1rem;
+		cursor: pointer;
+		color: var(--primary-color);
+	}
+
+	input[type="file"] {
+		display: none;
+	}
+}
+
+.custom-image-upload {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
@@ -298,26 +377,26 @@ dialog .max-width {
 		color: white !important;
 		text-align: center;
 	}
-}
 
-.custom-file-upload label {
-	padding: 0.5rem 1rem;
-	border-radius: 5px;
-	cursor: pointer;
-	pointer-events: all !important;
-	height: 100%;
-	width: 100%;
-	top: 0 !important;
-	left: 0 !important;
-	background-color: transparent !important;
-}
+	input[type="file"] {
+		display: none;
+	}
 
-.custom-file-upload input[type="file"] {
-	display: none;
+	label {
+		padding: 0.5rem 1rem;
+		border-radius: 5px;
+		cursor: pointer;
+		pointer-events: all !important;
+		height: 100%;
+		width: 100%;
+		top: 0 !important;
+		left: 0 !important;
+		background-color: transparent !important;
+	}
 }
 
 .custom-select {
-	border: 1px solid var(--primary-color);
+	border: 1px solid #a8a8a8;
 	border-radius: 5px;
 	padding: 0.5rem 1rem;
 	cursor: pointer;
@@ -325,13 +404,20 @@ dialog .max-width {
 	position: relative;
 	width: 100%;
 
+	.select-display-container {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		width: 100%;
+		color: var(--text-color-light);
+	}
+
 	.select-display {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		gap: 0.5rem;
 		width: 100%;
-		color: #838383;
+		color: var(--text-color-light);
 	}
 
 	.select-options {
@@ -339,7 +425,7 @@ dialog .max-width {
 		flex-direction: column;
 		gap: 0;
 		position: absolute;
-		background-color: var(--bg-color);
+		background-color: var(--bg-color-10);
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 		width: 100%;
 		top: 2.7rem;
@@ -358,6 +444,10 @@ dialog .max-width {
 			cursor: pointer;
 			transition: all 0.3s ease;
 			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: var(--text-color-light);
 
 			&:hover {
 				background-color: var(--primary-color-100);
@@ -528,7 +618,7 @@ hr {
 
 
 	img {
-		width: 55px;
+		width: 4rem;
 		height: 100%;
 		object-fit: cover;
 		border-radius: 5px;
@@ -687,18 +777,28 @@ hr {
 
 	#nextInContainer,
 	#prevInContainer {
+
 		background-color: transparent;
-		color: var(--primary-color) !important;
+		color: var(--primary-color);
 		border: none;
 		padding: 0.5rem;
 		cursor: pointer;
-		height: 100%;
 		position: absolute;
 		z-index: 1;
-		width: 2.5rem;
+		top: 50%;
+		height: 2rem;
+		width: 2rem;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		iconify-icon {
-			font-size: 2rem;
+			font-size: 1.5rem;
+		}
+
+		&:hover {
+			background-color: var(--primary-color-100);
 		}
 
 	}
@@ -729,5 +829,85 @@ hr {
 	.error-text {
 		color: red;
 		font-size: 0.9rem;
+	}
+}
+
+
+@keyframes slideIn {
+	from {
+		right: -100rem;
+		display: none;
+	}
+
+	to {
+		right: 1rem;
+		display: flex;
+	}
+}
+
+@keyframes slideOut {
+	from {
+		right: 1rem;
+		display: flex;
+	}
+
+	to {
+		right: -100rem;
+		display: none;
+	}
+}
+
+/* Alert container to hold all alerts */
+.alert-container {
+	position: fixed;
+	top: calc(4rem + 1rem);
+	right: 1rem;
+	min-width: 18rem;
+	z-index: 1000;
+	pointer-events: none;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+/* Individual alert styles */
+.alert {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem;
+	border-radius: 1rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	animation: slideIn 0.5s ease forwards, slideOut 0.5s ease 4.5s forwards;
+	width: 100%;
+
+	p {
+		font-weight: bold;
+	}
+}
+
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideOut {
+	from {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateX(100%);
 	}
 }

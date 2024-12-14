@@ -1,5 +1,7 @@
 <?php
 include_once 'database.php';
+header('Content-Type: application/json');
+
 //fetch random music queue
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST["id"];
