@@ -10,12 +10,8 @@ get('/trending', 'pages/home/mainHome.php'); // Route for the /trending URL
 get('/favourites', 'pages/home/mainHome.php'); // Route for the /favourites URL
 get('/search', 'pages/home/mainHome.php'); // Route for the /search URL
 get('/search/$tag', 'pages/home/mainHome.php'); // Route for the /search URL
-get('/upload', 'pages/home/mainHome.php'); // Route for the /upload URL
-
-
-
-// Route for logging out
-get('/logout', 'modules/logoutUser.php');
+get('/upload', path_to_include: 'pages/home/mainHome.php'); // Route for the /upload URL
+get('/logout', 'modules/logoutUser.php'); // Route for logging out
 
 // Define POST routes for dynamically loading pages
 post('/', 'pages/home/home.php'); // Route for the root URL
