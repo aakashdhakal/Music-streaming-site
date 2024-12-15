@@ -21,7 +21,7 @@
         width: 100%;
         height: 100%;
         background-color: var(--bg-color);
-        z-index: 9999;
+        z-index: 999999999;
         display: flex;
         justify-content: center;
         align-items: center;

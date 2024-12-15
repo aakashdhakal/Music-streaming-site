@@ -77,6 +77,10 @@ function uploadFile($file, $type, $fileName)
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/public/images/song-cover/";
             $webPath = "/public/images/song-cover/"; // Path for web access
             break;
+        case 'song_lyrics':
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/public/lyrics/";
+            $webPath = "/public/lyrics"; // Path for web access
+            break;
         default:
             echo "Invalid file type.";
             return;
@@ -93,4 +97,48 @@ function uploadFile($file, $type, $fileName)
     }
 }
 
+function getGenreList()
+{
+    require 'database.php';
+    $sql = "SELECT genre FROM musics GROUP BY genre";
+    $result = $mysqli->query($sql);
+    $genreList = array();
+    while ($row = $result->fetch_assoc()) {
+        $genreList[] = $row['genre'];
+    }
+    return $genreList;
+}
 
+
+
+function getLanguageList()
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, [
+        CURLOPT_URL => "https://list-of-all-countries-and-languages-with-their-codes.p.rapidapi.com/languages",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => [
+            "x-rapidapi-host: list-of-all-countries-and-languages-with-their-codes.p.rapidapi.com",
+            "x-rapidapi-key: bd9675f92cmsh6cab361f97989e9p1c811ajsn0db08a964b9e"
+        ],
+    ]);
+
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    if ($err) {
+        return "cURL Error #:" . $err;
+    } else {
+        $languageList = json_decode($response, true);
+        //return array of names
+        return array_column($languageList, 'name');
+    }
+}

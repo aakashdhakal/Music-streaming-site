@@ -42,6 +42,7 @@ post('/getTrendingQueue', 'modules/getTrendingQueue.php'); // Route for getting 
 post('/getFavouritesQueue', 'modules/getFavouritesQueue.php'); // Route for getting favourites queue
 post('/getMusicQueue', 'modules/getMusicQueue.php'); // Route for getting music queue
 post('/fetchNotifications', 'modules/fetchNotifications.php'); // Route for fetching notifications
+post('/uploadMusic', 'modules/uploadMusic.php'); // Route for uploading music
 
 // Define a catch-all route for 404 errors
 any('/404', 'pages/404/404.php'); // Route for 404 error page

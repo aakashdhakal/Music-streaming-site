@@ -5,7 +5,9 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 $website_title = "Sangeet- The Heartbeat of Music";
-include_once "pages/head.php"; ?>
+include_once "pages/head.php";
+include_once "modules/extraFunctions.php"
+    ?>
 <link rel="stylesheet" href="public/CSS/home.css">
 </head>
 
@@ -195,14 +197,14 @@ include_once "pages/head.php"; ?>
 
                             <form action="#" method="POST" class="login-form">
                                 <div class="form-group">
-                                    <input type="text" name="username" id="username" placeholder=" ">
                                     <label for="username">Username</label>
+                                    <input type="text" name="username" id="username" placeholder=" ">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" id="password" autocomplete="off" placeholder=" ">
                                     <label for="password">Password</label>
+                                    <input type="password" name="password" id="password" autocomplete="off" placeholder=" ">
                                     <button class="toggle-password-visibility" type="button">
-                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon> </button>
+                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon></button>
                                 </div>
                                 <p class="forgot-password-show">Forgot Password?</p>
                                 <button type="submit" class="primary-btn">Login</button>

@@ -5,6 +5,7 @@ async function loadPageDynamic(url) {
 	setPagePreloader(true);
 	let path = url.split("/").pop();
 	history.pushState({ path }, null, url); // Update URL without reloading
+	await loadPage(url); // Load the page content
 
 	let btn = document.querySelector(`button[data-path="/${path}"]`);
 	if (btn) {
@@ -19,7 +20,6 @@ async function loadPageDynamic(url) {
 		changeActiveBtn(null);
 	}
 
-	await loadPage(url); // Load the page content
 }
 
 // Show preloader
@@ -108,7 +108,6 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("change", (e) => {
 	if (e.target.matches(".image-upload")) {
 		let previewImage = e.target.parentElement;
-		console.log(previewImage);
 		let file = e.target.files[0];
 		previewImage.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
 	}
@@ -317,7 +316,7 @@ document.addEventListener("click", (e) => {
 	if (e.target.closest(".dark-mode-btn")) changeTheme();
 	if (e.target.closest(".profile-btn")) toggleProfileWindow();
 	if (e.target.closest(".toggle-password-visibility")) {
-		let passwordField = e.target.previousElementSibling.previousElementSibling;
+		let passwordField = e.target.parentElement.querySelector("input");
 		passwordField.type =
 			passwordField.type === "password" ? "text" : "password";
 		e.target.innerHTML =
@@ -334,15 +333,39 @@ document.addEventListener("click", (e) => {
 	}
 	if (e.target.closest(".select-option")) {
 		let option = e.target.closest(".select-option");
-		let value = option.getAttribute("data-value");
-		let visibilityInput = option.parentElement.parentElement.querySelector("input[type='hidden']");
-		let selectDisplay = option.parentElement.parentElement.querySelector(".select-display");
-		selectDisplay.innerHTML = option.innerHTML;
-		visibilityInput.value = value;
+		let value = option.dataset.value;
+		let hiddenInput = option.parentElement.parentElement.querySelector("input[type='hidden']");
+		let displayInput = option.parentElement.previousElementSibling.querySelector("input");
+		console.log(displayInput);
+		console.log(hiddenInput);
+		if (hiddenInput) {
+			let selectDisplay = option.parentElement.parentElement.querySelector(".select-display");
+			selectDisplay.innerHTML = option.innerHTML;
+			hiddenInput.value = value;
+		} else if (displayInput) {
+			displayInput.value = value;
+		}
 	}
-	if (e.target.closest(".custom-file-upload")) {
+	if (e.target.closest(".custom-file-upload") || e.target.closest(".custom-image-upload")) {
+		console.log(e.target);
 		let input = e.target.querySelector("input[type='file']");
 		if (input) input.click();
+	}
+});
+
+document.addEventListener("input", (e) => {
+	if (e.target.matches(".custom-select input")) {
+		let input = e.target;
+		let select = input.closest(".custom-select");
+		let options = select.querySelectorAll(".select-option");
+		let value = input.value.toLowerCase();
+		options.forEach((option) => {
+			if (option.innerHTML.toLowerCase().indexOf(value) > -1) {
+				option.style.display = "flex";
+			} else {
+				option.style.display = "none";
+			}
+		});
 	}
 });
 
@@ -352,7 +375,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function showAlert(message, type) {
-	console.log(message);
 	let alertIcons = {
 		success: "qlementine-icons:success-16",
 		error: "material-symbols:error-outline",
@@ -391,6 +413,50 @@ function showAlert(message, type) {
 	setTimeout(() => {
 		alert.remove();
 	}, 5000); // Adjust the timeout duration as needed
+}
+// Debounce function to limit the rate at which a function can fire
+function debounce(func, wait) {
+	let timeout;
+	return function (...args) {
+		const context = this;
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(context, args), wait);
+	};
+}
+
+// Debounced search input handler
+const handleSearchInput = debounce(async (e) => {
+	// Check if the text on search bar has changed
+	if (e.target.id === "search") {
+		// Get the search value
+		let searchValue = e.target.value;
+		// If the search value is empty, load the home page
+		if (searchValue === "") {
+			document.title = "Sangeet - The Heartbeat of Music";
+			await loadPageDynamic("/");
+		} else {
+			document.title = "Sangeet - Search ";
+			await loadSearchPage(searchValue);
+		}
+	}
+}, 300); // Adjust the debounce delay as needed (300ms in this example)
+
+document.addEventListener("input", handleSearchInput);
+
+document.addEventListener("reset", async (e) => {
+	// Check if the clicked element or its ancestor has the id search
+	if (e.target.closest(".search-form")) {
+		// Prevent the reset event from triggering loadPageDynamic if input event has already handled it
+		e.preventDefault();
+		document.querySelector("#search").value = "";
+		document.title = "Sangeet - The Heartbeat of Music";
+		await loadPageDynamic("/");
+	}
+});
+
+async function loadSearchPage(searchValue) {
+	document.title = "Sangeet - Search ";
+	await loadPageDynamic("/search/" + encodeURIComponent(searchValue));
 }
 
 //all api calls
@@ -797,5 +863,22 @@ async function fetchMusicQueue(musicId, mode, queueId) {
 	} catch (error) {
 		console.error("Error fetching music queue:", error);
 		return [];
+	}
+}
+
+async function uploadMusic(formData) {
+	try {
+		const response = await fetch("/uploadMusic", {
+			method: "POST",
+			body: formData,
+		});
+		const data = await response.json();
+		if (data.status === 200) {
+			return true;
+		} else {
+			showAlert(data, "error");
+		}
+	} catch (error) {
+		showAlert(error.message, "error");
 	}
 }

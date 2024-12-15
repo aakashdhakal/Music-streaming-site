@@ -1,4 +1,3 @@
-console.log("uploadMusic.js loaded");
 let dragDropArea = document.querySelector(".music-upload-area");
 let uploadMusicText = document.querySelector(".music-upload-text");
 let uploadMusicForm = document.querySelector("#uploadMusicForm");
@@ -18,7 +17,11 @@ dragDropArea.addEventListener("dragleave", function (e) {
 dragDropArea.addEventListener("drop", function (e) {
 	e.preventDefault();
 	let input = dragDropArea.querySelector("input[type='file']");
-	uploadMusic(input, e.dataTransfer.files[0]);
+	if (checkMusicFileType(e.dataTransfer.files[0])) {
+		uploadedFileName(input, e.dataTransfer.files[0].name);
+	} else {
+		showAlert("Only music files are allowed", "error");
+	}
 	dragDropArea.style.borderColor = "#a8a8a8";
 	uploadMusicText.style.color = "#a8a8a8";
 });
@@ -59,14 +62,32 @@ function checkLyricsFileType(file) {
 	}
 }
 
-uploadMusicForm.addEventListener("submit", function (e) {
+uploadMusicForm.addEventListener("submit", async function (e) {
 	e.preventDefault();
 	let submitBtn = uploadMusicForm.querySelector("button[type='submit");
 	setBtnStatus(submitBtn, "loading", "Uploading Music");
 	let formData = new FormData(uploadMusicForm);
+	let musicFile = uploadMusicForm.querySelector("#musicFile").files[0];
+	let lyricsFile = uploadMusicForm.querySelector("#lyricsFile").files[0];
+	let coverFile = uploadMusicForm.querySelector("#coverImage").files[0];
+	formData.set("musicFile", musicFile);
+	if (lyricsFile) {
+		formData.set("lyricsFile", lyricsFile);
+	}
+	if (coverFile) {
+		formData.set("coverFile", coverFile);
+	}
+
+	let music = new Audio(musicFile);
+	formData.set("duration", music.duration);
+
 	if (!validateUploadMusicForm(formData)) {
-		setBtnStatus(submitBtn, "normal", "Upload Music");
+		setBtnStatus(submitBtn, "normal", "Upload");
 		return;
+	} else if (await uploadMusic(formData)) {
+		showAlert("Music uploaded", "success");
+		setBtnStatus(submitBtn, "normal", "Upload");
+		loadPageDynamic("/");
 	}
 });
 
@@ -75,7 +96,19 @@ function validateUploadMusicForm(formData) {
 	if (formData.get("title") === "") {
 		showAlert("Title is required", "error");
 		return false;
+	} else if (formData.get("genre") === "") {
+		showAlert("Genre is required", "error");
+		return false;
 	}
+	else if (formData.get("language") === "") {
+		showAlert("Language is required", "error");
+		return false;
+	}
+	else if (formData.get("musicFile") === null) {
+		showAlert("You need to upload music file", "error");
+		return false;
+	}
+	return true;
 }
 
 document.addEventListener("change", function (e) {
@@ -89,17 +122,25 @@ document.addEventListener("change", function (e) {
 		}
 	}
 	if (e.target.closest("#musicFile")) {
-		console.log(e.target.files[0]);
-		uploadMusic(e.target, e.target.files[0]);
+		let fileInput = e.target;
+		let file = e.target.files[0];
+		if (checkMusicFileType(file)) {
+			uploadedFileName(fileInput, file.name);
+		} else {
+			showAlert("Only music files are allowed", "error");
+		}
+	}
+	if (e.target.closest("#coverFile")) {
+		showAlert("Cover file uploaded", "success");
 	}
 });
 
 
-function uploadMusic(fileInput, file) {
-	if (checkMusicFileType(file)) {
-		uploadedFileName(fileInput, file.name);
-	} else {
-		showAlert("Only music files are allowed", "error");
+// function uploadMusic(fileInput, file) {
+// 	if (checkMusicFileType(file)) {
+// 		uploadedFileName(fileInput, file.name);
+// 	} else {
+// 		showAlert("Only music files are allowed", "error");
 
-	}
-}
+// 	}
+// }

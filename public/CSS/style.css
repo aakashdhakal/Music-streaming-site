@@ -219,8 +219,14 @@ dialog .max-width {
 	gap: 0.5rem;
 	position: relative;
 	width: 100%;
-	border-bottom: 1.5px solid #a7a7a7;
+	border: 1.5px solid #a7a7a7;
 	text-align: left;
+	border-radius: 0.5rem;
+	padding-right: 0.5rem;
+
+	&:has(input:focus) {
+		border: 1px solid var(--primary-color);
+	}
 
 	input {
 		width: 100%;
@@ -231,84 +237,58 @@ dialog .max-width {
 		color: var(--text-color);
 		font-size: 1rem;
 		cursor: text;
+		border-radius: 0.5rem;
+
 	}
 
-	&:not(:has(input[type="file"])) {
+	label {
+		position: absolute;
+		color: #808080;
+		transition: all 0.5s ease-in-out;
+		bottom: 2.5rem;
+		left: 0;
+		pointer-events: none;
+		width: 100%;
+		background: transparent !important;
+	}
 
-		textarea {
-			outline: none;
-			border: none;
-			border-radius: 1rem;
-			font-size: 1rem;
-			resize: none;
-			width: 100%;
-			padding: 0.5rem 1rem;
-		}
+	::placeholder {
+		color: #afafaf !important;
+	}
 
-		label {
-			position: absolute;
-			color: #808080;
-			transition: all 0.5s ease-in-out;
-			top: 0.3rem;
-			left: 0.5rem;
-			pointer-events: none;
-			width: 100%;
-			background: transparent !important;
-		}
+	textarea {
+		outline: none;
+		border: none;
+		border-radius: 1rem;
+		font-size: 1rem;
+		resize: none;
+		width: 100%;
+		padding: 0.5rem 1rem;
+		background-color: transparent;
+		color: var(--text-color);
 
-		&:has(textarea) {
-			border: 1px solid #a7a7a7 !important;
-			border-radius: 1rem !important;
-
-			label {
-				left: 0.6rem;
-				top: 0.5rem;
-			}
-		}
-
-		input:focus+label,
-		input:not(:placeholder-shown)+label,
-		textarea:focus+label,
-		textarea:not(:placeholder-shown)+label {
-			top: -1.3rem;
-			left: 0;
-			font-size: 0.95rem;
-			color: var(--primary-color);
-			background-color: var(--bg-color-10);
-			font-weight: 700;
-		}
-
-		textarea:focus+label,
-		textarea:not(:placeholder-shown)+label {
-			top: -1.5rem;
-		}
-
-		&:has(input:focus) {
-			border-bottom: 1.5px solid var(--primary-color);
-		}
-
-		&:has(textarea:focus) {
+		&:focus {
 			border: 1px solid var(--primary-color) !important;
 		}
 	}
-}
 
-.form-group:has(input[type="file"]),
-.form-group:has(#visibility) {
-	border: none !important;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 1rem;
+	&:has(input[type="file"]),
+	&:has(.custom-select),
+	&:has(textarea) {
+		border: none !important;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+
+		textarea {
+			border: 1px solid #a7a7a7;
+		}
+
+	}
 
 	.input-title {
 		font-size: 1rem;
-		color: var(--text-color);
-		font-weight: bold;
-
-		.optional {
-			color: var(--text-color-light);
-			font-weight: normal;
-		}
+		color: var(--text-color-light);
 	}
 }
 
@@ -376,6 +356,7 @@ dialog .max-width {
 		justify-content: center;
 		color: white !important;
 		text-align: center;
+		pointer-events: none !important;
 	}
 
 	input[type="file"] {
@@ -404,6 +385,12 @@ dialog .max-width {
 	position: relative;
 	width: 100%;
 
+	&.type-input {
+		padding: 0;
+	}
+
+
+
 	.select-display-container {
 		display: flex;
 		align-items: center;
@@ -417,7 +404,7 @@ dialog .max-width {
 		align-items: center;
 		gap: 0.5rem;
 		width: 100%;
-		color: var(--text-color-light);
+		color: var(--text-color);
 	}
 
 	.select-options {
@@ -425,18 +412,29 @@ dialog .max-width {
 		flex-direction: column;
 		gap: 0;
 		position: absolute;
-		background-color: var(--bg-color-10);
-		box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+		background-color: var(--bg-color);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 		width: 100%;
 		top: 2.7rem;
 		left: 0;
 		max-height: 0;
 		transition: all 0.3s ease;
 		overflow: hidden;
+		z-index: 9999999 !important;
+		border-radius: 5px;
+
+		&::-webkit-scrollbar {
+			display: none !important;
+		}
 
 		&.show {
 			max-height: 10rem;
 			overflow: auto;
+
+			&::-webkit-scrollbar {
+				display: block !important;
+			}
+
 		}
 
 		li {
