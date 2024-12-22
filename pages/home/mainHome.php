@@ -6,20 +6,35 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 $website_title = "Sangeet- The Heartbeat of Music";
 include_once "pages/head.php";
-include_once "modules/extraFunctions.php"
-    ?>
-<link rel="stylesheet" href="public/CSS/home.css">
+include_once "modules/extraFunctions.php";
+?>
+<link rel="stylesheet" href="/public/CSS/home.css">
 </head>
 
 <body>
     <?php
     include_once "pages/preloader.php";
+    include_once "pages/home/createPlaylist.php";
     ?>
+    <dialog id="addToPlaylistModal">
+        <div class="max-width">
+            <?php
+            if (isset($_SESSION['user_id'])) {
+
+                $playlistList = getPlaylistList($_SESSION['user_id']);
+                // Remove var_dump($playlistList); if you don't need to debug
+                foreach ($playlistList as $playlist) {
+                    echo "<button class='playlist-btn' data-playlistid='{$playlist['id']}'>{$playlist['name']}</button>";
+                }
+            }
+            ?>
+        </div>
+    </dialog>
 
     <div id="musicControls">
         <div class="full-screen-show">
             <div class="playing-on">
-                <img src="public/images/logo-circle.png" alt="" srcset="">
+                <img src="/public/images/logo-circle.png" alt="" srcset="">
                 <p>PLAYING ON SANGEET</p>
             </div>
             <div id="lyricsContainer" class="lyrics-container">
@@ -30,7 +45,7 @@ include_once "modules/extraFunctions.php"
         </div>
         <div class="controls">
             <div class="left">
-                <img src="public\images\song-cover\sarangi.jpg" alt="album art" class="music-cover">
+                <img src="/public\images\song-cover\sarangi.jpg" alt="album art" class="music-cover">
                 <div class="song-info">
                     <h3 class="music-title">Saarangi wadawdawd awd</h3>
                     <p class="music-artist">Sushant K.C</p>
@@ -58,9 +73,9 @@ include_once "modules/extraFunctions.php"
                 </div>
             </div>
             <div class="right">
-                <button class="like-btn" title="Add to Favourites" data-liked="false">
+                <button class="like-btn" title="Add to Favourites" data-liked="0">
                     <iconify-icon icon='fe:heart-o'></iconify-icon></button>
-                <button class="add-to-playlist-dialog-show-btn" title="Add to Playlist">
+                <button class="add-to-playlist-btn" title="Add to Playlist">
                     <iconify-icon icon='tabler:playlist-add'></iconify-icon> </button>
                 <div class="volume-control">
                     <button class="volume-btn">
@@ -85,13 +100,13 @@ include_once "modules/extraFunctions.php"
                 </button>
             </li>
             <li>
-                <button data-path="/discover" class="nav-btn page-load-btn" data-script="public/JS/discover.js"
+                <button data-path="/discover" class="nav-btn page-load-btn" data-script="/public/JS/discover.js"
                     data-title="Discover new music">
                     <iconify-icon icon="mingcute:compass-fill"></iconify-icon>Discover
                 </button>
             </li>
             <li>
-                <button data-path="/trending" class="nav-btn page-load-btn" data-title="Trending Music"
+                <button data-path="/trending" class="nav-btn page-load-btn" data-title="/Trending Music"
                     data-script="public/JS/trending.js">
                     <iconify-icon icon="mage:fire-b-fill"></iconify-icon>Trending
                 </button>
@@ -107,13 +122,13 @@ include_once "modules/extraFunctions.php"
                 </div>
                 <!-- Favourites -->
                 <li>
-                    <button data-path="/library" data-script="public/JS/favourites.js" class="nav-btn page-load-btn">
+                    <button data-path="/favourites" data-script="/public/JS/favourites.js" class="nav-btn page-load-btn">
                         <iconify-icon icon="si:heart-fill"></iconify-icon>Favourites
                     </button>
                 </li>
                 <!-- Recently Played -->
                 <li>
-                    <button data-path="/history" class="nav-btn page-load-btn" data-script="public/JS/history.js">
+                    <button data-path="/history" class="nav-btn page-load-btn">
                         <iconify-icon icon="akar-icons:history"></iconify-icon>History
                     </button>
                 </li>
@@ -125,8 +140,26 @@ include_once "modules/extraFunctions.php"
                 </div>
                 <!-- My Playlists -->
                 <div class="sidebar-playlist-container">
-                    <?php include "modules/getPlaylist.php" ?>
+                    <?php
+                    $playlistList = getPlaylistList($_SESSION['user_id']);
+                    foreach ($playlistList as $playlist) {
+                        echo "
+                    <div class='playlist-card page-load-btn' data-playlistId = '{$playlist['id']}' data-path='/playlist/{$playlist['id']}' data-title='{$playlist['name']} - by " . getFullName($_SESSION['username']) . "' >
+                        <img src='{$playlist['cover']}' alt='' srcset=''>
+                        <div class='playlist-info'>
+                            <h3 class='playlist-title'>{$playlist['name']}</h3>
+                            <p class='song-count'> <span class='count'>{$playlist['song_count']}</span> songs</p>
+                        </div>
+                    </div>
+                    ";
+                    }
+                    ?>
                 </div>
+                <button class="secondary-btn" id="createPlaylistDialogShowBtn">
+                    <iconify-icon icon="lucide:plus"></iconify-icon>
+                    <p class="nav-text">Create Playlist</p>
+                </button>
+
             </ul>
             <?php
         } else {
@@ -167,7 +200,7 @@ include_once "modules/extraFunctions.php"
             if (isset($_SESSION['user_id'])) {
                 ?>
                 <button id="uploadMusicShowBtn" title="Upload Music" data-title="Upload Music" data-path="/upload"
-                    class="page-load-btn" data-script="public/JS/uploadMusic.js">
+                    class="page-load-btn" data-script="/public/JS/uploadMusic.js">
                     <iconify-icon icon="iconoir:music-note-plus"></iconify-icon> </button>
                 <button class="dark-mode-btn">
                     <iconify-icon icon="flowbite:moon-outline"></iconify-icon>
@@ -198,7 +231,7 @@ include_once "modules/extraFunctions.php"
                             <form action="#" method="POST" class="login-form">
                                 <div class="form-group">
                                     <label for="username">Username</label>
-                                    <input type="text" name="username" id="username" placeholder=" ">
+                                    <input type="text" name="username" id="username" placeholder="harilama">
                                 </div>
                                 <div class="form-group">
                                     <label for="password">Password</label>
@@ -292,7 +325,7 @@ include_once "modules/extraFunctions.php"
                                 <div class="form-group">
 
                                     <p>Profile Picture</p>
-                                    <div class="custom-file-upload"
+                                    <div class="custom-image-upload"
                                         style="	background-image: url(public/images/profile-pics/default.jpg);">
                                         <input type="file" class="file-upload" id="profilePic" name="profile_pic" hidden />
                                         <label for="profilePic">Upload Profile Picture</label>
@@ -404,19 +437,19 @@ include_once "modules/extraFunctions.php"
         <?php include "home.php" ?>
     </main>
     <script class="dynamic-script" src=""></script>
-    <script src="public/JS/script.js"></script>
-    <script src="public/JS/temp-musicplayer.js"></script>
+    <script src="/public/JS/script.js"></script>
+    <script src="/public/JS/temp-musicplayer.js"></script>
     <?php
     if (!isset($_SESSION['user_id'])) {
         ?>
-        <script src="public/JS/login.js"></script>
-        <script src="public/JS/signup.js"></script>
-        <script src="public/JS/forgotPassword.js"></script>
+        <script src="/public/JS/login.js"></script>
+        <script src="/public/JS/signup.js"></script>
+        <script src="/public/JS/forgotPassword.js"></script>
         <?php
-    } else {
-
     }
     ?>
 </body>
 
 </html>
+
+<!-- jcettrwbpewjnqrt -->

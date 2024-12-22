@@ -20,13 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Correct the logic for checking if the music is already in favourites
             if (!isFavourites($musicId)) {
+                global $message;
                 $sql = "INSERT INTO favourite_songs (user_id, song_id) VALUES (?, ?)";
                 $message = "Music added to favourites";
                 $status = 200;
             } else {
+                global $message;
                 $sql = "DELETE FROM favourite_songs WHERE user_id = ? AND song_id = ?";
                 $message = "Music removed from favourites";
-                $status = 201;
+                $status = 200;
             }
 
             $stmt = $mysqli->prepare($sql);
@@ -34,8 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
+                global $message;
+
                 echo json_encode(['status' => $status, 'message' => $message]);
             } else {
+                global $message;
+
                 echo json_encode(['status' => 400, 'message' => $mysqli->error]);
             }
         }

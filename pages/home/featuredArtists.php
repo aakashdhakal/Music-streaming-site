@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../modules/database.php';
-require_once __DIR__ . '/../../modules/extraFunctions.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/modules/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/modules/extraFunctions.php';
 $sql = "SELECT * from users where is_artist = 1 ORDER BY id DESC LIMIT 13";
 $stmt = $mysqli->prepare($sql);
 $stmt->execute();

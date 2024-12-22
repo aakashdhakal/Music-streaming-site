@@ -5,9 +5,9 @@ header('Content-Type: application/json');
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-require '../vendor/phpmailer/src/Exception.php';
-require '../vendor/phpmailer/src/PHPMailer.php';
-require '../vendor/phpmailer/src/SMTP.php';
+require 'vendor/phpmailer/src/Exception.php';
+require 'vendor/phpmailer/src/PHPMailer.php';
+require 'vendor/phpmailer/src/SMTP.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $stmt = $mysqli->prepare($sql);
                 $stmt->bind_param("is", $otp, $email);
                 $stmt->execute();
-                echo json_encode(["status" => 200]);
+                echo json_encode(["status" => 200, "message" => "OTP verified successfully"]);
             } else {
                 echo json_encode(["status" => 400, "error" => "OTP expired"]);
             }

@@ -20,7 +20,7 @@ if (isset($tag)) {
     $searchTerm = "%" . $tag . "%";
     $isResultFound = false;
     echo "
-    <div class='search-result-container'>
+    <div class='search-result-container songs-container'>
     ";
 
     // Search for musics
@@ -45,8 +45,7 @@ if (isset($tag)) {
                         icon='gravity-ui:play-fill'></iconify-icon></button>
                 <div class='song-info'>
                     <p class='music-title'>$title</p>
-                </div>
-                <p class='music-artist'>$artist</p>
+                    </div>
             </div>
             ";
         }

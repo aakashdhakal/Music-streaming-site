@@ -6,10 +6,7 @@ const shuffleBtn = document.querySelector(".shuffle-btn");
 const repeatBtn = document.querySelector(".repeat-btn");
 const volumeBtn = document.querySelector(".volume-btn");
 const volume = document.querySelector("#volume");
-const addToPlaylistDialogShowBtn = document.querySelector(
-	".add-to-playlist-dialog-show-btn",
-);
-const addToPlaylistDialog = document.querySelector("#addToPlaylistDialog");
+const addToPlaylistShowBtn = document.querySelectorAll(".add-to-playlist-btn");
 const playlistContainer = document.querySelectorAll(".playlists");
 const likeBtn = document.querySelector(".like-btn");
 const prevMusicBtn = document.querySelector(".prev-btn");
@@ -19,9 +16,7 @@ const playIcon =
 	"<iconify-icon icon='solar:play-bold' style='color:#ff7f11'></iconify-icon>";
 const pauseIcon =
 	"<iconify-icon icon='solar:pause-bold' style='color:#ff7f11'></iconify-icon>";
-const unlikedIcon = "<iconify-icon icon='fe:heart-o'></iconify-icon>";
-const likedIcon =
-	"<iconify-icon icon='fe:heart'  style='color: #ff6a3a'></iconify-icon>";
+
 
 let isPlaying = false;
 let music = new Audio();
@@ -34,6 +29,7 @@ let lyrics = [];
 let currentLyric = [];
 let nextLyric = [];
 let previousLyric = [];
+let musicName, artistName;
 
 // Function to parse LRC file text and return an array of time-text objects
 function parseLyric(lrc) {
@@ -79,9 +75,7 @@ function displayLyric(lyrics, time) {
 		previousLyric = lyrics[lyricIndex - 1];
 
 		lyricContainer.innerHTML = `
-            <p class="lyric previous">${
-							previousLyric ? previousLyric.text : ""
-						}</p>
+            <p class="lyric previous">${previousLyric ? previousLyric.text : ""}</p>
             <p class="lyric current">${currentLyric.text}</p>
             <p class="lyric next">${nextLyric ? nextLyric.text : ""}</p>
         `;
@@ -90,11 +84,7 @@ function displayLyric(lyrics, time) {
 	}
 }
 
-// Function to update like button status
-function setLikeBtnStatus(action) {
-	likeBtn.innerHTML = action === "like" ? likedIcon : unlikedIcon;
-	likeBtn.setAttribute("data-liked", action === "like" ? "true" : "false");
-}
+
 
 // Check if the given music ID is already loaded
 function isMusicLoaded(id) {
@@ -105,7 +95,9 @@ function isMusicLoaded(id) {
 async function loadMusic(id) {
 	const musicData = await fetchMusic(id);
 	musicId = musicData.id;
-	document.title = `${musicData.title} - ${musicData.firstname} ${musicData.lastname}`;
+	musicName = musicData.title;
+	artistName = `${musicData.firstname} ${musicData.lastname}`;
+	setPageTitle("", musicName + " - " + artistName);
 	music.src = musicData.filePath;
 	music.load();
 	music.addEventListener("loadedmetadata", () => {
@@ -115,9 +107,11 @@ async function loadMusic(id) {
 	await addToHistory(musicData.id);
 	addToPrevMusic(musicData.id);
 	if (await setLikeStatus(musicData.id)) {
-		setLikeBtnStatus("like");
+		likeBtn.dataset.liked = 1
+		setBtnStatus(likeBtn, "normal", likedIcon);
 	} else {
-		setLikeBtnStatus("unlike");
+		likeBtn.dataset.liked = 0
+		setBtnStatus(likeBtn, "normal", unlikedIcon);
 	}
 
 	// Fetch and display lyrics
@@ -146,7 +140,7 @@ function updateMusicControls(musicData) {
 	musicArtist.innerHTML = `${musicData.firstname} ${musicData.lastname}`;
 	musicCover.src = musicData.coverImage;
 	totalDuration.innerHTML = formatDuration(music.duration);
-	likeBtn.setAttribute("data-musicId", musicData.id);
+	likeBtn.dataset.musicid = musicData.id;
 
 	if (!loaded) {
 		musicControls.animate([{ bottom: "-10%" }, { bottom: "0" }], {
@@ -159,6 +153,8 @@ function updateMusicControls(musicData) {
 
 // Function to play the music
 async function playMusic() {
+	setPageTitle("", musicName + " - " + artistName);
+	navigator.mediaSession.playbackState = "playing";
 	music.play();
 	displayLyric(lyrics, music.currentTime);
 	isPlaying = true;
@@ -167,6 +163,8 @@ async function playMusic() {
 
 // Function to pause the music
 function pauseMusic() {
+	navigator.mediaSession.playbackState = "paused";
+	setPageTitle(window.location.href,);
 	music.pause();
 	isPlaying = false;
 	playPauseBtn.innerHTML = playIcon;
@@ -332,7 +330,7 @@ volume.addEventListener("mousemove", () =>
 
 // Event listener for keydown events
 document.addEventListener("keydown", (e) => {
-	if (e.target.matches("input")) return;
+	if (e.target.matches("input") || e.target.matches("textarea")) return;
 
 	switch (e.key) {
 		case " ":
@@ -371,32 +369,28 @@ async function displayPlaylists() {
 	});
 }
 
-// Event listener for like button
-likeBtn.addEventListener("click", async () => {
-	const musicId = likeBtn.getAttribute("data-musicId");
-	const action =
-		likeBtn.getAttribute("data-liked") === "false" ? "like" : "unlike";
-	if (await setLikeStatus(musicId, action)) {
-		setLikeBtnStatus(action);
-		// showAlert(
-		//     `Music ${action === 'like' ? 'added to' : 'removed from'} favourites`,
-		//     'success',
-		// );
-	}
-});
+
 
 // Event listener for document clicks
 document.addEventListener("click", async (e) => {
 	const startPlayBtn = e.target.closest(".start-play-music");
 	if (startPlayBtn) {
-		const musicId = startPlayBtn.getAttribute("data-musicId");
+		let musicId = startPlayBtn.dataset.musicid;
+
 		if (isMusicLoaded(musicId)) {
 			isPlaying ? pauseMusic() : playMusic();
 		} else {
 			await loadMusic(musicId);
-			nextMusicQueue = (await fetchMusicQueue(musicId)).map(
-				(music) => music.id,
-			);
+			let playlistId = startPlayBtn.dataset.playlistid;
+			if (playlistId) {
+				nextMusicQueue = (await fetchMusicQueue(musicId, "playlist", playlistId)).map(
+					(music) => music.music_id,
+				);
+			} else {
+				nextMusicQueue = (await fetchMusicQueue(musicId)).map(
+					(music) => music.id,
+				);
+			}
 			nextMusicQueueCopy = [...nextMusicQueue];
 			playMusic();
 		}
@@ -427,3 +421,29 @@ document.addEventListener("fullscreenchange", () => {
 music.addEventListener("seeked", () => {
 	displayLyric(lyrics, music.currentTime);
 });
+
+document.addEventListener("click", (e) => {
+	if (e.target.closest(".add-to-playlist-btn")) {
+		//show playlists just below the btn
+		let addToPlaylistDialog = document.querySelector("#addToPlaylistModal");
+		let playListBtns = document.querySelectorAll("#addToPlaylistModal .playlist-btn");
+		playListBtns.forEach((btn) => {
+			btn.dataset.musicid = e.target.closest(".add-to-playlist-btn").dataset.musicid;
+		})
+		addToPlaylistDialog.show()
+		addToPlaylistDialog.style.top = `${getElementPosition(e.target).top + 30}px`;
+		addToPlaylistDialog.style.left = `${getElementPosition(e.target).left - 170}px`;
+	} else if (document.querySelector("#addToPlaylistModal").open) {
+		closeDialog(document.querySelector("#addToPlaylistModal"));
+	}
+})
+
+function getElementPosition(element) {
+	const rect = element.getBoundingClientRect();
+	return {
+		top: rect.top + window.scrollY,
+		left: rect.left + window.scrollX,
+		right: rect.right + window.scrollX,
+		bottom: rect.bottom + window.scrollY
+	};
+}

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../modules/database.php';
 require_once __DIR__ . '/../../modules/extraFunctions.php';
+
 $sql = 'SELECT musics.id, musics.coverImage, musics.title, musics.artist, COUNT(music_history.music_id) as plays 
         FROM music_history
         INNER JOIN musics ON music_history.music_id = musics.id
@@ -32,7 +33,7 @@ if ($result) {
         <p class='artist-name'>$artist</p>
     </div>
     <div class='song-options btn-container'>
-        <button class='add-to-playlist-btn' title='Add to Playlist' data-musicId='2'>
+        <button class='add-to-playlist-btn' title='Add to Playlist' data-musicId='$musicId'>
             <iconify-icon icon='tabler:playlist-add'></iconify-icon></button>
 </div>
     </div>

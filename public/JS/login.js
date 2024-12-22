@@ -26,8 +26,10 @@ document.addEventListener("submit", async (e) => {
 		if (username === "" || password === "") {
 			showError(e.target, "Please fill in all the fields");
 			setBtnStatus(btn, "normal", "Login");
+
 		} else {
-			await loginUser(e.target);
+			if (await loginUser(e.target))
+				setBtnStatus(btn, "normal", "Login");
 		}
 	}
 });

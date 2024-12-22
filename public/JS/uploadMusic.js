@@ -1,29 +1,40 @@
-let dragDropArea = document.querySelector(".music-upload-area");
-let uploadMusicText = document.querySelector(".music-upload-text");
-let uploadMusicForm = document.querySelector("#uploadMusicForm");
+console.log("uploadMusic.js loaded")
 
-dragDropArea.addEventListener("dragover", function (e) {
-	e.preventDefault();
-	dragDropArea.style.borderColor = "var(--primary-color) ";
-	uploadMusicText.style.color = "var(--primary-color) ";
-});
 
-dragDropArea.addEventListener("dragleave", function (e) {
+document.addEventListener("dragover", function (e) {
 	e.preventDefault();
-	dragDropArea.style.borderColor = "#a8a8a8";
-	uploadMusicText.style.color = "#a8a8a8";
-});
-
-dragDropArea.addEventListener("drop", function (e) {
-	e.preventDefault();
-	let input = dragDropArea.querySelector("input[type='file']");
-	if (checkMusicFileType(e.dataTransfer.files[0])) {
-		uploadedFileName(input, e.dataTransfer.files[0].name);
-	} else {
-		showAlert("Only music files are allowed", "error");
+	if (e.target.closest(".music-upload-area")) {
+		let dragDropArea = e.target;
+		let uploadMusicText = dragDropArea.querySelector(".music-upload-text");
+		dragDropArea.style.borderColor = "var(--primary-color) ";
+		uploadMusicText.style.color = "var(--primary-color)";
 	}
-	dragDropArea.style.borderColor = "#a8a8a8";
-	uploadMusicText.style.color = "#a8a8a8";
+});
+
+document.addEventListener("dragleave", function (e) {
+	e.preventDefault();
+	if (e.target.closest(".music-upload-area")) {
+		let dragDropArea = e.target;
+		let uploadMusicText = dragDropArea.querySelector(".music-upload-text");
+		dragDropArea.style.borderColor = "#a8a8a8";
+		uploadMusicText.style.color = "#a8a8a8";
+	}
+});
+
+document.addEventListener("drop", function (e) {
+	e.preventDefault();
+	if (e.target.closest(".music-upload-area")) {
+		let dragDropArea = e.target;
+		let uploadMusicText = dragDropArea.querySelector(".music-upload-text");
+		let input = dragDropArea.querySelector("input[type='file']");
+		if (checkMusicFileType(e.dataTransfer.files[0])) {
+			uploadedFileName(input, e.dataTransfer.files[0].name);
+		} else {
+			showAlert("Only music files are allowed", "error");
+		}
+		dragDropArea.style.borderColor = "#a8a8a8";
+		uploadMusicText.style.color = "#a8a8a8";
+	}
 });
 
 function checkMusicFileType(file) {
@@ -62,32 +73,34 @@ function checkLyricsFileType(file) {
 	}
 }
 
-uploadMusicForm.addEventListener("submit", async function (e) {
+document.addEventListener("submit", async function (e) {
 	e.preventDefault();
-	let submitBtn = uploadMusicForm.querySelector("button[type='submit");
-	setBtnStatus(submitBtn, "loading", "Uploading Music");
-	let formData = new FormData(uploadMusicForm);
-	let musicFile = uploadMusicForm.querySelector("#musicFile").files[0];
-	let lyricsFile = uploadMusicForm.querySelector("#lyricsFile").files[0];
-	let coverFile = uploadMusicForm.querySelector("#coverImage").files[0];
-	formData.set("musicFile", musicFile);
-	if (lyricsFile) {
-		formData.set("lyricsFile", lyricsFile);
-	}
-	if (coverFile) {
-		formData.set("coverFile", coverFile);
-	}
+	if (e.target.closest("#uploadMusicForm")) {
+		let submitBtn = uploadMusicForm.querySelector("button[type='submit");
+		setBtnStatus(submitBtn, "loading", "Uploading Music");
+		let formData = new FormData(uploadMusicForm);
+		let musicFile = uploadMusicForm.querySelector("#musicFile").files[0];
+		let lyricsFile = uploadMusicForm.querySelector("#lyricsFile").files[0];
+		let coverFile = uploadMusicForm.querySelector("#coverImage").files[0];
+		formData.set("musicFile", musicFile);
+		if (lyricsFile) {
+			formData.set("lyricsFile", lyricsFile);
+		}
+		if (coverFile) {
+			formData.set("coverFile", coverFile);
+		}
 
-	let music = new Audio(musicFile);
-	formData.set("duration", music.duration);
+		let music = new Audio(musicFile);
+		formData.set("duration", music.duration);
 
-	if (!validateUploadMusicForm(formData)) {
-		setBtnStatus(submitBtn, "normal", "Upload");
-		return;
-	} else if (await uploadMusic(formData)) {
-		showAlert("Music uploaded", "success");
-		setBtnStatus(submitBtn, "normal", "Upload");
-		loadPageDynamic("/");
+		if (!validateUploadMusicForm(formData)) {
+			setBtnStatus(submitBtn, "normal", "Upload");
+			return;
+		} else if (await uploadMusic(formData)) {
+			showAlert("Music uploaded", "success");
+			setBtnStatus(submitBtn, "normal", "Upload");
+			loadPageDynamic("/");
+		}
 	}
 });
 

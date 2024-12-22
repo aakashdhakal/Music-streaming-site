@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["playlistId"])) {
         $playlistId = $_POST["playlistId"];
-        $sql = "SELECT music_id from playlist_songs where playlist_id = ? and music_id != ?";
+        $sql = "SELECT music_id from playlist_songs where playlist_id = ? and music_id != ? ORDER BY id DESC";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("ii", $playlistId, $id);
         $stmt->execute();

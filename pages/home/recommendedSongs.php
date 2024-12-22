@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../modules/database.php';
-include_once __DIR__ . '/../../modules/extraFunctions.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/modules/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/modules/extraFunctions.php';
 $sql = "SELECT * FROM musics ORDER BY RAND() DESC LIMIT 13";
 $stmt = $mysqli->prepare($sql);
 $stmt->execute();

@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../modules/database.php';
-require_once __DIR__ . '/../../modules/extraFunctions.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/modules/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/modules/extraFunctions.php';
 $sql = 'SELECT * from musics WHERE artist = ? ORDER BY id DESC LIMIT 5';
 $stmt = $mysqli->prepare($sql);
 $artist = 'sushantkc';

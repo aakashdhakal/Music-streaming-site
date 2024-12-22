@@ -1,4 +1,3 @@
-console.log("home.js loaded");
 document.addEventListener("click", (e) => {
 	// Check if the clicked element or its ancestor has the ID 'nextInContainer'
 	if (e.target.closest("#nextInContainer")) {
@@ -20,3 +19,9 @@ document.addEventListener("click", (e) => {
 		cardContainer.scrollLeft -= cardContainer.offsetWidth;
 	}
 });
+
+document.addEventListener("submit", (e) => {
+	// Check if the clicked element or its ancestor has the ID 'searchForm'
+
+});
+

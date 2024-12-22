@@ -2,6 +2,8 @@
 if (!isset($_SESSION)) {
     session_start();
 }
+
+require_once 'database.php';
 function isFavourites($musicId)
 {
     if (isset($_SESSION['user_id'])) {
@@ -113,32 +115,161 @@ function getGenreList()
 
 function getLanguageList()
 {
-    $curl = curl_init();
+    $languages = [
+        "Afrikaans",
+        "Albanian",
+        "Amharic",
+        "Arabic",
+        "Armenian",
+        "Azerbaijani",
+        "Basque",
+        "Belarusian",
+        "Bengali",
+        "Bosnian",
+        "Bulgarian",
+        "Catalan",
+        "Cebuano",
+        "Chichewa",
+        "Chinese",
+        "Corsican",
+        "Croatian",
+        "Czech",
+        "Danish",
+        "Dutch",
+        "English",
+        "Esperanto",
+        "Estonian",
+        "Filipino",
+        "Finnish",
+        "French",
+        "Frisian",
+        "Galician",
+        "Georgian",
+        "German",
+        "Greek",
+        "Gujarati",
+        "Haitian Creole",
+        "Hausa",
+        "Hawaiian",
+        "Hebrew",
+        "Hindi",
+        "Hmong",
+        "Hungarian",
+        "Icelandic",
+        "Igbo",
+        "Indonesian",
+        "Irish",
+        "Italian",
+        "Japanese",
+        "Javanese",
+        "Kannada",
+        "Kazakh",
+        "Khmer",
+        "Kinyarwanda",
+        "Korean",
+        "Kurdish",
+        "Kyrgyz",
+        "Lao",
+        "Latin",
+        "Latvian",
+        "Lithuanian",
+        "Luxembourgish",
+        "Macedonian",
+        "Malagasy",
+        "Malay",
+        "Malayalam",
+        "Maltese",
+        "Maori",
+        "Marathi",
+        "Mongolian",
+        "Myanmar",
+        "Nepali",
+        "Norwegian",
+        "Odia",
+        "Pashto",
+        "Persian",
+        "Polish",
+        "Portuguese",
+        "Punjabi",
+        "Romanian",
+        "Russian",
+        "Samoan",
+        "Scots Gaelic",
+        "Serbian",
+        "Sesotho",
+        "Shona",
+        "Sindhi",
+        "Sinhala",
+        "Slovak",
+        "Slovenian",
+        "Somali",
+        "Spanish",
+        "Sundanese",
+        "Swahili",
+        "Swedish",
+        "Tajik",
+        "Tamil",
+        "Tatar",
+        "Telugu",
+        "Thai",
+        "Turkish",
+        "Turkmen",
+        "Ukrainian",
+        "Urdu",
+        "Uyghur",
+        "Uzbek",
+        "Vietnamese",
+        "Welsh",
+        "Xhosa",
+        "Yiddish",
+        "Yoruba",
+        "Zulu"
+    ];
+    return $languages;
+}
 
-    curl_setopt_array($curl, [
-        CURLOPT_URL => "https://list-of-all-countries-and-languages-with-their-codes.p.rapidapi.com/languages",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => [
-            "x-rapidapi-host: list-of-all-countries-and-languages-with-their-codes.p.rapidapi.com",
-            "x-rapidapi-key: bd9675f92cmsh6cab361f97989e9p1c811ajsn0db08a964b9e"
-        ],
-    ]);
+function getPlaylistSongsCount($playlistId)
+{
+    require 'database.php';
+    $sql = "SELECT * FROM playlist_songs WHERE playlist_id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('i', $playlistId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->num_rows;
+}
 
-    $response = curl_exec($curl);
-    $err = curl_error($curl);
-
-    curl_close($curl);
-
-    if ($err) {
-        return "cURL Error #:" . $err;
-    } else {
-        $languageList = json_decode($response, true);
-        //return array of names
-        return array_column($languageList, 'name');
+function getPlaylistList($userId)
+{
+    require 'database.php';
+    $sql = "SELECT * FROM playlists WHERE user_id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $playlistList = [];
+    while ($row = $result->fetch_assoc()) {
+        $row['song_count'] = getPlaylistSongsCount($row['id']);
+        $playlistList[] = $row;
     }
+    return $playlistList;
+}
+
+function formatDuration($duration)
+{
+    $minutes = floor($duration / 60);
+    $seconds = $duration % 60;
+    return $minutes . ':' . str_pad($seconds, 2, '0', STR_PAD_LEFT);
+}
+
+function formatTime($time)
+{
+    $hours = floor($time / 3600);
+    $minutes = floor(($time % 3600) / 60);
+    $seconds = $time % 60;
+    return [
+        'hrs' => $hours,
+        'mins' => $minutes,
+        'secs' => $seconds
+    ];
 }
