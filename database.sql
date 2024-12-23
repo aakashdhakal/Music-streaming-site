@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 21, 2024 at 01:26 PM
+-- Generation Time: Dec 23, 2024 at 05:03 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,13 +38,12 @@ CREATE TABLE `favourite_songs` (
 --
 
 INSERT INTO `favourite_songs` (`id`, `song_id`, `user_id`) VALUES
-(107, 2, 3),
 (108, 16, 3),
 (110, 15, 3),
-(111, 55, 3),
-(324, 0, 3),
-(330, 58, 3),
-(335, 18, 3);
+(356, 57, 3),
+(366, 71, 28),
+(367, 22, 28),
+(368, 21, 28);
 
 -- --------------------------------------------------------
 
@@ -85,7 +84,8 @@ INSERT INTO `musics` (`id`, `title`, `artist`, `genre`, `duration`, `releaseDate
 (55, 'Lean On (Ft. MØ)', 'majorlazer', 'Rock', 177, '2024-08-24', '/public/music/lean-on-music.m4a', '/public/images/song-cover/music.jpg', '/public/lyrics/lean-on-lyrics.lrc', 0, '', ''),
 (56, 'Liggi', 'ritviz', 'Indian', 181, '2024-08-24', '/public/music/liggi-music.m4a', '/public/images/song-cover/liggi-cover.jpg', '', 0, '', ''),
 (57, 'Bardali', 'sushantkc', 'Folk', 213, '2024-08-24', '/public/music/bardali-shusant-kc.mp3', '/public/images/song-cover/bardali.jpg', '/public/lyrics/bardali-lyrics.lrc', 0, '', ''),
-(58, 'Raiya Chadiko', 'aakashdhakal', 'Dohori', 0, '2024-12-15', 'public/music/raiya-chadiko-music.mp3', '/public/images/song-cover/music.jpg', NULL, 1, 'Nepali', '');
+(58, 'Raiya Chadiko', 'aakashdhakal', 'Dohori', 0, '2024-12-15', 'public/music/raiya-chadiko-music.mp3', '/public/images/song-cover/music.jpg', NULL, 1, 'Nepali', ''),
+(71, 'My Music', 'dhakalaakash', 'Dohori', 0, '2024-12-22', 'public/music/my-music-music.mp3', '/public/images/song-cover/my-music-cover.jpg', NULL, 1, 'Nepali', 'my desc');
 
 -- --------------------------------------------------------
 
@@ -106,11 +106,6 @@ CREATE TABLE `music_history` (
 INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
 (457, 3, 55),
 (458, 3, 55),
-(459, 3, 22),
-(460, 3, 22),
-(461, 3, 22),
-(462, 3, 22),
-(463, 3, 22),
 (464, 3, 55),
 (465, 3, 55),
 (466, 3, 55),
@@ -139,10 +134,7 @@ INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
 (489, 3, 1),
 (490, 3, 2),
 (491, 3, 56),
-(492, 3, 16),
-(493, 3, 16),
 (494, 3, 55),
-(495, 3, 16),
 (496, 3, 55),
 (497, 3, 2),
 (498, 3, 2),
@@ -156,13 +148,9 @@ INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
 (506, 3, 1),
 (507, 3, 17),
 (508, 3, 17),
-(509, 3, 16),
 (510, 3, 57),
-(511, 3, 22),
 (512, 3, 2),
-(513, 3, 22),
 (514, 3, 15),
-(515, 3, 22),
 (516, 3, 3),
 (517, 3, 56),
 (518, 3, 56),
@@ -196,30 +184,22 @@ INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
 (546, 3, 18),
 (547, 3, 1),
 (548, 3, 56),
-(549, 3, 16),
 (550, 3, 57),
-(551, 3, 22),
 (552, 3, 57),
-(553, 3, 22),
 (554, 3, 19),
 (555, 3, 3),
 (556, 3, 19),
 (557, 3, 15),
 (558, 3, 21),
-(559, 3, 16),
 (560, 3, 55),
 (561, 3, 21),
 (562, 3, 21),
 (563, 3, 19),
 (564, 3, 55),
 (565, 3, 1),
-(566, 3, 22),
 (567, 3, 2),
 (568, 3, 58),
 (569, 3, 58),
-(570, 3, 22),
-(571, 3, 22),
-(572, 3, 22),
 (573, 3, 58),
 (574, 3, 2),
 (575, 3, 1),
@@ -230,7 +210,6 @@ INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
 (580, 3, 18),
 (581, 3, 1),
 (582, 3, 57),
-(583, 3, 22),
 (584, 3, 3),
 (585, 3, 17),
 (586, 3, 17),
@@ -242,60 +221,87 @@ INSERT INTO `music_history` (`id`, `user_id`, `music_id`) VALUES
 (592, 3, 17),
 (593, 3, 17),
 (594, 3, 15),
-(595, 3, 16),
-(596, 3, 16),
 (597, 3, 55),
 (598, 3, 55),
 (599, 3, 17),
 (600, 17, 16),
 (601, 3, 17),
-(602, 3, 22),
 (603, 3, 1),
 (604, 3, 18),
 (605, 3, 3),
 (614, 3, 18),
 (616, 3, 18),
 (617, 3, 2),
-(618, 3, 16),
 (619, 3, 15),
 (620, 3, 19),
 (621, 3, 1),
-(622, 3, 22),
 (623, 3, 18),
-(624, 3, 22),
 (625, 3, 1),
 (626, 3, 19),
 (627, 3, 15),
-(628, 3, 16),
 (629, 3, 2),
-(630, 3, 16),
 (631, 3, 15),
 (632, 3, 19),
 (633, 3, 1),
-(634, 3, 22),
 (635, 3, 18),
-(636, 3, 22),
 (637, 3, 1),
 (638, 3, 19),
 (639, 3, 15),
-(640, 3, 16),
 (641, 3, 2),
 (642, 3, 19),
 (643, 3, 58),
 (644, 3, 21),
 (645, 3, 17),
-(646, 3, 22),
-(647, 3, 22),
 (648, 3, 19),
 (649, 3, 19),
 (650, 3, 1),
-(651, 3, 22),
 (652, 3, 18),
 (653, 3, 19),
 (654, 3, 15),
-(655, 3, 16),
 (656, 3, 2),
-(657, 3, 18);
+(657, 3, 18),
+(658, 3, 57),
+(659, 3, 57),
+(660, 3, 57),
+(661, 3, 57),
+(662, 3, 57),
+(663, 3, 57),
+(664, 3, 57),
+(665, 3, 57),
+(666, 3, 57),
+(667, 3, 57),
+(668, 3, 57),
+(669, 3, 57),
+(670, 3, 57),
+(671, 3, 18),
+(672, 3, 57),
+(673, 3, 57),
+(674, 3, 55),
+(675, 3, 55),
+(677, 3, 55),
+(679, 3, 55),
+(680, 3, 17),
+(683, 3, 17),
+(685, 3, 17),
+(686, 3, 57),
+(688, 3, 17),
+(689, 3, 55),
+(691, 3, 2),
+(692, 3, 55),
+(693, 3, 17),
+(694, 3, 2),
+(696, 3, 55),
+(697, 3, 3),
+(698, 3, 2),
+(700, 3, 55),
+(701, 3, 55),
+(706, 28, 55),
+(707, 28, 17),
+(708, 28, 2),
+(710, 28, 21),
+(711, 28, 71),
+(713, 28, 21),
+(715, 28, 17);
 
 -- --------------------------------------------------------
 
@@ -325,16 +331,17 @@ CREATE TABLE `playlists` (
   `creation_date` date NOT NULL,
   `cover` text NOT NULL,
   `description` text NOT NULL,
-  `isPrivate` tinyint(1) NOT NULL
+  `isPublic` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `playlists`
 --
 
-INSERT INTO `playlists` (`id`, `user_id`, `name`, `creation_date`, `cover`, `description`, `isPrivate`) VALUES
+INSERT INTO `playlists` (`id`, `user_id`, `name`, `creation_date`, `cover`, `description`, `isPublic`) VALUES
 (50, 3, 'Aakash\'s Playlist', '2024-07-29', '/public/images/playlist-cover/playlist-cover.png', 'This playlist features a curated selection of the best tracks from various genres, perfect for any mood or occasion. Enjoy a mix of classic hits and new releases, handpicked to provide an exceptional listening experience. Whether you\'re looking to relax, get energized, or discover new music, this playlist has something for everyone. Dive in and let the music take you on a journey', 1),
-(52, 3, 'Aakash Dhakal', '2024-08-10', '/public/images/playlist-cover/test.jpg', 'This is a test playlist description', 0);
+(52, 3, 'Aakash Dhakal', '2024-08-10', '/public/images/playlist-cover/test.jpg', 'This is a test playlist description', 0),
+(88, 28, 'My playlist', '2024-12-22', '/public/images/playlist-cover/28-My playlist280161.jpg', 'My playlist desc', 1);
 
 -- --------------------------------------------------------
 
@@ -357,13 +364,14 @@ INSERT INTO `playlist_songs` (`id`, `music_id`, `playlist_id`) VALUES
 (56, 2, 52),
 (57, 16, 50),
 (58, 15, 50),
-(59, 19, 50),
 (60, 1, 50),
 (62, 15, 52),
 (63, 18, 50),
 (64, 22, 50),
 (65, 16, 52),
-(66, 19, 52);
+(70, 57, 52),
+(75, 55, 88),
+(76, 2, 88);
 
 -- --------------------------------------------------------
 
@@ -405,7 +413,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `firstname`, `lastname`, `dob
 (13, 'edsheerean', 'admin', 'Ed', 'Sheerean', '2014-08-01', 'male', 'helloworld@gmail.com', '/public/images/profile-pics/edsheeran.jpg', '', 1, 1),
 (14, 'daddyyankee', 'kjhekajhksjdhak', 'Daddy', 'Yankee', '1997-01-01', 'male', 'helloworld@gmail.com', '/public/images/profile-pics/daddyyankee.jpg', '', 1, 1),
 (16, 'donnoone', 'Hello@123', 'Hello', 'World', '2001-01-12', '', 'slsmets@otpku.com', '/public/images/profile-pics/default.jpg', '', 0, 0),
-(17, 'hilubabz', 'Yunika@12', 'Utsarga', 'Manandhar', '2004-11-29', '', 'utsargam44@gmail.com', '/public/images/profile-pics/default.jpg', '', 0, 0);
+(17, 'hilubabz', 'Yunika@12', 'Utsarga', 'Manandhar', '2004-11-29', '', 'utsargam44@gmail.com', '/public/images/profile-pics/default.jpg', '', 0, 0),
+(28, 'dhakalaakash', 'A@kash123', 'Aakash', 'Dhakal', '2002-12-01', '', 'anamoldhakal22@gmail.com', 'public/images/profile-pics/default.jpg', '', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -437,7 +446,10 @@ INSERT INTO `verify_email` (`id`, `otp`, `email`, `time`) VALUES
 (97, 818138, 'null', '2024-11-22 01:31:07'),
 (98, 772658, 'null', '2024-11-22 01:31:16'),
 (102, 325131, 'anamoldhakal22@gmail.com', '2024-11-22 02:58:16'),
-(107, 816297, 'ehsonfors@suksesboss.com', '2024-11-28 15:46:54');
+(107, 816297, 'ehsonfors@suksesboss.com', '2024-11-28 15:46:54'),
+(109, 707731, 'anamoldhakal22@gmail.com', '2024-12-22 18:31:17'),
+(111, 947430, 'anamoldhakal22@gmail.com', '2024-12-22 18:35:36'),
+(116, 805952, 'anamoldhakal22@gmail.com', '2024-12-22 18:48:01');
 
 --
 -- Indexes for dumped tables
@@ -503,19 +515,19 @@ ALTER TABLE `verify_email`
 -- AUTO_INCREMENT for table `favourite_songs`
 --
 ALTER TABLE `favourite_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=336;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=370;
 
 --
 -- AUTO_INCREMENT for table `musics`
 --
 ALTER TABLE `musics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `music_history`
 --
 ALTER TABLE `music_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=658;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=716;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -527,25 +539,25 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `playlists`
 --
 ALTER TABLE `playlists`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `playlist_songs`
 --
 ALTER TABLE `playlist_songs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `verify_email`
 --
 ALTER TABLE `verify_email`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- Constraints for dumped tables
