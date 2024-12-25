@@ -97,7 +97,7 @@ async function loadMusic(id) {
 	musicId = musicData.id;
 	musicName = musicData.title;
 	artistName = `${musicData.firstname} ${musicData.lastname}`;
-	setPageTitle("", musicName + " - " + artistName);
+	document.title = musicName + " - " + artistName;
 	music.src = musicData.filePath;
 	music.load();
 	music.addEventListener("loadedmetadata", () => {
@@ -118,6 +118,7 @@ async function loadMusic(id) {
 	currentLyric = nextLyric = previousLyric = [];
 	const lrc = await fetch(musicData.lyricsPath).then((res) => res.text());
 	lyrics = parseLyric(lrc);
+
 }
 
 // Format the duration of the music in minutes and seconds

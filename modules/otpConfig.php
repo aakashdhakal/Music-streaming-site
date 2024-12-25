@@ -25,87 +25,24 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
 
         $htmlContent = "
-    <!DOCTYPE html>
-<html lang='en'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>OTP Verification</title>
-
-</head>
-<body>
-   <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #dddddd;
-            
-        }
-        .header h1 {
-            margin: 0;
-            color: #ff6a3a;
-        }
-        .content {
-            padding: 20px;
-            text-align: center;
-        }
-        .content p {
-            font-size: 16px;
-            color: #666666;
-            line-height: 1.5rem;
-        }
-        .otp {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff6a3a;
-            margin: 20px 0;
-        }
-        .footer {
-            text-align: center;
-            padding: 10px 0;
-            border-top: 1px solid #dddddd;
-            margin-top: 20px;
-        }
-        .footer p {
-            font-size: 14px;
-            color: #999999;
-          margin-top: 1rem;
-        }
-    </style>
-    <div class='container'>
-        <div class='header'>
-            <h1>OTP Verification</h1>
-        </div>
-        <div class='content'>
-            <p>Dear User,</p>
-            <p>$message</p>
-            <div class='otp'>$otpCode</div>
-            <p>This OTP is valid for 10 minutes. Please do not share this OTP with anyone.</p>
-        </div>
-        <div class='footer'>
-            <p>If you did not request this, please ignore this email.</p>
-            <p>Thank you,<br>SANGEET</p>
-        </div>
-    </div>
-</body>
-</html>
-
-    ";
+                        <div class='container' style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                            <div class='header' style='text-align: center; margin-bottom: 20px;'>
+                                <h1 style='font-size: 24px; color: #333;'>OTP Verification</h1>
+                            </div>
+                            <div class='content' style='font-size: 16px; color: #555;'>
+                                <p>Dear User,</p>
+                                <p>$message</p>
+                                <div class='otp' style='font-size: 20px; font-weight: bold; color: #ff6a3a; margin: 20px 0;'>
+                                    $otpCode
+                                </div>
+                                <p>This OTP is valid for 10 minutes. Please do not share this OTP with anyone.</p>
+                            </div>
+                            <div class='footer' style='font-size: 14px; color: #777; margin-top: 20px;'>
+                                <p>If you did not request this, please ignore this email.</p>
+                                <p>Thank you,<br>SANGEET</p>
+                            </div>
+                        </div>
+                    ";
 
         $mail = new PHPMailer(true);
         $mail->isSMTP();

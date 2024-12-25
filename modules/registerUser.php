@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lastName = $_POST['lastName'];
     $dob = $_POST['dob'];
     $profilePicture = $_FILES['profile_pic']['name'];
+    $gender = $_POST['gender'];
 
     //if profilepicture is empty use default profile picture
     if (empty($profilePicture)) {
@@ -21,9 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $profilePicture = uploadFile($_FILES['profile_pic'], 'profile_pic', $profilePicture);
     }
 
-    $sql = "INSERT INTO users (username, email, password, firstName, lastName, dob,profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (username, email, password, firstName, lastName, dob,profile_picture,gender) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
     $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("sssssss", $username, $email, $password, $firstName, $lastName, $dob, $profilePicture);
+    $stmt->bind_param("ssssssss", $username, $email, $password, $firstName, $lastName, $dob, $profilePicture, $gender);
     $stmt->execute();
     if ($stmt->affected_rows > 0) {
         echo json_encode(["message" => "User registered successfully", "status" => 200]);

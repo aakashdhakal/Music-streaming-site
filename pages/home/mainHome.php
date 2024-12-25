@@ -128,7 +128,7 @@ include_once "modules/extraFunctions.php";
                 </li>
                 <!-- Recently Played -->
                 <li>
-                    <button data-path="/history" class="nav-btn page-load-btn">
+                    <button data-path="/history" class="nav-btn page-load-btn" data-script="/public/JS/history.js">
                         <iconify-icon icon="akar-icons:history"></iconify-icon>History
                     </button>
                 </li>
@@ -144,7 +144,7 @@ include_once "modules/extraFunctions.php";
                     $playlistList = getPlaylistList($_SESSION['user_id']);
                     foreach ($playlistList as $playlist) {
                         echo "
-                    <div class='playlist-card page-load-btn' data-playlistId = '{$playlist['id']}' data-path='/playlist/{$playlist['id']}' data-title='{$playlist['name']} - by " . getFullName($_SESSION['username']) . "' >
+                    <div class='playlist-card page-load-btn' data-playlistId = '{$playlist['id']}' data-path='/playlist/{$playlist['id']}' data-title='{$playlist['name']} - by " . getFullName($_SESSION['username']) . "' data-script='/public/JS/playlist.js'>
                         <img src='{$playlist['cover']}' alt='' srcset=''>
                         <div class='playlist-info'>
                             <h3 class='playlist-title'>{$playlist['name']}</h3>
@@ -211,225 +211,57 @@ include_once "modules/extraFunctions.php";
                 <button class="profile-btn">
                     <img src="<?php echo $_SESSION["user_image"] ?>" alt="profile-pic">
                 </button>
+                <div id="notificationWindow">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="mark-all-as-read"> Mark all as read <iconify-icon
+                                icon="charm:circle-tick"></iconify-icon>
+                        </button>
+                    </div>
+                    <hr>
+                    <div class="notification-body"></div>
+                </div>
+
+                <div id="profileWindow">
+                    <ul>
+
+                        <li>
+                            <a href="/<?php echo $_SESSION["username"] ?>">
+                                <iconify-icon icon="bi:person-circle"></iconify-icon>Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/settings">
+                                <iconify-icon icon="bi:gear-wide-connected"></iconify-icon>Settings
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/help">
+                                <iconify-icon icon="bi:question-circle"></iconify-icon>Help
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/logout">
+                                <iconify-icon icon="bi:box-arrow-right"></iconify-icon>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <?php
             } else {
+                include_once "pages/home/login.php";
+                include_once "pages/home/signup.php";
+                include_once "pages/home/resetPassword.php";
                 ?>
                 <div class="login-signup-btn-container">
                     <button class="login-form-show-btn secondary-btn" id="loginFormShowBtn">Login</button>
                     <button class="signup-form-show-btn primary-btn" id="signupFormShowBtn">Sign Up</button>
                 </div>
-                <dialog id="loginForm">
-                    <div class="max-width">
-                        <button class="close-dialog-btn" id="closeLoginForm">
-                            <iconify-icon icon="system-uicons:cross"></iconify-icon> </button>
-                        <h2>Login</h2>
-                        <div class="error-container">
-                            <p class="error-text">Username already Exists</p>
-                        </div>
-                        <div class="forms-container">
-
-                            <form action="#" method="POST" class="login-form">
-                                <div class="form-group">
-                                    <label for="username">Username</label>
-                                    <input type="text" name="username" id="username" placeholder="harilama">
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" name="password" id="password" autocomplete="off" placeholder=" ">
-                                    <button class="toggle-password-visibility" type="button">
-                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon></button>
-                                </div>
-                                <p class="forgot-password-show">Forgot Password?</p>
-                                <button type="submit" class="primary-btn">Login</button>
-                                <p>Don't have an account?&nbsp;&nbsp;<a href="#" id="signupFromLogin">Sign Up</a></p>
-                            </form>
-                        </div>
-                    </div>
-                </dialog>
-                <dialog id="signupForm">
-                    <div class="max-width">
-                        <button class="close-dialog-btn" id="closeSignupForm">
-                            <iconify-icon icon="system-uicons:cross"></iconify-icon> </button>
-                        <h2>Sign Up</h2>
-                        <div class="error-container">
-                            <p class="error-text">Username already Exists</p>
-                        </div>
-                        <div class="forms-container">
-                            <form action="#" method="POST" class="signup-form">
-                                <div class="form-group">
-                                    <input type="text" name="username" id="signupUsername" placeholder=" ">
-                                    <label for="username">Username</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" name="email" id="signupEmail" placeholder=" ">
-                                    <label for="email">Email</label>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="password" id="signupPassword" autocomplete="off"
-                                        placeholder=" ">
-                                    <label for="password">Password</label>
-                                    <button class="toggle-password-visibility" type="button">
-                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon> </button>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="confirmPassword" id="confirmPassword" autocomplete="off"
-                                        placeholder=" ">
-                                    <label for="confirmPassword">Confirm Password</label>
-                                    <button class="toggle-password-visibility" type="button">
-                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon> </button>
-                                </div>
-                                <button type="submit" class="primary-btn" id="nextStep">Next</button>
-                                <p>Already have an account? <a href="#" id="loginFromSignup">Login</a></p>
-                            </form>
-                            <form action="#" method="POST" class="otp-verify">
-                                <p>Enter the OTP sent to your email</p>
-                                <div class="form-group otp-group">
-                                    <!-- one digit per input -->
-                                    <input type="number" name="otp[]" id="otp1" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" id="otp2" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" id="otp3" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" id="otp4" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" id="otp5" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" id="otp6" maxlength="1" autocomplete="off" required>
-                                </div>
-                                <p class="resend-otp">Didn't Receive the code? <button class="resend"
-                                        type="button">Resend</button>
-                                </p>
-                                <button type="submit" class="primary-btn">Verify</button>
-                            </form>
-                            <form action="" method="post" class="personal-info">
-                                <div class="full-name">
-                                    <div class="form-group">
-                                        <input type="text" name="firstName" id="firstName" placeholder=" ">
-                                        <label for="firstName">First Name</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" name="lastName" id="lastName" placeholder=" ">
-                                        <label for="lastName">Last Name</label>
-                                    </div>
-                                </div>
-                                <div class="date-of-birth">
-                                    <div class="form-group">
-                                        <input type="number" name="year" id="year" placeholder=" ">
-                                        <label for="year">Year</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="number" name="month" id="month" placeholder=" ">
-                                        <label for="month">Month</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="number" name="day" id="day" placeholder=" ">
-                                        <label for="day">Day</label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-
-                                    <p>Profile Picture</p>
-                                    <div class="custom-image-upload"
-                                        style="	background-image: url(public/images/profile-pics/default.jpg);">
-                                        <input type="file" class="file-upload" id="profilePic" name="profile_pic" hidden />
-                                        <label for="profilePic">Upload Profile Picture</label>
-                                    </div>
-                                </div>
-                                <button type="submit" class="primary-btn">Sign Up</button>
-                            </form>
-                        </div>
-                    </div>
-                </dialog>
-                <dialog id="resetPassword">
-                    <div class="max-width">
-                        <button class="close-dialog-btn" id="closeResetPasswordForm">
-                            <iconify-icon icon="system-uicons:cross"></iconify-icon> </button>
-                        <h2>Reset Password</h2>
-                        <div class="error-container">
-                            <p class="error-text">Username already Exists</p>
-                        </div>
-                        <div class="forms-container">
-                            <form action="#" method="POST" class="get-email">
-                                <p>
-                                    Enter your email to reset your password
-                                </p>
-                                <div class="form-group">
-                                    <input type="email" name="email" id="resetPasswordEmail" placeholder=" ">
-                                    <label for="email">Email</label>
-                                </div>
-                                <button type="submit" class="primary-btn">Next</button>
-                            </form>
-                            <form action="#" method="POST" class="otp-verify">
-                                <p>Enter the OTP sent to your email</p>
-                                <div class="form-group otp-group">
-                                    <!-- one digit per input -->
-                                    <input type="number" name="otp[]" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" maxlength="1" autocomplete="off" required>
-                                    <input type="number" name="otp[]" maxlength="1" autocomplete="off" required>
-                                </div>
-                                <p class="resend-otp">Didn't Receive the code? <button class="resend"
-                                        type="button">Resend</button>
-                                </p>
-                                <button type="submit" class="primary-btn">Verify</button>
-                            </form>
-                            <form action="" method="post" class="reset-password">
-                                <div class="form-group">
-                                    <input type="password" name="password" id="resetPassword" autocomplete="off"
-                                        placeholder=" ">
-                                    <label for="password">New Password</label>
-                                    <button class="toggle-password-visibility" type="button">
-                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon> </button>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="confirmPassword" id="resetConfirmPassword"
-                                        autocomplete="off" placeholder=" ">
-                                    <label for="confirmPassword">Confirm Password</label>
-                                    <button class="toggle-password-visibility" type="button">
-                                        <iconify-icon icon="fluent:eye-24-regular"></iconify-icon> </button>
-                                </div>
-                                <button type="submit" class="primary-btn">Reset Password</button>
-                            </form>
-                        </div>
-                </dialog>
                 <?php
             }
             ?>
         </div>
-        <div id="notificationWindow">
-            <div class="notification-header">
-                <h3>Notifications</h3>
-                <button class="mark-all-as-read"> Mark all as read <iconify-icon
-                        icon="charm:circle-tick"></iconify-icon>
-                </button>
-            </div>
-            <hr>
-            <div class="notification-body"></div>
-        </div>
 
-        <div id="profileWindow">
-            <ul>
-
-                <li>
-                    <a href="/<?php echo $_SESSION["username"] ?>">
-                        <iconify-icon icon="bi:person-circle"></iconify-icon>Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="/settings">
-                        <iconify-icon icon="bi:gear-wide-connected"></iconify-icon>Settings
-                    </a>
-                </li>
-                <li>
-                    <a href="/help">
-                        <iconify-icon icon="bi:question-circle"></iconify-icon>Help
-                    </a>
-                </li>
-                <li>
-                    <a href="/logout">
-                        <iconify-icon icon="bi:box-arrow-right"></iconify-icon>Logout
-                    </a>
-                </li>
-            </ul>
-        </div>
 
     </header>
 

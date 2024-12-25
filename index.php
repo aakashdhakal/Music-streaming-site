@@ -21,7 +21,7 @@ post('/favourites', 'pages/favourites/favourites.php'); // Route for the /favour
 post('/discover', 'pages/discover/discover.php'); // Route for the /discover URL
 post('/trending', 'pages/trending/trending.php'); // Route for the /trending URL
 post('/search/$tag', 'pages/search/search.php'); // Route for the /search URL
-post('/upload', 'pages/home/addMusic.php'); // Route for the /upload URL
+post('/upload', 'pages/upload/upload.php'); // Route for the /upload URL
 post('/playlist/$id', 'pages/playlist/playlist.php'); // Route for the /playlist URL
 post('/history', 'pages/history/history.php'); // Route for the /history URL
 

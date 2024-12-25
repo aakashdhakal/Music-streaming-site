@@ -273,3 +273,13 @@ function formatTime($time)
         'secs' => $seconds
     ];
 }
+
+
+function incrementPlays($musicId)
+{
+    require 'database.php';
+    $sql = "UPDATE musics SET plays = plays + 1 WHERE id = ?";
+    $stmt = $mysqli->prepare($sql);
+    $stmt->bind_param('i', $musicId);
+    $stmt->execute();
+}

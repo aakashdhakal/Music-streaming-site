@@ -620,145 +620,101 @@
 
         }
 
-
-        form {
+        .auth-details {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 2.5rem;
-            width: 100%;
-            align-items: center;
         }
 
-        button[type="submit"] {
-            width: 100%;
-        }
-
-        /* .signup-form {
+        .otp-verify {
             display: none;
-        } */
 
+            .otp-group {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                border: none;
+                width: 100%;
+
+            }
+
+            .otp-group input {
+
+                /* Adjust the height as needed */
+                text-align: center;
+                font-size: 1.1rem;
+                /* Adjust the font size as needed */
+                border: 1px solid var(--text-color-light);
+                /* Adjust the border color as needed */
+                border-radius: 5px;
+                /* Adjust the border radius as needed */
+                outline: none;
+                transition: border-color 0.3s ease;
+                font-weight: bold;
+
+
+            }
+
+            .otp-group input:focus {
+                border-color: #ff6a3a;
+                /* Adjust the focus border color as needed */
+
+            }
+
+            .resend-otp {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0.5rem;
+
+                .resend {
+                    color: var(--primary-color);
+                    cursor: pointer;
+                }
+            }
+
+        }
 
         .personal-info {
             display: none;
+            gap: 2.5rem !important;
 
-            .form-group {
-                gap: 1.5rem;
-            }
-
-            .custom-file-upload {
-                border-radius: 50%;
-                overflow: hidden;
-            }
-
-            .full-name {
+            .full-name,
+            .date-of-birth {
                 display: flex;
                 gap: 1rem;
+                align-items: center;
             }
 
-
-            .date-of-birth {
+            .image-upload-area {
                 display: flex;
                 align-items: center;
                 gap: 1rem;
+
+                .custom-image-upload {
+                    border-radius: 50%;
+                    overflow: hidden;
+                }
             }
         }
 
-        .otp-verify {
-            display: none;
-        }
-
-    }
-
-    .otp-verify {
-
-        .resend {
-            color: var(--primary-color);
-            cursor: pointer;
-            padding: 0.2rem;
-            width: 3rem;
-        }
-
-        .resend-otp {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .otp-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 0.5rem;
-            border: none;
-        }
-
-        .otp-group input {
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            font-size: 1.5rem;
-            border-bottom: 1px solid #000000;
-            border-radius: 0;
-            padding: 0.2rem;
-            appearance: none !important;
-
-        }
-
-        .otp-group input:focus {
-            border-bottom: 1px solid var(--primary-color);
-        }
-    }
-
-    #resetPassword {
-        width: 42vh;
-        height: max-content;
-        color: var(--text-color);
-        text-align: center;
-
-        .max-width {
-            padding: 1.5rem;
-            gap: 3rem;
-            height: max-content;
-        }
-
-        form {
-            display: flex;
+        .auth-details,
+        .otp-verify,
+        .personal-info {
             flex-direction: column;
             gap: 1.5rem;
+            width: 100%;
 
-            input {
-                width: 100%;
+            .input-group {
+                display: flex;
+                flex-direction: column;
+                gap: 3rem;
             }
         }
 
-        form>*:first-child {
-            margin-bottom: 1.5rem;
-        }
 
-        #togglePasswordVisibility {
-            padding: 0;
-            right: 0;
-            top: -0.2rem;
 
-            iconify-icon {
-                pointer-events: none;
-            }
-        }
-
-        .otp-verify {
-            display: none;
-        }
-
-        .reset-password {
-            display: none;
-        }
-
-        /* 
-        .get-email {
-            display: none;
-        } */
     }
+
+
 
     #loginForm a,
     #signupForm a {
@@ -1181,6 +1137,7 @@ main {
         gap: 5rem;
         height: max-content;
 
+
         .featured-banner {
             position: relative;
             display: flex;
@@ -1260,6 +1217,12 @@ main {
             justify-content: flex-start;
             gap: 0.8rem;
             height: 100%;
+
+            h1 {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: var(--text-color-light);
+            }
         }
     }
 }

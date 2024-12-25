@@ -25,3 +25,5 @@ if (session_status() == PHP_SESSION_NONE) {
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     <link rel="stylesheet" href="" class="dynamic-css">
+    <link rel="stylesheet" href="/vendor/datepicker/datepicker.material.css">
+    <script src="/vendor/datepicker/datepicker.js"></script>

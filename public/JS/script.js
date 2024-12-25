@@ -8,19 +8,18 @@ const likedIcon =
 async function loadPageDynamic(url, dynamicNames) {
 	setPagePreloader(true);
 	setPageTitle(url, dynamicNames)
+	//get path after domain name
 	let path = url.split("/").pop();
 	history.pushState({ path }, null, url); // Update URL without reloading
 	await loadPage(url); // Load the page content
-
-	let btn = document.querySelector(`[data-path="/${path}"]`);
+	let btn = document.querySelector(`[data-path="${url}"]`);
 	if (btn) {
 		if (btn.classList.contains("nav-btn")) {
 			changeActiveBtn(btn);
 		} else {
 			changeActiveBtn(null);
 		}
-		// appendScript(btn.dataset.script);
-		appendStyle(btn.dataset.style);
+		appendScript(btn.dataset.script);
 	} else {
 		changeActiveBtn(null);
 	}
@@ -65,7 +64,7 @@ async function setPageTitle(url, dynamicName) {
 
 // Preloader and initial page load
 window.addEventListener("load", async () => {
-	let url = window.location.href;
+	let url = window.location.pathname;
 	let searchValue = url.split("/").filter(Boolean);
 	if (searchValue.includes("search") && searchValue.length === 3) {
 		loadPageDynamic("/");
@@ -80,6 +79,14 @@ window.addEventListener("load", async () => {
 	}
 	await loadPageDynamic(url);
 	setTimeout(() => (document.querySelector(".preloader").style.display = "none"), 1000);
+});
+
+// Handle popstate event to load pages when navigating with back/forward buttons
+window.addEventListener("popstate", async (event) => {
+	eve
+	if (event.state && event.state.path) {
+		await loadPageDynamic(window.location.href, document.title);
+	}
 });
 
 // Show error message
@@ -144,24 +151,27 @@ function uploadedFileName(input, name) {
 
 // Append script dynamically
 function appendScript(src) {
-	return new Promise((resolve, reject) => {
-		let dynamicScript = document.querySelector(".dynamic-script");
-		if (dynamicScript) document.body.removeChild(dynamicScript);
-		let script = document.createElement("script");
-		script.src = src;
-		script.async = true;
-		script.classList.add("dynamic-script");
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-		setTimeout(() => document.body.appendChild(script), 1000);
-	});
+	console.log(src)
+	let dynamicScript = document.querySelector(".dynamic-script");
+	if (dynamicScript) {
+		console.log("script found")
+		if (!dynamicScript.src.includes(src)) {
+			console.log("script not same src")
+			dynamicScript.remove();
+		} else {
+			console.log("script same src")
+			return;
+		}
+	} else {
+		console.log("script not found")
+	}
+	let script = document.createElement("script");
+	script.src = src;
+	script.async = true;
+	script.classList.add("dynamic-script");
+	document.body.appendChild(script);
 }
 
-// Append style dynamically
-function appendStyle(href) {
-	let dynamicStyle = document.querySelector(".dynamic-css");
-	if (dynamicStyle) dynamicStyle.href = href;
-}
 
 // Change active button
 function changeActiveBtn(btn) {
@@ -272,28 +282,33 @@ function removeCustomSelectDropdown() {
 
 // Event listeners for various actions
 document.addEventListener("click", async (e) => {
-	if (!e.target.closest("#notificationWindow, .notification-btn")) {
-		document.querySelector("#notificationWindow").classList.remove("openNotificationWindow");
-	}
-	if (e.target.matches(".notification-card *") && !e.target.matches("#clearNotification *")) {
-		let notificationCard = e.target.closest(".notification-card");
-		if (notificationCard.dataset.readStatus === "0") {
-			markAsRead(notificationCard.dataset.notificationId);
-			notificationCard.dataset.readStatus = "1";
+	if (document.getElementById("notificationWindow") !== null) {
+		if (!e.target.closest("#notificationWindow, .notification-btn")) {
+			document.querySelector("#notificationWindow").classList.remove("openNotificationWindow");
 		}
+		if (e.target.matches(".notification-card *") && !e.target.matches("#clearNotification *")) {
+			let notificationCard = e.target.closest(".notification-card");
+			if (notificationCard.dataset.readStatus === "0") {
+				markAsRead(notificationCard.dataset.notificationId);
+				notificationCard.dataset.readStatus = "1";
+			}
+		}
+		if (e.target.matches("#clearNotification *")) {
+			deleteNotification(e.target.closest(".notification-card").dataset.notificationId);
+			showNotifications(notificationCount);
+		}
+		if (e.target.closest("#seeAllNotifications")) showNotifications(-1);
+		if (e.target.closest(".mark-all-as-read")) markAllAsRead();
+		if (e.target.closest(".notification-btn")) toggleNotificationWindow();
+
 	}
-	if (e.target.matches("#clearNotification *")) {
-		deleteNotification(e.target.closest(".notification-card").dataset.notificationId);
-		showNotifications(notificationCount);
+	if (document.getElementById("profileWindow") !== null) {
+		if (!e.target.closest("#profileWindow, .profile-btn")) {
+			document.querySelector("#profileWindow").classList.remove("openProfileWindow");
+		}
+		if (e.target.closest(".profile-btn")) toggleProfileWindow();
 	}
-	if (!e.target.closest("#profileWindow, .profile-btn")) {
-		document.querySelector("#profileWindow").classList.remove("openProfileWindow");
-	}
-	if (e.target.closest(".notification-btn")) toggleNotificationWindow();
-	if (e.target.closest("#seeAllNotifications")) showNotifications(-1);
-	if (e.target.closest(".mark-all-as-read")) markAllAsRead();
 	if (e.target.closest(".dark-mode-btn")) changeTheme();
-	if (e.target.closest(".profile-btn")) toggleProfileWindow();
 	if (e.target.closest(".toggle-password-visibility")) {
 		let passwordField = e.target.parentElement.querySelector("input");
 		passwordField.type = passwordField.type === "password" ? "text" : "password";
@@ -327,13 +342,11 @@ document.addEventListener("click", async (e) => {
 		let btn = e.target.closest(".page-load-btn");
 		if (btn.classList.contains("nav-btn")) changeActiveBtn(btn);
 		await loadPageDynamic(btn.dataset.path);
-		console.log(btn.dataset.script)
 		appendScript(btn.dataset.script);
 	}
 	if (e.target.closest(".like-btn")) {
 		let likeBtn = e.target.closest(".like-btn");
 		setBtnStatus(likeBtn, "loading", "");
-		console.log(likeBtn.dataset.liked)
 		const musicId = likeBtn.dataset.musicid;
 		const action = likeBtn.dataset.liked === "1" ? "unlike" : "like";
 		if (await setLikeStatus(musicId, action)) {
@@ -406,9 +419,8 @@ async function updateSidebarPlaylistContainer() {
 	let sidebarPlaylistContainer = document.querySelector(".sidebar-playlist-container");
 	if (sidebarPlaylistContainer) {
 		const playlists = await fetchPlaylists();
-		console.log(playlists)
 		sidebarPlaylistContainer.innerHTML = playlists.map(playlist => `
-			<div class='playlist-card page-load-btn' data-playlistId='${playlist.id}' data-path='/playlist/${playlist.id}' data-title='${playlist.name} - by ${userFullName}'>
+			<div class='playlist-card page-load-btn' data-playlistId='${playlist.id}' data-path='/playlist/${playlist.id}' data-title='${playlist.name} - by ${userFullName}' data-script='/public/JS/playlist.js'>
 				<img src='${playlist.cover}' alt=''>
 				<div class='playlist-info'>
 					<h3 class='playlist-title'>${playlist.name}</h3>
@@ -568,6 +580,18 @@ async function loadSearchPage(searchValue) {
 	await loadPageDynamic("/search/" + encodeURIComponent(searchValue));
 }
 
+function getParentElement(element, levels) {
+	let parent = element;
+	for (let i = 0; i < levels; i++) {
+		if (parent.parentElement) {
+			parent = parent.parentElement;
+		} else {
+			return null; // Return null if there are not enough parent elements
+		}
+	}
+	return parent;
+}
+
 
 //all api calls
 
@@ -621,7 +645,6 @@ async function setLikeStatus(musicId, action = "check") {
 		if (data.status === 200) {
 			return true;
 		} else if (data.status === 401 || data.status === 201) {
-			console.log("error coming")
 			return false;
 		} else {
 			showAlert("Error", data.message)
@@ -871,7 +894,6 @@ async function checkOtp(otp, email) {
 			)}&action=verifyOtp&email=${encodeURIComponent(email)}`,
 		});
 		const data = await response.json();
-		console.log(data)
 		if (data.status === 200) {
 			return true;
 		} else {

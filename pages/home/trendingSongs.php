@@ -2,13 +2,10 @@
 require_once __DIR__ . '/../../modules/database.php';
 require_once __DIR__ . '/../../modules/extraFunctions.php';
 
-$sql = 'SELECT musics.id, musics.coverImage, musics.title, musics.artist, COUNT(music_history.music_id) as plays 
-        FROM music_history
-        INNER JOIN musics ON music_history.music_id = musics.id
-        INNER JOIN users ON musics.artist = users.username
-        GROUP BY musics.id, musics.coverImage, musics.title, musics.artist 
-        ORDER BY plays DESC 
-        LIMIT 5;';
+$sql = 'SELECT musics.id, musics.coverImage, musics.title, musics.artist, musics.plays
+        FROM musics
+        ORDER BY plays DESC
+        LIMIT 5';
 $result = mysqli_query($mysqli, $sql);
 
 if ($result) {

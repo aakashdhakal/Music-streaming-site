@@ -1,6 +1,3 @@
-console.log("uploadMusic.js loaded")
-
-
 document.addEventListener("dragover", function (e) {
 	e.preventDefault();
 	if (e.target.closest(".music-upload-area")) {
@@ -74,8 +71,8 @@ function checkLyricsFileType(file) {
 }
 
 document.addEventListener("submit", async function (e) {
-	e.preventDefault();
 	if (e.target.closest("#uploadMusicForm")) {
+		e.preventDefault();
 		let submitBtn = uploadMusicForm.querySelector("button[type='submit");
 		setBtnStatus(submitBtn, "loading", "Uploading Music");
 		let formData = new FormData(uploadMusicForm);
@@ -129,7 +126,6 @@ document.addEventListener("change", function (e) {
 		let file = e.target.files[0];
 		if (checkLyricsFileType(file)) {
 			uploadedFileName(e.target, file.name);
-			console.log(file);
 		} else {
 			showAlert("Only .lrc files are allowed", "error");
 		}

@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/../../modules/database.php';
 require_once __DIR__ . '/../../modules/extraFunctions.php';
-
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /404');
+}
 $userId = $_SESSION['user_id'];
 $sql = 'SELECT * FROM favourite_songs
         INNER JOIN musics ON favourite_songs.song_id = musics.id

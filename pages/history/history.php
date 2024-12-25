@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../../modules/database.php';
 require_once __DIR__ . '/../../modules/extraFunctions.php';
 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /404');
+}
+
 $userId = $_SESSION['user_id'];
 $sql = "SELECT music_history.music_id, musics.*, MAX(music_history.id) as max_id
         FROM music_history 

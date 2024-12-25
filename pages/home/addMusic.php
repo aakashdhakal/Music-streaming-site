@@ -1,5 +1,5 @@
 <section id="uploadMusic">
-    <form id="uploadMusicForm">
+    <form id="uploadMusicForm" action="#" method="post">
         <div class="uploads-container">
             <div class="music-upload-area">
                 <p class="music-upload-text">
